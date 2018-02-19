@@ -18,6 +18,12 @@ android {
         }
     }
 
+
+    defaultConfig {
+        File apiConfig = file('the-movie-db-api-key')
+        buildConfigField 'String', 'THE_MOVIE_DB_API_KEY', "\"${apiConfig.text}\""
+    }
+
     lintOptions {
         disable 'GoogleAppIndexingWarning'
     }
