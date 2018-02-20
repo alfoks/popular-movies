@@ -23,7 +23,8 @@ public interface TheMovieDbApi {
     }
 
     String BASE_URL = "https://api.themoviedb.org/";
+    String API_PATH = "/3/movie";
 
-    @GET("/3/movie/{sort-by}")
+    @GET(API_PATH + "/{sort-by}")
     Single<Movies> getMovies(@Path("sort-by") SortBy sortBy);
 }

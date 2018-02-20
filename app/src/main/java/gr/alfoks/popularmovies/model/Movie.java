@@ -3,12 +3,12 @@ package gr.alfoks.popularmovies.model;
 import java.util.Date;
 
 public class Movie {
-    private final String title;
-    private final String original_title;
-    private final String poster_path;
-    private final String overview;
-    private final float vote_average;
-    private final Date release_date;
+    public final String title;
+    public final String original_title;
+    public final String poster_path;
+    public final String overview;
+    public final float vote_average;
+    public final Date release_date;
 
     public Movie(
         String title,
