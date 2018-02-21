@@ -4,6 +4,7 @@ import gr.alfoks.popularmovies.model.Movies;
 import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface TheMovieDbApi {
     enum SortBy {
@@ -26,5 +27,5 @@ public interface TheMovieDbApi {
     String API_PATH = "/3/movie";
 
     @GET(API_PATH + "/{sort-by}")
-    Single<Movies> getMovies(@Path("sort-by") SortBy sortBy);
+    Single<Movies> getMovies(@Path("sort-by") SortBy sortBy, @Query("page") int page);
 }

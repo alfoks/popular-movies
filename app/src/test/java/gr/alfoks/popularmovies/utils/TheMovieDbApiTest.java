@@ -72,14 +72,14 @@ public class TheMovieDbApiTest {
         server.enqueue(new MockResponse().setBody(""));
         server.enqueue(new MockResponse().setBody(""));
 
-        api.getMovies(TheMovieDbApi.SortBy.POPULAR).subscribe(new TestObserver<Movies>());
-        api.getMovies(TheMovieDbApi.SortBy.TOP_RATED).subscribe(new TestObserver<Movies>());
+        api.getMovies(TheMovieDbApi.SortBy.POPULAR, 1).subscribe(new TestObserver<Movies>());
+        api.getMovies(TheMovieDbApi.SortBy.TOP_RATED, 1).subscribe(new TestObserver<Movies>());
 
         RecordedRequest request = server.takeRequest();
-        assertEquals(TheMovieDbApi.API_PATH + "/popular", request.getPath());
+        assertEquals(TheMovieDbApi.API_PATH + "/popular?page=1", request.getPath());
 
         request = server.takeRequest();
-        assertEquals(TheMovieDbApi.API_PATH + "/top_rated", request.getPath());
+        assertEquals(TheMovieDbApi.API_PATH + "/top_rated?page=1", request.getPath());
     }
 
     @Test
@@ -90,7 +90,7 @@ public class TheMovieDbApiTest {
         server.enqueue(new MockResponse().setResponseCode(code).setBody(message));
 
         MoviesResult moviesResult = new MoviesResult();
-        final Single<Movies> moviesObservable = api.getMovies(TheMovieDbApi.SortBy.POPULAR);
+        final Single<Movies> moviesObservable = api.getMovies(TheMovieDbApi.SortBy.POPULAR, 1);
         TestObserver observer = moviesObservable.subscribeWith(getTestObserver(moviesResult));
 
         observer.assertNotComplete();
@@ -104,7 +104,7 @@ public class TheMovieDbApiTest {
         server.enqueue(new MockResponse().setResponseCode(200).setBody(NO_MOVIES_JSON_RESULT));
 
         MoviesResult moviesResult = new MoviesResult();
-        final Single<Movies> moviesObservable = api.getMovies(TheMovieDbApi.SortBy.POPULAR);
+        final Single<Movies> moviesObservable = api.getMovies(TheMovieDbApi.SortBy.POPULAR, 1);
         moviesObservable.subscribeWith(getTestObserver(moviesResult));
 
         assertEquals(0, moviesResult.getMovies().getMovies().size());
@@ -116,13 +116,10 @@ public class TheMovieDbApiTest {
             .setResponseCode(200)
             .setBody(ONE_MOVIE_ALL_FIELDS_JSON_RESULT));
 
-        final Single<Movies> moviesObservable = api.getMovies(TheMovieDbApi.SortBy.POPULAR);
+        final Single<Movies> moviesObservable = api.getMovies(TheMovieDbApi.SortBy.POPULAR, 1);
 
         final MoviesResult moviesResult = new MoviesResult();
         TestObserver observer = moviesObservable.subscribeWith(getTestObserver(moviesResult));
-
-        RecordedRequest request = server.takeRequest();
-        assertEquals("/3/movie/popular", request.getPath());
 
         observer.assertComplete();
         Movies movies = moviesResult.getMovies();
@@ -143,7 +140,7 @@ public class TheMovieDbApiTest {
             .setResponseCode(200)
             .setBody(TWO_MOVIES_JSON_RESULT));
 
-        final Single<Movies> moviesObservable = api.getMovies(TheMovieDbApi.SortBy.POPULAR);
+        final Single<Movies> moviesObservable = api.getMovies(TheMovieDbApi.SortBy.POPULAR, 1);
 
         final MoviesResult moviesResult = new MoviesResult();
         TestObserver observer = moviesObservable.subscribeWith(getTestObserver(moviesResult));
