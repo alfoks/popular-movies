@@ -1,4 +1,4 @@
-package gr.alfoks.popularmovies.utils;
+package gr.alfoks.popularmovies.util;
 
 import gr.alfoks.popularmovies.model.Movies;
 import io.reactivex.Single;

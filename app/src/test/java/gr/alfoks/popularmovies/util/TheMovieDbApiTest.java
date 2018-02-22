@@ -1,4 +1,4 @@
-package gr.alfoks.popularmovies.utils;
+package gr.alfoks.popularmovies.util;
 
 import java.io.IOException;
 
