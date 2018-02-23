@@ -3,6 +3,7 @@ package gr.alfoks.popularmovies.model;
 import java.util.Date;
 
 public class Movie {
+    private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
     public final String title;
     public final String original_title;
     public final String poster_path;
@@ -24,5 +25,9 @@ public class Movie {
         this.overview = overview;
         this.vote_average = vote_average;
         this.release_date = release_date;
+    }
+
+    public String getFullPosterPath() {
+        return POSTER_BASE_URL + poster_path;
     }
 }
