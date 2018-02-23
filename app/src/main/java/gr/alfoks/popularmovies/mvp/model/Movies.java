@@ -1,4 +1,4 @@
-package gr.alfoks.popularmovies.model;
+package gr.alfoks.popularmovies.mvp.model;
 
 import java.util.Collections;
 import java.util.List;

@@ -2,7 +2,7 @@ package gr.alfoks.popularmovies.testutils;
 
 import java.io.IOException;
 
-import gr.alfoks.popularmovies.model.Movies;
+import gr.alfoks.popularmovies.mvp.model.Movies;
 import io.reactivex.observers.TestObserver;
 import retrofit2.HttpException;
 

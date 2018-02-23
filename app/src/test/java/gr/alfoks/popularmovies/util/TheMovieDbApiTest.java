@@ -2,8 +2,8 @@ package gr.alfoks.popularmovies.util;
 
 import java.io.IOException;
 
-import gr.alfoks.popularmovies.model.Movie;
-import gr.alfoks.popularmovies.model.Movies;
+import gr.alfoks.popularmovies.mvp.model.Movie;
+import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.testutils.MoviesResult;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;

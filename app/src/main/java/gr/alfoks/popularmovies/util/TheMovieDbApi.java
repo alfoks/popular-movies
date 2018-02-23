@@ -1,6 +1,6 @@
 package gr.alfoks.popularmovies.util;
 
-import gr.alfoks.popularmovies.model.Movies;
+import gr.alfoks.popularmovies.mvp.model.Movies;
 import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
