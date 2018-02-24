@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsActivity">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/gdlVerticalMiddle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center_vertical|start"
+        android:padding="8dp"
+        android:text="@string/placeholder_title"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgPoster"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="@dimen/field_vertical_separation_margin"
+        android:contentDescription="@string/cnt_movie_poster"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="@id/gdlVerticalMiddle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+        app:srcCompat="@drawable/placeholder_poster" />
+
+    <TextView
+        android:id="@+id/txtYear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/field_horizontal_separation_margin"
+        android:layout_marginStart="@dimen/field_horizontal_separation_margin"
+        android:layout_marginTop="@dimen/field_vertical_separation_margin"
+        android:text="@string/placeholder_year"
+        android:textAppearance="?android:textAppearanceMedium"
+        app:layout_constraintStart_toEndOf="@id/gdlVerticalMiddle"
+        app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
+
+    <TextView
+        android:id="@+id/txtDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/field_vertical_separation_margin"
+        android:text="@string/placeholder_duration"
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="@+id/txtYear"
+        app:layout_constraintTop_toBottomOf="@+id/txtYear" />
+
+    <TextView
+        android:id="@+id/txtRating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/field_vertical_separation_margin"
+        android:text="@string/placeholder_rating"
+        app:layout_constraintStart_toStartOf="@+id/txtYear"
+        app:layout_constraintTop_toBottomOf="@+id/txtDuration" />
+
+    <ImageView
+        android:id="@+id/btnFavorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/field_vertical_separation_margin"
+        android:clickable="true"
+        android:contentDescription="@string/cnt_favorite_button"
+        app:layout_constraintStart_toStartOf="@+id/txtYear"
+        app:layout_constraintTop_toBottomOf="@+id/txtRating"
+        app:srcCompat="@drawable/ic_favorite" />
+
+    <TextView
+        android:id="@+id/txtOverview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/fragment_horizontal_margin"
+        android:layout_marginStart="@dimen/fragment_horizontal_margin"
+        android:layout_marginTop="@dimen/field_vertical_separation_margin"
+        android:text="@string/placeholder_plot"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgPoster" />
+
+    <View
+        android:id="@+id/divider"
+        style="@style/Divider"
+        android:layout_marginTop="@dimen/field_vertical_separation_margin"
+        app:layout_constraintEnd_toEndOf="@id/txtOverview"
+        app:layout_constraintStart_toStartOf="@id/txtOverview"
+        app:layout_constraintTop_toBottomOf="@+id/txtOverview" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/fragment_horizontal_margin"
+        android:layout_marginStart="@dimen/fragment_horizontal_margin"
+        android:layout_marginTop="@dimen/field_vertical_separation_margin"
+        android:text="@string/lbl_trailers"
+        app:layout_constraintEnd_toStartOf="@+id/gdlVerticalMiddle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+</android.support.constraint.ConstraintLayout>
+

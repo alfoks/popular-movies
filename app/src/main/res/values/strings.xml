@@ -1,6 +1,18 @@
 <resources>
     <string name="app_name">Pop Movies</string>
 
-    <!-- Content descriptions-->
+    <!-- Content descriptions -->
     <string name="cnt_movie_poster">Movie poster</string>
+    <string name="cnt_favorite_button">Favorite button</string>
+
+    <!-- Placeholders -->
+    <string name="placeholder_title">Title</string>
+    <string name="placeholder_year">2015</string>
+    <string name="placeholder_duration">120min</string>
+    <string name="placeholder_rating">8/10</string>
+    <string name="placeholder_plot">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam maximus fermentum tempus. Ut massa sem, iaculis a velit ac, ornare.</string>
+
+    <!-- Labels -->
+    <string name="lbl_trailers">Trailers:</string>
+
 </resources>

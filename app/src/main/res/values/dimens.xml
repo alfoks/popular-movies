@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="fragment_horizontal_margin">8dp</dimen>
+    <dimen name="field_vertical_separation_margin">8dp</dimen>
+    <dimen name="field_horizontal_separation_margin">8dp</dimen>
+</resources>
