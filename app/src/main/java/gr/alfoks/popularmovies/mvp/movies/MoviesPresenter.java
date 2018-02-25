@@ -3,8 +3,9 @@ package gr.alfoks.popularmovies.mvp.movies;
 import java.util.HashMap;
 
 import gr.alfoks.popularmovies.BuildConfig;
-import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.mvp.BasePresenter;
+import gr.alfoks.popularmovies.mvp.model.Movie;
+import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.util.RestClient;
 import gr.alfoks.popularmovies.util.TheMovieDbApi;
 import io.reactivex.Single;
@@ -18,12 +19,12 @@ import android.support.annotation.NonNull;
 public class MoviesPresenter extends BasePresenter<MoviesContract.View>
     implements MoviesContract.Presenter {
 
-    private TheMovieDbApi theMovieDbApi;
+    private final @NonNull TheMovieDbApi theMovieDbApi;
     private int nextPage = 1;
     private int totalPages = 1;
 
     public MoviesPresenter() {
-        createApi();
+        theMovieDbApi = createApi();
     }
 
     @Override
@@ -45,10 +46,16 @@ public class MoviesPresenter extends BasePresenter<MoviesContract.View>
         getView().onListReset();
     }
 
-    private void createApi() {
+    @Override
+    public void showMovieDetails(Movie movie) {
+        getView().onShowMovieDetails(movie);
+    }
+
+    @NonNull
+    private TheMovieDbApi createApi() {
         final HashMap<String, String> parameters = new HashMap<>();
         parameters.put("api_key", BuildConfig.THE_MOVIE_DB_API_KEY);
-        theMovieDbApi = new RestClient<>(TheMovieDbApi.BASE_URL, TheMovieDbApi.class, parameters, null).create();
+        return new RestClient<>(TheMovieDbApi.BASE_URL, TheMovieDbApi.class, parameters, null).create();
     }
 
     @NonNull

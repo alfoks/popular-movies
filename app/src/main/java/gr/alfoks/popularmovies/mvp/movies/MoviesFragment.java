@@ -8,12 +8,14 @@ import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.util.EndlessRecyclerViewScrollListener;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 public class MoviesFragment extends BaseFragment<MoviesContract.Presenter>
     implements MoviesContract.View {
@@ -23,6 +25,7 @@ public class MoviesFragment extends BaseFragment<MoviesContract.Presenter>
 
     private MoviesAdapter adapter;
     private EndlessRecyclerViewScrollListener scrollListener;
+    private OnMovieClickedListener listener;
 
     public MoviesFragment() {
     }
@@ -44,7 +47,7 @@ public class MoviesFragment extends BaseFragment<MoviesContract.Presenter>
         rcvMovies.setLayoutManager(layoutManager);
         rcvMovies.setItemAnimator(new DefaultItemAnimator());
 
-        adapter = new MoviesAdapter(getContext());
+        adapter = new MoviesAdapter(getContext(), createOnItemClickedListener());
         rcvMovies.setAdapter(adapter);
 
         scrollListener = createScrollListener(layoutManager);
@@ -53,11 +56,26 @@ public class MoviesFragment extends BaseFragment<MoviesContract.Presenter>
         getPresenter().resetList();
     }
 
+    @NonNull
+    private MoviesAdapter.OnItemClickedListener createOnItemClickedListener() {
+        return new MoviesAdapter.OnItemClickedListener() {
+            @Override
+            public void onItemClicked(Movie movie) {
+                getPresenter().showMovieDetails(movie);
+            }
+        };
+    }
+
     @Override
     public void onListReset() {
         adapter.reset();
         scrollListener.resetState();
         getPresenter().fetchNextMoviesPage();
+    }
+
+    @Override
+    public void onShowMovieDetails(Movie movie) {
+        listener.onMovieClicked(movie);
     }
 
     @NonNull
@@ -76,4 +94,30 @@ public class MoviesFragment extends BaseFragment<MoviesContract.Presenter>
             adapter.addMovie(movie);
         }
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof OnMovieClickedListener) {
+            listener = (OnMovieClickedListener)context;
+        } else {
+            listener = nullListener;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+
+    public interface OnMovieClickedListener {
+        void onMovieClicked(Movie movie);
+    }
+
+    private final OnMovieClickedListener nullListener = new OnMovieClickedListener() {
+        @Override
+        public void onMovieClicked(Movie movie) {
+        }
+    };
 }

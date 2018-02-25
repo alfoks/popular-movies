@@ -11,6 +11,7 @@ import gr.alfoks.popularmovies.R;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +22,11 @@ public class MoviesAdapter
     extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
     private Context context;
     private List<Movie> movies = new ArrayList<>();
+    private OnItemClickedListener listener;
 
-    MoviesAdapter(Context context) {
+    MoviesAdapter(Context context, OnItemClickedListener listener) {
         this.context = context;
+        this.listener = listener;
     }
 
     @Override
@@ -59,6 +62,10 @@ public class MoviesAdapter
         notifyDataSetChanged();
     }
 
+    public interface OnItemClickedListener {
+        void onItemClicked(Movie movie);
+    }
+
     class MovieViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.imgPoster)
         ImageView imgPoster;
@@ -66,6 +73,20 @@ public class MoviesAdapter
         private MovieViewHolder(android.view.View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            imgPoster.setOnClickListener(createOnClickedListener());
+        }
+
+        @NonNull
+        private View.OnClickListener createOnClickedListener() {
+            return new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(listener != null) {
+                        listener.onItemClicked(movies.get(getLayoutPosition()));
+                    }
+                }
+            };
         }
     }
 }
