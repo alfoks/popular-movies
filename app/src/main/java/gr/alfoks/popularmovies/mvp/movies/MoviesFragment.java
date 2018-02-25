@@ -75,7 +75,7 @@ public class MoviesFragment extends BaseFragment<MoviesContract.Presenter>
 
     @Override
     public void onShowMovieDetails(Movie movie) {
-        listener.onMovieClicked(movie);
+        listener.onMovieClicked(movie.id);
     }
 
     @NonNull
@@ -112,12 +112,12 @@ public class MoviesFragment extends BaseFragment<MoviesContract.Presenter>
     }
 
     public interface OnMovieClickedListener {
-        void onMovieClicked(Movie movie);
+        void onMovieClicked(long movieId);
     }
 
     private final OnMovieClickedListener nullListener = new OnMovieClickedListener() {
         @Override
-        public void onMovieClicked(Movie movie) {
+        public void onMovieClicked(long movieId) {
         }
     };
 }

@@ -1,29 +1,45 @@
 package gr.alfoks.popularmovies;
 
-import gr.alfoks.popularmovies.mvp.BasePresenter;
-import gr.alfoks.popularmovies.mvp.MvpView;
+import java.util.HashMap;
+
+import gr.alfoks.popularmovies.mvp.model.RetrofitMoviesRepository;
+import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsPresenter;
 import gr.alfoks.popularmovies.mvp.movies.MoviesPresenter;
+import gr.alfoks.popularmovies.util.RestClient;
+import gr.alfoks.popularmovies.util.TheMovieDbApi;
 
 import android.app.Application;
+import android.support.annotation.NonNull;
 
 public class PopularMoviesApplication extends Application {
     private MoviesPresenter moviesPresenter;
-    private BasePresenter<MvpView> movieDetailsPresenter;
+    private MovieDetailsPresenter movieDetailsPresenter;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        moviesPresenter = new MoviesPresenter();
-        movieDetailsPresenter = new BasePresenter<>();
+        TheMovieDbApi theMovieDbApi = createApi();
+        RetrofitMoviesRepository repository = new RetrofitMoviesRepository(theMovieDbApi);
+        moviesPresenter = new MoviesPresenter(repository);
+        movieDetailsPresenter = new MovieDetailsPresenter(repository);
     }
 
     //Dependency injection functions below
+    @NonNull
+    private TheMovieDbApi createApi() {
+        final HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("api_key", BuildConfig.THE_MOVIE_DB_API_KEY);
+        return new RestClient<>(TheMovieDbApi.BASE_URL, TheMovieDbApi.class, parameters, null).create();
+    }
+
+    @NonNull
     public MoviesPresenter provideMoviesPresenter() {
         return moviesPresenter;
     }
 
-    public BasePresenter<MvpView> provideMovieDetailsPresenter() {
+    @NonNull
+    public MovieDetailsPresenter provideMovieDetailsPresenter() {
         return movieDetailsPresenter;
     }
 }

@@ -20,13 +20,13 @@
         android:background="@color/colorPrimary"
         android:gravity="center_vertical|start"
         android:padding="8dp"
-        android:text="@string/placeholder_title"
         android:textAppearance="?android:textAppearanceLarge"
         android:textColor="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/placeholder_title" />
 
     <ImageView
         android:id="@+id/imgPoster"
@@ -38,7 +38,7 @@
         app:layout_constraintEnd_toEndOf="@id/gdlVerticalMiddle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtTitle"
-        app:srcCompat="@drawable/placeholder_poster" />
+        tools:srcCompat="@drawable/placeholder_poster" />
 
     <TextView
         android:id="@+id/txtYear"
@@ -47,29 +47,29 @@
         android:layout_marginLeft="@dimen/field_horizontal_separation_margin"
         android:layout_marginStart="@dimen/field_horizontal_separation_margin"
         android:layout_marginTop="@dimen/field_vertical_separation_margin"
-        android:text="@string/placeholder_year"
         android:textAppearance="?android:textAppearanceMedium"
         app:layout_constraintStart_toEndOf="@id/gdlVerticalMiddle"
-        app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+        tools:text="@string/placeholder_year" />
 
     <TextView
         android:id="@+id/txtDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/field_vertical_separation_margin"
-        android:text="@string/placeholder_duration"
         android:textStyle="italic"
         app:layout_constraintStart_toStartOf="@+id/txtYear"
-        app:layout_constraintTop_toBottomOf="@+id/txtYear" />
+        app:layout_constraintTop_toBottomOf="@+id/txtYear"
+        tools:text="@string/placeholder_duration" />
 
     <TextView
         android:id="@+id/txtRating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/field_vertical_separation_margin"
-        android:text="@string/placeholder_rating"
         app:layout_constraintStart_toStartOf="@+id/txtYear"
-        app:layout_constraintTop_toBottomOf="@+id/txtDuration" />
+        app:layout_constraintTop_toBottomOf="@+id/txtDuration"
+        tools:text="@string/placeholder_rating" />
 
     <ImageView
         android:id="@+id/btnFavorite"
@@ -78,9 +78,10 @@
         android:layout_marginTop="@dimen/field_vertical_separation_margin"
         android:clickable="true"
         android:contentDescription="@string/cnt_favorite_button"
+        android:focusable="true"
         app:layout_constraintStart_toStartOf="@+id/txtYear"
         app:layout_constraintTop_toBottomOf="@+id/txtRating"
-        app:srcCompat="@drawable/ic_favorite" />
+        app:srcCompat="@drawable/ic_favorite_border" />
 
     <TextView
         android:id="@+id/txtOverview"
@@ -89,10 +90,10 @@
         android:layout_marginEnd="@dimen/fragment_horizontal_margin"
         android:layout_marginStart="@dimen/fragment_horizontal_margin"
         android:layout_marginTop="@dimen/field_vertical_separation_margin"
-        android:text="@string/placeholder_plot"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgPoster" />
+        app:layout_constraintTop_toBottomOf="@+id/imgPoster"
+        tools:text="@string/placeholder_plot" />
 
     <View
         android:id="@+id/divider"
