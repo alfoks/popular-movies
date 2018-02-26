@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import gr.alfoks.popularmovies.mvp.BasePresenter;
 import gr.alfoks.popularmovies.mvp.model.Movie;
-import gr.alfoks.popularmovies.mvp.model.RetrofitMoviesRepository;
+import gr.alfoks.popularmovies.mvp.model.TheMovieDbRepository;
 import gr.alfoks.popularmovies.mvp.model.Trailer;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
@@ -18,9 +18,9 @@ public class MovieDetailsPresenter
     extends BasePresenter<MovieDetailsContract.View>
     implements MovieDetailsContract.Presenter {
     private final @NonNull
-    RetrofitMoviesRepository repository;
+    TheMovieDbRepository repository;
 
-    public MovieDetailsPresenter(@NonNull RetrofitMoviesRepository repository) {
+    public MovieDetailsPresenter(@NonNull TheMovieDbRepository repository) {
         this.repository = repository;
     }
 

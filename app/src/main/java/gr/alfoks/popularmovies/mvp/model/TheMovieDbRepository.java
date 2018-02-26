@@ -5,12 +5,12 @@ import io.reactivex.Single;
 
 import android.support.annotation.NonNull;
 
-public class RetrofitMoviesRepository implements MoviesRepository {
+public class TheMovieDbRepository implements MoviesRepository {
 
     @NonNull
     private final TheMovieDbApi theMovieDbApi;
 
-    public RetrofitMoviesRepository(@NonNull TheMovieDbApi theMovieDbApi) {
+    public TheMovieDbRepository(@NonNull TheMovieDbApi theMovieDbApi) {
         this.theMovieDbApi = theMovieDbApi;
     }
 

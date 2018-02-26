@@ -3,7 +3,7 @@ package gr.alfoks.popularmovies.mvp.movies;
 import gr.alfoks.popularmovies.mvp.BasePresenter;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
-import gr.alfoks.popularmovies.mvp.model.RetrofitMoviesRepository;
+import gr.alfoks.popularmovies.mvp.model.TheMovieDbRepository;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
@@ -17,11 +17,11 @@ public class MoviesPresenter extends BasePresenter<MoviesContract.View>
     implements MoviesContract.Presenter {
 
     @NonNull
-    private final RetrofitMoviesRepository repository;
+    private final TheMovieDbRepository repository;
     private int nextPage = 1;
     private int totalPages = 1;
 
-    public MoviesPresenter(@NonNull RetrofitMoviesRepository repository) {
+    public MoviesPresenter(@NonNull TheMovieDbRepository repository) {
         this.repository = repository;
     }
 
