@@ -20,7 +20,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".mvp.moviedetails.MovieDetailsActivity" />
+        <activity
+            android:name=".mvp.moviedetails.MovieDetailsActivity"
+            android:parentActivityName=".mvp.movies.MoviesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="gr.alfoks.popularmovies.mvp.movies.MoviesActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -15,7 +15,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
 
 public class MoviesFragment extends BaseFragment<MoviesContract.Presenter>
     implements MoviesContract.View {
