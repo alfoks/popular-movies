@@ -2,7 +2,7 @@ package gr.alfoks.popularmovies.mvp.moviedetails;
 
 import java.util.ArrayList;
 
-import gr.alfoks.popularmovies.mvp.BasePresenter;
+import gr.alfoks.popularmovies.mvp.base.BasePresenter;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.TheMovieDbRepository;
 import gr.alfoks.popularmovies.mvp.model.Trailer;

@@ -3,7 +3,7 @@ package gr.alfoks.popularmovies.mvp.movies;
 import butterknife.BindView;
 import gr.alfoks.popularmovies.PopularMoviesApplication;
 import gr.alfoks.popularmovies.R;
-import gr.alfoks.popularmovies.mvp.BaseFragment;
+import gr.alfoks.popularmovies.mvp.base.BaseFragment;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.util.EndlessRecyclerViewScrollListener;
@@ -16,7 +16,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-public class MoviesFragment extends BaseFragment<MoviesContract.Presenter>
+public class MoviesFragment extends BaseFragment<MoviesContract.View, MoviesContract.Presenter>
     implements MoviesContract.View {
 
     @BindView(R.id.rcvMovies)
@@ -38,6 +38,11 @@ public class MoviesFragment extends BaseFragment<MoviesContract.Presenter>
     protected MoviesContract.Presenter providePresenter() {
         PopularMoviesApplication app = (PopularMoviesApplication)getContext().getApplicationContext();
         return app.provideMoviesPresenter();
+    }
+
+    @Override
+    protected MoviesContract.View getThis() {
+        return this;
     }
 
     @Override

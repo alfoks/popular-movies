@@ -1,7 +1,7 @@
 package gr.alfoks.popularmovies.mvp.movies;
 
-import gr.alfoks.popularmovies.mvp.MvpPresenter;
-import gr.alfoks.popularmovies.mvp.MvpView;
+import gr.alfoks.popularmovies.mvp.base.MvpPresenter;
+import gr.alfoks.popularmovies.mvp.base.MvpView;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
 

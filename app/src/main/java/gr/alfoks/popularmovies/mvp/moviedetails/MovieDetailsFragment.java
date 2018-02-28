@@ -8,7 +8,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import gr.alfoks.popularmovies.PopularMoviesApplication;
 import gr.alfoks.popularmovies.R;
-import gr.alfoks.popularmovies.mvp.BaseFragment;
+import gr.alfoks.popularmovies.mvp.base.BaseFragment;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Trailer;
 
@@ -17,7 +17,8 @@ import android.support.annotation.Nullable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MovieDetailsFragment extends BaseFragment<MovieDetailsPresenter>
+public class MovieDetailsFragment
+    extends BaseFragment<MovieDetailsContract.View, MovieDetailsContract.Presenter>
     implements MovieDetailsContract.View {
     public static final String KEY_MOVIE_ID = "MOVIE_ID";
 
@@ -57,9 +58,14 @@ public class MovieDetailsFragment extends BaseFragment<MovieDetailsPresenter>
     }
 
     @Override
-    protected MovieDetailsPresenter providePresenter() {
+    protected MovieDetailsContract.Presenter providePresenter() {
         PopularMoviesApplication app = (PopularMoviesApplication)getContext().getApplicationContext();
         return app.provideMovieDetailsPresenter();
+    }
+
+    @Override
+    protected MovieDetailsContract.View getThis() {
+        return this;
     }
 
     @Override

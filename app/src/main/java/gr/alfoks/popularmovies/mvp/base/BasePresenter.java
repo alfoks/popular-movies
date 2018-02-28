@@ -1,4 +1,4 @@
-package gr.alfoks.popularmovies.mvp;
+package gr.alfoks.popularmovies.mvp.base;
 
 public class BasePresenter<V extends MvpView> implements MvpPresenter<V> {
     private V view;
@@ -13,7 +13,6 @@ public class BasePresenter<V extends MvpView> implements MvpPresenter<V> {
         view = null;
     }
 
-    @Override
     public boolean isAttached() {
         return view != null;
     }

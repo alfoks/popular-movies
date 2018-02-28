@@ -1,4 +1,4 @@
-package gr.alfoks.popularmovies.mvp;
+package gr.alfoks.popularmovies.mvp.base;
 
 import butterknife.ButterKnife;
 
@@ -10,9 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public abstract class BaseFragment<P extends MvpPresenter> extends Fragment
-    implements MvpView {
-
+public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
+    extends Fragment {
     P presenter;
 
     @Override
@@ -25,18 +24,17 @@ public abstract class BaseFragment<P extends MvpPresenter> extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(getContentResource(), container, false);
-
         ButterKnife.bind(this, view);
-        presenter.attach(this);
 
+        presenter.attach(getThis());
         init(savedInstanceState);
         return view;
     }
 
     @Override
     public void onDetach() {
-        super.onDetach();
         presenter.detach();
+        super.onDetach();
     }
 
     /**
@@ -45,6 +43,7 @@ public abstract class BaseFragment<P extends MvpPresenter> extends Fragment
     @LayoutRes
     protected abstract int getContentResource();
     protected abstract P providePresenter();
+    protected abstract V getThis();
     protected abstract void init(@Nullable Bundle state);
 
     protected P getPresenter() {

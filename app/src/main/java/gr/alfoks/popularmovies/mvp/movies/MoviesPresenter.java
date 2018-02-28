@@ -1,10 +1,10 @@
 package gr.alfoks.popularmovies.mvp.movies;
 
-import gr.alfoks.popularmovies.mvp.BasePresenter;
+import gr.alfoks.popularmovies.mvp.base.BasePresenter;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
-import gr.alfoks.popularmovies.mvp.model.TheMovieDbRepository;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
+import gr.alfoks.popularmovies.mvp.model.TheMovieDbRepository;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -15,7 +15,6 @@ import android.support.annotation.NonNull;
 
 public class MoviesPresenter extends BasePresenter<MoviesContract.View>
     implements MoviesContract.Presenter {
-
     @NonNull
     private final TheMovieDbRepository repository;
     private int nextPage = 1;
