@@ -18,7 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MovieDetailsFragment
-    extends BaseFragment<MovieDetailsContract.View, MovieDetailsContract.Presenter>
+    extends
+    BaseFragment<MovieDetailsContract.View, MovieDetailsContract.Presenter>
     implements MovieDetailsContract.View {
     public static final String KEY_MOVIE_ID = "MOVIE_ID";
 

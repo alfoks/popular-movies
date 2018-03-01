@@ -1,13 +1,23 @@
 package gr.alfoks.popularmovies.mvp.model;
 
-public enum SortBy {
-    POPULAR("popular"),
-    TOP_RATED("top_rated");
+import java.io.Serializable;
+
+public enum SortBy implements Serializable {
+    POPULAR("popular", "Popular"),
+    TOP_RATED("top_rated", "Top rated"),
+    NOW_PLAYING("now_playing", "Now playing"),
+    UPCOMING("upcoming", "Upcoming");
 
     private final String value;
+    private final String displayName;
 
-    SortBy(String value) {
+    SortBy(String value, String displayName) {
         this.value = value;
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     @Override

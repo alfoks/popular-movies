@@ -4,6 +4,7 @@
     <!-- Content descriptions -->
     <string name="cnt_movie_poster">Movie poster</string>
     <string name="cnt_favorite_button">Favorite button</string>
+    <string name="cnt_loading">Loading icon</string>
 
     <!-- Placeholders -->
     <string name="placeholder_title">Title</string>
@@ -14,5 +15,6 @@
 
     <!-- Labels -->
     <string name="lbl_trailers">Trailers:</string>
+    <string name="lbl_sort_by">Sort by</string>
 
 </resources>

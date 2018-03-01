@@ -23,10 +23,8 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <fragment
+        <FrameLayout
             android:id="@+id/frgMovies"
-            android:name="gr.alfoks.popularmovies.mvp.movies.MoviesFragment"
-
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>

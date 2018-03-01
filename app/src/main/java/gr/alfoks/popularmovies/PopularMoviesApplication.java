@@ -2,6 +2,7 @@ package gr.alfoks.popularmovies;
 
 import java.util.HashMap;
 
+import gr.alfoks.popularmovies.mvp.main.MainPresenter;
 import gr.alfoks.popularmovies.mvp.model.TheMovieDbRepository;
 import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsPresenter;
 import gr.alfoks.popularmovies.mvp.movies.MoviesPresenter;
@@ -12,6 +13,7 @@ import android.app.Application;
 import android.support.annotation.NonNull;
 
 public class PopularMoviesApplication extends Application {
+    private MainPresenter mainPresenter;
     private MoviesPresenter moviesPresenter;
     private MovieDetailsPresenter movieDetailsPresenter;
 
@@ -21,6 +23,8 @@ public class PopularMoviesApplication extends Application {
 
         TheMovieDbApi theMovieDbApi = createApi();
         TheMovieDbRepository repository = new TheMovieDbRepository(theMovieDbApi);
+
+        mainPresenter = new MainPresenter();
         moviesPresenter = new MoviesPresenter(repository);
         movieDetailsPresenter = new MovieDetailsPresenter(repository);
     }
@@ -31,6 +35,11 @@ public class PopularMoviesApplication extends Application {
         final HashMap<String, String> parameters = new HashMap<>();
         parameters.put("api_key", BuildConfig.THE_MOVIE_DB_API_KEY);
         return new RestClient<>(TheMovieDbApi.BASE_URL, TheMovieDbApi.class, parameters, null).create();
+    }
+
+    @NonNull
+    public MainPresenter provideMainPresenter() {
+        return mainPresenter;
     }
 
     @NonNull

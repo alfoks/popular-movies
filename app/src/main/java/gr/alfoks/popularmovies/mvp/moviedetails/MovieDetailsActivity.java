@@ -28,7 +28,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
         setSupportActionBar(tlbMovieDetails);
         if(getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setIcon(R.drawable.ic_movie);
         }

@@ -6,6 +6,7 @@ import gr.alfoks.popularmovies.R;
 import gr.alfoks.popularmovies.mvp.base.BaseFragment;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
+import gr.alfoks.popularmovies.mvp.model.SortBy;
 import gr.alfoks.popularmovies.util.EndlessRecyclerViewScrollListener;
 
 import android.content.Context;
@@ -16,8 +17,10 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-public class MoviesFragment extends BaseFragment<MoviesContract.View, MoviesContract.Presenter>
+public class MoviesFragment
+    extends BaseFragment<MoviesContract.View, MoviesContract.Presenter>
     implements MoviesContract.View {
+    private static final String KEY_SORT_BY = "SORT_BY";
 
     @BindView(R.id.rcvMovies)
     RecyclerView rcvMovies;
@@ -27,6 +30,16 @@ public class MoviesFragment extends BaseFragment<MoviesContract.View, MoviesCont
     private OnMovieClickedListener listener;
 
     public MoviesFragment() {
+    }
+
+    public static MoviesFragment newInstance(SortBy sortBy) {
+        MoviesFragment moviesFragment = new MoviesFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_SORT_BY, sortBy);
+        moviesFragment.setArguments(bundle);
+
+        return moviesFragment;
     }
 
     @Override
@@ -51,7 +64,7 @@ public class MoviesFragment extends BaseFragment<MoviesContract.View, MoviesCont
         rcvMovies.setLayoutManager(layoutManager);
         rcvMovies.setItemAnimator(new DefaultItemAnimator());
 
-        adapter = new MoviesAdapter(getContext(), createOnItemClickedListener());
+        adapter = new MoviesAdapter(getContext(), onItemClickedListener);
         rcvMovies.setAdapter(adapter);
 
         scrollListener = createScrollListener(layoutManager);
@@ -61,20 +74,19 @@ public class MoviesFragment extends BaseFragment<MoviesContract.View, MoviesCont
     }
 
     @NonNull
-    private MoviesAdapter.OnItemClickedListener createOnItemClickedListener() {
-        return new MoviesAdapter.OnItemClickedListener() {
-            @Override
-            public void onItemClicked(Movie movie) {
-                getPresenter().showMovieDetails(movie);
-            }
-        };
-    }
+    private final MoviesAdapter.OnItemClickedListener onItemClickedListener = new MoviesAdapter.OnItemClickedListener() {
+        @Override
+        public void onItemClicked(Movie movie) {
+            getPresenter().showMovieDetails(movie);
+        }
+    };
 
     @Override
     public void onListReset() {
         adapter.reset();
         scrollListener.resetState();
-        getPresenter().fetchNextMoviesPage();
+
+        getPresenter().fetchNextMoviesPage(getSortBy());
     }
 
     @Override
@@ -83,11 +95,11 @@ public class MoviesFragment extends BaseFragment<MoviesContract.View, MoviesCont
     }
 
     @NonNull
-    public EndlessRecyclerViewScrollListener createScrollListener(final GridLayoutManager layoutManager) {
+    private EndlessRecyclerViewScrollListener createScrollListener(final GridLayoutManager layoutManager) {
         return new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                getPresenter().fetchNextMoviesPage();
+                getPresenter().fetchNextMoviesPage(getSortBy());
             }
         };
     }
@@ -113,6 +125,16 @@ public class MoviesFragment extends BaseFragment<MoviesContract.View, MoviesCont
     public void onDetach() {
         super.onDetach();
         listener = null;
+    }
+
+    private SortBy getSortBy() {
+        SortBy sortBy = (SortBy)getArguments().getSerializable(KEY_SORT_BY);
+        return sortBy == null ? SortBy.POPULAR : sortBy;
+    }
+
+    public void setSortBy(SortBy sortBy) {
+        getArguments().putSerializable(KEY_SORT_BY, sortBy);
+        getPresenter().resetList();
     }
 
     public interface OnMovieClickedListener {
