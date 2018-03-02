@@ -7,7 +7,7 @@
     android:layout_height="250dp"
     android:clickable="true"
     android:focusable="true"
-    android:scaleType="fitXY"
+    android:scaleType="center"
     android:contentDescription="@string/cnt_movie_poster">
 
 </ImageView>
