@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="gr.alfoks.popularmovies.mvp.credits.CreditsActivity">
+
+    <include
+        layout="@layout/layout_activity_common"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/txtTmdbDisclaimer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/fragment_horizontal_margin"
+            android:layout_marginStart="@dimen/fragment_horizontal_margin"
+            android:layout_marginTop="@dimen/field_vertical_separation_margin"
+            android:text="@string/msg_powered_by_tmdb"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imgTmdbLogo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/field_vertical_separation_margin"
+            android:clickable="true"
+            android:contentDescription="@string/cnt_tmdb_logo"
+            android:focusable="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_tmdb"
+            app:layout_constraintEnd_toEndOf="@+id/txtTmdbDisclaimer"
+            app:layout_constraintStart_toStartOf="@+id/txtTmdbDisclaimer"
+            app:layout_constraintTop_toBottomOf="@+id/txtTmdbDisclaimer" />
+    </android.support.constraint.ConstraintLayout>
+
+</LinearLayout>

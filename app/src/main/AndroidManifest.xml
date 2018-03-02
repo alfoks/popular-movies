@@ -30,6 +30,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="gr.alfoks.popularmovies.mvp.movies.MoviesActivity" />
         </activity>
+        <activity
+            android:name=".mvp.credits.CreditsActivity"
+            android:parentActivityName=".mvp.movies.MoviesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="gr.alfoks.popularmovies.mvp.movies.MoviesActivity" />
+        </activity>
     </application>
 
 </manifest>

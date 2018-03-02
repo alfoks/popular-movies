@@ -5,6 +5,7 @@
     <string name="cnt_movie_poster">Movie poster</string>
     <string name="cnt_favorite_button">Favorite button</string>
     <string name="cnt_loading">Loading icon</string>
+    <string name="cnt_tmdb_logo">The Movie Database logo</string>
 
     <!-- Placeholders -->
     <string name="placeholder_title">Title</string>
@@ -17,5 +18,9 @@
     <string name="lbl_trailers">Trailers:</string>
     <string name="lbl_sort_by">Sort by</string>
     <string name="lbl_no_connection">No connection</string>
+    <string name="lbl_credits">Credits</string>
+
+    <string name="msg_powered_by_tmdb">This product uses the TMDb API but is not endorsed or certified by TMDb.</string>
+    <string name="msg_tmdb_link">https://www.themoviedb.org/</string>
 
 </resources>

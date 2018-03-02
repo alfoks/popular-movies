@@ -2,9 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/spnSortBy"
-        android:background="@color/colorPrimaryDark"
+        android:id="@+id/miSortBy"
         android:title="@string/lbl_sort_by"
         app:actionViewClass="android.widget.Spinner"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/miCredits"
+        android:title="@string/lbl_credits"
+        app:showAsAction="never" />
 </menu>

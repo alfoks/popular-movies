@@ -3,6 +3,7 @@ package gr.alfoks.popularmovies.mvp.movies;
 import butterknife.BindView;
 import gr.alfoks.popularmovies.R;
 import gr.alfoks.popularmovies.mvp.base.BaseActivity;
+import gr.alfoks.popularmovies.mvp.credits.CreditsActivity;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
 import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsActivity;
 import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsFragment;
@@ -13,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
@@ -48,8 +50,19 @@ public class MoviesActivity extends BaseActivity
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.miCredits:
+                showCredits();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void setupSortBySpinner(Menu menu) {
-        Spinner spnSortBy = (Spinner)menu.findItem(R.id.spnSortBy).getActionView();
+        Spinner spnSortBy = (Spinner)menu.findItem(R.id.miSortBy).getActionView();
         final SortBySpinnerAdapter sortByAdapter = new SortBySpinnerAdapter(
             this,
             R.layout.item_sortby,
@@ -58,6 +71,11 @@ public class MoviesActivity extends BaseActivity
 
         spnSortBy.setAdapter(sortByAdapter);
         spnSortBy.setOnItemSelectedListener(createOnItemSelectedListener(sortByAdapter));
+    }
+
+    private void showCredits() {
+        final Intent showLegalIntent = new Intent(this, CreditsActivity.class);
+        startActivity(showLegalIntent);
     }
 
     @NonNull
