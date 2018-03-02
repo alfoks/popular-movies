@@ -85,6 +85,8 @@ public class MovieDetailsFragment
         txtOverview.setText(movie.overview);
         Picasso.with(getContext())
                .load(movie.getFullPosterPath())
+               .placeholder(R.drawable.anim_loading)
+               .error(R.drawable.ic_warning)
                .into(imgPoster);
     }
 

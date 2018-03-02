@@ -45,6 +45,7 @@ public class MoviesAdapter
         Picasso.with(context)
                .load(movie.getFullPosterPath())
                .placeholder(R.drawable.anim_loading)
+               .error(R.drawable.ic_warning)
                .fit()
                .into(holder.imgPoster);
     }
