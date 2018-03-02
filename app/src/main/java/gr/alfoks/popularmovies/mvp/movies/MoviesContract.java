@@ -9,14 +9,16 @@ import gr.alfoks.popularmovies.mvp.model.SortBy;
 public interface MoviesContract {
 
     interface Presenter extends MvpPresenter<MoviesContract.View> {
-        void fetchNextMoviesPage(SortBy sortBy);
+        void setSortBy(SortBy sortBy);
         void resetList();
+        void fetchNextMoviesPage();
         void showMovieDetails(Movie movie);
     }
 
     interface View extends MvpView {
-        void onMoviesFetched(Movies movies);
+        void onSetSortBy();
         void onListReset();
+        void onMoviesFetched(Movies movies);
         void onShowMovieDetails(Movie movie);
     }
 

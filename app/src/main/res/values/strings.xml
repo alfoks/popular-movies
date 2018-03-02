@@ -16,5 +16,6 @@
     <!-- Labels -->
     <string name="lbl_trailers">Trailers:</string>
     <string name="lbl_sort_by">Sort by</string>
+    <string name="lbl_no_connection">No connection</string>
 
 </resources>

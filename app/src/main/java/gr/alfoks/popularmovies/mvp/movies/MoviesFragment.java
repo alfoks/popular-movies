@@ -70,6 +70,7 @@ public class MoviesFragment
         scrollListener = createScrollListener(layoutManager);
         rcvMovies.addOnScrollListener(scrollListener);
 
+        getPresenter().setSortBy(getSortBy());
         getPresenter().resetList();
     }
 
@@ -81,27 +82,26 @@ public class MoviesFragment
         }
     };
 
-    @Override
-    public void onListReset() {
-        adapter.reset();
-        scrollListener.resetState();
-
-        getPresenter().fetchNextMoviesPage(getSortBy());
-    }
-
-    @Override
-    public void onShowMovieDetails(Movie movie) {
-        listener.onMovieClicked(movie.id);
-    }
-
     @NonNull
     private EndlessRecyclerViewScrollListener createScrollListener(final GridLayoutManager layoutManager) {
         return new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                getPresenter().fetchNextMoviesPage(getSortBy());
+                getPresenter().fetchNextMoviesPage();
             }
         };
+    }
+
+    @Override
+    public void onSetSortBy() {
+    }
+
+    @Override
+    public void onListReset() {
+        adapter.reset();
+        scrollListener.resetState();
+
+        getPresenter().fetchNextMoviesPage();
     }
 
     @Override
@@ -109,6 +109,11 @@ public class MoviesFragment
         for(Movie movie : movies.getMovies()) {
             adapter.addMovie(movie);
         }
+    }
+
+    @Override
+    public void onShowMovieDetails(Movie movie) {
+        listener.onMovieClicked(movie.id);
     }
 
     @Override
@@ -134,6 +139,7 @@ public class MoviesFragment
 
     public void setSortBy(SortBy sortBy) {
         getArguments().putSerializable(KEY_SORT_BY, sortBy);
+        getPresenter().setSortBy(sortBy);
         getPresenter().resetList();
     }
 

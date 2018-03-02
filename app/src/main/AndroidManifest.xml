@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".mvp.main.MainActivity"
+            android:name=".mvp.movies.MoviesActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,10 +25,10 @@
         </activity>
         <activity
             android:name=".mvp.moviedetails.MovieDetailsActivity"
-            android:parentActivityName=".mvp.main.MainActivity">
+            android:parentActivityName=".mvp.movies.MoviesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="gr.alfoks.popularmovies.mvp.main.MainActivity" />
+                android:value="gr.alfoks.popularmovies.mvp.movies.MoviesActivity" />
         </activity>
     </application>
 

@@ -17,24 +17,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
-    extends AppCompatActivity implements
-    MvpView {
-
-    private P presenter;
-
+public abstract class BaseActivity extends AppCompatActivity {
     @BindView(R.id.txtNoConnection)
     TextView txtConnection;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = providePresenter();
         setContentView(getContentResource());
 
         ButterKnife.bind(this);
 
-        presenter.attach(getThis());
         registerConnectivityReceiver();
         init(savedInstanceState);
     }
@@ -42,7 +35,6 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
     @Override
     protected void onDestroy() {
         unregisterConnectivityReceiver();
-        presenter.detach();
         super.onDestroy();
     }
 
@@ -61,13 +53,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
      */
     @LayoutRes
     protected abstract int getContentResource();
-    protected abstract P providePresenter();
-    protected abstract V getThis();
     protected abstract void init(@Nullable Bundle state);
-
-    protected P getPresenter() {
-        return presenter;
-    }
 
     private final BroadcastReceiver connectivityChangeReceiver = new BroadcastReceiver() {
         @Override

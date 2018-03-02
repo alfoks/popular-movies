@@ -19,13 +19,20 @@ public class MoviesPresenter extends BasePresenter<MoviesContract.View>
     private final TheMovieDbRepository repository;
     private int nextPage = 1;
     private int totalPages = 1;
+    private SortBy sortBy = SortBy.POPULAR;
 
     public MoviesPresenter(@NonNull TheMovieDbRepository repository) {
         this.repository = repository;
     }
 
     @Override
-    public void fetchNextMoviesPage(SortBy sortBy) {
+    public void setSortBy(SortBy sortBy) {
+        this.sortBy = sortBy;
+        getView().onSetSortBy();
+    }
+
+    @Override
+    public void fetchNextMoviesPage() {
         //Don't try to load more pages than those the api can provide
         if(nextPage > totalPages) return;
 

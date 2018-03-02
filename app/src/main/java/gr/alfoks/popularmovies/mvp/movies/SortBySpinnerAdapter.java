@@ -1,4 +1,4 @@
-package gr.alfoks.popularmovies.mvp.main;
+package gr.alfoks.popularmovies.mvp.movies;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

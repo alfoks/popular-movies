@@ -1,13 +1,11 @@
-package gr.alfoks.popularmovies.mvp.main;
+package gr.alfoks.popularmovies.mvp.movies;
 
 import butterknife.BindView;
-import gr.alfoks.popularmovies.PopularMoviesApplication;
 import gr.alfoks.popularmovies.R;
 import gr.alfoks.popularmovies.mvp.base.BaseActivity;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
 import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsActivity;
 import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsFragment;
-import gr.alfoks.popularmovies.mvp.movies.MoviesFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,27 +17,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
-public class MainActivity
-    extends BaseActivity<MainContract.View, MainContract.Presenter> implements
-    MainContract.View,
-    MoviesFragment.OnMovieClickedListener {
-    @BindView(R.id.tlbMovies)
+public class MoviesActivity extends BaseActivity
+    implements MoviesFragment.OnMovieClickedListener {
+    @BindView(R.id.tlbMain)
     Toolbar tlbMovies;
 
     @Override
     protected int getContentResource() {
         return R.layout.activity_movies;
-    }
-
-    @Override
-    protected MainContract.Presenter providePresenter() {
-        PopularMoviesApplication app = (PopularMoviesApplication)getApplicationContext();
-        return app.provideMainPresenter();
-    }
-
-    @Override
-    protected MainContract.View getThis() {
-        return this;
     }
 
     @Override
@@ -82,9 +67,9 @@ public class MainActivity
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 SortBy sortBy = sortByAdapter.getItem(position);
 
-                MoviesFragment fragment = (MoviesFragment)getSupportFragmentManager().findFragmentById(R.id.frgMovies);
+                MoviesFragment fragment = (MoviesFragment)getSupportFragmentManager().findFragmentById(R.id.frgPlaceholder);
                 if(fragment == null) {
-                    getPresenter().attachMoviesFragment(SortBy.POPULAR);
+                    attachFragment(SortBy.POPULAR);
                 } else {
                     fragment.setSortBy(sortBy);
                 }
@@ -97,26 +82,15 @@ public class MainActivity
         };
     }
 
-    @Override
-    public void onAttachMoviesFragment(SortBy sortBy) {
-        attachFragment(sortBy);
-    }
-
     private void attachFragment(SortBy sortBy) {
         getSupportFragmentManager()
             .beginTransaction()
-            .add(R.id.frgMovies,
-                MoviesFragment.newInstance(sortBy))
+            .add(R.id.frgPlaceholder, MoviesFragment.newInstance(sortBy))
             .commit();
     }
 
     @Override
     public void onMovieClicked(long movieId) {
-        getPresenter().showMovieDetails(movieId);
-    }
-
-    @Override
-    public void onShowMovieDetails(long movieId) {
         final Intent showMovieIntent = new Intent(this, MovieDetailsActivity.class);
         Bundle bundle = new Bundle();
         bundle.putLong(MovieDetailsFragment.KEY_MOVIE_ID, movieId);
