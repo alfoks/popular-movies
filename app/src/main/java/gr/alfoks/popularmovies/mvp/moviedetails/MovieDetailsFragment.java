@@ -103,4 +103,9 @@ public class MovieDetailsFragment
 
     }
 
+    public void onConnectivityChanged(boolean connectionOn) {
+        if(connectionOn) {
+            getPresenter().loadMovie(movieId);
+        }
+    }
 }

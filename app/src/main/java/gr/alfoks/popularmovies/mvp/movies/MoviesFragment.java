@@ -143,6 +143,12 @@ public class MoviesFragment
         getPresenter().resetList();
     }
 
+    public void onConnectivityChanged(boolean connectionOn) {
+        if(connectionOn) {
+            getPresenter().fetchNextMoviesPage();
+        }
+    }
+
     public interface OnMovieClickedListener {
         void onMovieClicked(long movieId);
     }

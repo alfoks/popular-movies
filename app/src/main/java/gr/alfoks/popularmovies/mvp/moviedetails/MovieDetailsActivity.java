@@ -43,4 +43,12 @@ public class MovieDetailsActivity extends BaseActivity {
                 MovieDetailsFragment.newInstance(movieId))
             .commit();
     }
+
+    @Override
+    protected void onConnectivityChanged(boolean connectionOn) {
+        MovieDetailsFragment fragment = (MovieDetailsFragment)getSupportFragmentManager().findFragmentById(R.id.frgPlaceholder);
+        if(fragment != null) {
+            fragment.onConnectivityChanged(connectionOn);
+        }
+    }
 }

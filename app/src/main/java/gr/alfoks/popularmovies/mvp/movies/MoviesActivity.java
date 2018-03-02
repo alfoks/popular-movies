@@ -98,4 +98,12 @@ public class MoviesActivity extends BaseActivity
 
         startActivity(showMovieIntent);
     }
+
+    @Override
+    protected void onConnectivityChanged(boolean connectionOn) {
+        MoviesFragment fragment = (MoviesFragment)getSupportFragmentManager().findFragmentById(R.id.frgPlaceholder);
+        if(fragment != null) {
+            fragment.onConnectivityChanged(connectionOn);
+        }
+    }
 }
