@@ -13,7 +13,12 @@ public class BasePresenter<V extends MvpView> implements MvpPresenter<V> {
         view = null;
     }
 
-    public boolean isAttached() {
+    @Override
+    public void onError(Throwable e) {
+
+    }
+
+    public boolean isViewAttached() {
         return view != null;
     }
 

@@ -55,6 +55,12 @@ public class MoviesPresenter extends BasePresenter<MoviesContract.View>
         getView().onShowMovieDetails(movie);
     }
 
+    @Override
+    public void onError(Throwable e) {
+        super.onError(e);
+        //Todo: Show error
+    }
+
     @NonNull
     private SingleObserver<Movies> createMoviesObserver() {
         return new SingleObserver<Movies>() {
@@ -65,13 +71,16 @@ public class MoviesPresenter extends BasePresenter<MoviesContract.View>
 
             @Override
             public void onSuccess(Movies movies) {
-                totalPages = movies.totalPages;
-                nextPage++;
-                getView().onMoviesFetched(movies);
+                if(isViewAttached()) {
+                    totalPages = movies.totalPages;
+                    nextPage++;
+                    getView().onMoviesFetched(movies);
+                }
             }
 
             @Override
             public void onError(Throwable e) {
+                MoviesPresenter.this.onError(e);
             }
         };
     }

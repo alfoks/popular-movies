@@ -34,6 +34,12 @@ public class MovieDetailsPresenter
             .subscribeWith(createMovieObserver());
     }
 
+    @Override
+    public void onError(Throwable e) {
+        super.onError(e);
+        //Todo: Show error
+    }
+
     @NonNull
     private SingleObserver<Movie> createMovieObserver() {
         return new SingleObserver<Movie>() {
@@ -44,11 +50,14 @@ public class MovieDetailsPresenter
 
             @Override
             public void onSuccess(Movie movie) {
-                getView().onMovieLoaded(movie);
+                if(isViewAttached()) {
+                    getView().onMovieLoaded(movie);
+                }
             }
 
             @Override
             public void onError(Throwable e) {
+                MovieDetailsPresenter.this.onError(e);
             }
         };
     }
