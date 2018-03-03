@@ -36,7 +36,7 @@ public class MoviesPresenter extends BasePresenter<MoviesContract.View>
         //Don't try to load more pages than those the api can provide
         if(nextPage > totalPages) return;
 
-        final Single<Movies> moviesObservable = repository.getMovies(sortBy, nextPage++);
+        final Single<Movies> moviesObservable = repository.getMovies(sortBy, nextPage);
 
         moviesObservable
             .subscribeOn(Schedulers.io())
@@ -66,6 +66,7 @@ public class MoviesPresenter extends BasePresenter<MoviesContract.View>
             @Override
             public void onSuccess(Movies movies) {
                 totalPages = movies.totalPages;
+                nextPage++;
                 getView().onMoviesFetched(movies);
             }
 
