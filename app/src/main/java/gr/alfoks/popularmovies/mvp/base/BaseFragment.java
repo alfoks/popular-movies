@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     extends Fragment {
-    P presenter;
+    private P presenter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

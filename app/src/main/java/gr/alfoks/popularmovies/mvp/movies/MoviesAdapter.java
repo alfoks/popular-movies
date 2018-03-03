@@ -20,9 +20,9 @@ import android.widget.ImageView;
 
 public class MoviesAdapter
     extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
-    private Context context;
-    private List<Movie> movies = new ArrayList<>();
-    private OnItemClickedListener listener;
+    private final Context context;
+    private final List<Movie> movies = new ArrayList<>();
+    private final OnItemClickedListener listener;
 
     MoviesAdapter(Context context, OnItemClickedListener listener) {
         this.context = context;

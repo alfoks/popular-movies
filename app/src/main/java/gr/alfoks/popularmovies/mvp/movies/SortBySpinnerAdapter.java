@@ -14,11 +14,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class SortBySpinnerAdapter extends ArrayAdapter<SortBy> {
+class SortBySpinnerAdapter extends ArrayAdapter<SortBy> {
     private final SortBy[] sortOptions;
     private final LayoutInflater inflater;
     @LayoutRes
-    private int viewResourceId;
+    private final int viewResourceId;
 
     SortBySpinnerAdapter(Context context, int viewResourceId, SortBy[] sortOptions) {
         super(context, viewResourceId, sortOptions);

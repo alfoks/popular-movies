@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import gr.alfoks.popularmovies.mvp.model.Movies;
 import io.reactivex.observers.TestObserver;
+import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 
 import android.support.annotation.NonNull;
@@ -39,8 +40,12 @@ public class MoviesResult {
                 if(t instanceof HttpException) {
                     moviesResult.httpStatusCode = ((HttpException)t).code();
                     try {
-                        moviesResult.message = ((HttpException)t).response().errorBody().string();
+                        ResponseBody error = ((HttpException)t).response().errorBody();
+                        if(error != null) {
+                            moviesResult.message = error.string();
+                        }
                     } catch(IOException ex) {
+                        ex.printStackTrace();
                     }
                 } else {
                     moviesResult.message = t.getMessage();

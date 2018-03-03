@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
+import gr.alfoks.popularmovies.mvp.model.SortBy;
 import gr.alfoks.popularmovies.testutils.MoviesResult;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
@@ -72,8 +73,8 @@ public class TheMovieDbApiTest {
         server.enqueue(new MockResponse().setBody(""));
         server.enqueue(new MockResponse().setBody(""));
 
-        api.getMovies(TheMovieDbApi.SortBy.POPULAR, 1).subscribe(new TestObserver<Movies>());
-        api.getMovies(TheMovieDbApi.SortBy.TOP_RATED, 1).subscribe(new TestObserver<Movies>());
+        api.getMovies(SortBy.POPULAR, 1).subscribe(new TestObserver<Movies>());
+        api.getMovies(SortBy.TOP_RATED, 1).subscribe(new TestObserver<Movies>());
 
         RecordedRequest request = server.takeRequest();
         assertEquals(TheMovieDbApi.API_PATH + "/popular?page=1", request.getPath());
@@ -90,7 +91,7 @@ public class TheMovieDbApiTest {
         server.enqueue(new MockResponse().setResponseCode(code).setBody(message));
 
         MoviesResult moviesResult = new MoviesResult();
-        final Single<Movies> moviesObservable = api.getMovies(TheMovieDbApi.SortBy.POPULAR, 1);
+        final Single<Movies> moviesObservable = api.getMovies(SortBy.POPULAR, 1);
         TestObserver observer = moviesObservable.subscribeWith(getTestObserver(moviesResult));
 
         observer.assertNotComplete();
@@ -104,7 +105,7 @@ public class TheMovieDbApiTest {
         server.enqueue(new MockResponse().setResponseCode(200).setBody(NO_MOVIES_JSON_RESULT));
 
         MoviesResult moviesResult = new MoviesResult();
-        final Single<Movies> moviesObservable = api.getMovies(TheMovieDbApi.SortBy.POPULAR, 1);
+        final Single<Movies> moviesObservable = api.getMovies(SortBy.POPULAR, 1);
         moviesObservable.subscribeWith(getTestObserver(moviesResult));
 
         assertEquals(0, moviesResult.getMovies().getMovies().size());
@@ -116,7 +117,7 @@ public class TheMovieDbApiTest {
             .setResponseCode(200)
             .setBody(ONE_MOVIE_ALL_FIELDS_JSON_RESULT));
 
-        final Single<Movies> moviesObservable = api.getMovies(TheMovieDbApi.SortBy.POPULAR, 1);
+        final Single<Movies> moviesObservable = api.getMovies(SortBy.POPULAR, 1);
 
         final MoviesResult moviesResult = new MoviesResult();
         TestObserver observer = moviesObservable.subscribeWith(getTestObserver(moviesResult));
@@ -140,7 +141,7 @@ public class TheMovieDbApiTest {
             .setResponseCode(200)
             .setBody(TWO_MOVIES_JSON_RESULT));
 
-        final Single<Movies> moviesObservable = api.getMovies(TheMovieDbApi.SortBy.POPULAR, 1);
+        final Single<Movies> moviesObservable = api.getMovies(SortBy.POPULAR, 1);
 
         final MoviesResult moviesResult = new MoviesResult();
         TestObserver observer = moviesObservable.subscribeWith(getTestObserver(moviesResult));
