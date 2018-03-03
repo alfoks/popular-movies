@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map>
+    <key name="POPULAR">Popular</key>
+    <key name="TOP_RATED">Top rated</key>
+    <key name="NOW_PLAYING">Now playing</key>
+    <key name="UPCOMING">Upcoming</key>
+</map>

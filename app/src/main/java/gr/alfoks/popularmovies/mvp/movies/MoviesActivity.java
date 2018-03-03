@@ -62,6 +62,7 @@ public class MoviesActivity extends BaseActivity
     }
 
     private void setupSortBySpinner(Menu menu) {
+        SortBy.setLocalizedDisplayNames(this);
         Spinner spnSortBy = (Spinner)menu.findItem(R.id.miSortBy).getActionView();
         final SortBySpinnerAdapter sortByAdapter = new SortBySpinnerAdapter(
             this,
