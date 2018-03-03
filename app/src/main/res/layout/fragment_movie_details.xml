@@ -1,99 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView android:id="@+id/scvMain"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context="gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsActivity">
 
-    <android.support.constraint.Guideline
-        android:id="@+id/gdlVerticalMiddle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/txtTitle"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:gravity="center_vertical|start"
-        android:padding="8dp"
-        android:textAppearance="?android:textAppearanceLarge"
-        android:background="?attr/colorAccent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/placeholder_title" />
+        <android.support.constraint.Guideline
+            android:id="@+id/gdlVerticalMiddle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
 
-    <ImageView
-        android:id="@+id/imgPoster"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="@dimen/field_vertical_separation_margin"
-        android:contentDescription="@string/cnt_movie_poster"
-        android:scaleType="fitCenter"
-        app:layout_constraintEnd_toEndOf="@id/gdlVerticalMiddle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtTitle"
-        tools:srcCompat="@drawable/placeholder_poster" />
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:gravity="center_vertical|start"
+            android:padding="8dp"
+            android:textAppearance="?android:textAppearanceLarge"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/placeholder_title" />
 
-    <TextView
-        android:id="@+id/txtYear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/field_horizontal_separation_margin"
-        android:layout_marginStart="@dimen/field_horizontal_separation_margin"
-        android:layout_marginTop="@dimen/field_vertical_separation_margin"
-        android:textAppearance="?android:textAppearanceMedium"
-        app:layout_constraintStart_toEndOf="@id/gdlVerticalMiddle"
-        app:layout_constraintTop_toBottomOf="@+id/txtTitle"
-        tools:text="@string/placeholder_year" />
+        <TextView
+            android:id="@+id/txtDummy"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/colorAccent"
+            android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/txtDuration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/field_vertical_separation_margin"
-        android:textStyle="italic"
-        app:layout_constraintStart_toStartOf="@+id/txtYear"
-        app:layout_constraintTop_toBottomOf="@+id/txtYear"
-        tools:text="@string/placeholder_duration" />
+        <ImageView
+            android:id="@+id/imgPoster"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="@dimen/field_vertical_separation_margin"
+            android:contentDescription="@string/cnt_movie_poster"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toEndOf="@id/gdlVerticalMiddle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+            tools:srcCompat="@drawable/placeholder_poster" />
 
-    <TextView
-        android:id="@+id/txtRating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/field_vertical_separation_margin"
-        app:layout_constraintStart_toStartOf="@+id/txtYear"
-        app:layout_constraintTop_toBottomOf="@+id/txtDuration"
-        tools:text="@string/placeholder_rating" />
+        <TextView
+            android:id="@+id/txtYear"
+            style="@style/Field.WrapContent"
+            android:layout_marginLeft="@dimen/field_horizontal_separation_margin"
+            android:layout_marginStart="@dimen/field_horizontal_separation_margin"
+            android:textAppearance="?android:textAppearanceMedium"
+            app:layout_constraintStart_toEndOf="@id/gdlVerticalMiddle"
+            app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+            tools:text="@string/placeholder_year" />
 
-    <ImageView
-        android:id="@+id/btnFavorite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/field_vertical_separation_margin"
-        android:clickable="true"
-        android:contentDescription="@string/cnt_favorite_button"
-        android:focusable="true"
-        app:layout_constraintStart_toStartOf="@+id/txtYear"
-        app:layout_constraintTop_toBottomOf="@+id/txtRating"
-        app:srcCompat="@drawable/ic_favorite_border" />
+        <TextView
+            android:id="@+id/txtDuration"
+            style="@style/Field.WrapContent"
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="@+id/txtYear"
+            app:layout_constraintTop_toBottomOf="@+id/txtYear"
+            tools:text="@string/placeholder_duration" />
 
-    <TextView
-        android:id="@+id/txtOverview"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/fragment_horizontal_margin"
-        android:layout_marginStart="@dimen/fragment_horizontal_margin"
-        android:layout_marginTop="@dimen/field_vertical_separation_margin"
-        app:layout_constraintEnd_toEndOf="@id/txtTitle"
-        app:layout_constraintStart_toStartOf="@id/txtTitle"
-        app:layout_constraintTop_toBottomOf="@+id/imgPoster"
-        tools:text="@string/placeholder_plot" />
+        <TextView
+            android:id="@+id/txtRating"
+            style="@style/Field.WrapContent"
+            app:layout_constraintStart_toStartOf="@+id/txtYear"
+            app:layout_constraintTop_toBottomOf="@+id/txtDuration"
+            tools:text="@string/placeholder_rating" />
 
-</android.support.constraint.ConstraintLayout>
+        <ImageView
+            android:id="@+id/btnFavorite"
+            style="@style/Field.WrapContent"
+            android:clickable="true"
+            android:contentDescription="@string/cnt_favorite_button"
+            android:focusable="true"
+            app:layout_constraintStart_toStartOf="@+id/txtYear"
+            app:layout_constraintTop_toBottomOf="@+id/txtRating"
+            tools:srcCompat="@drawable/ic_favorite_border" />
 
+        <TextView
+            android:id="@+id/txtOverview"
+            style="@style/Field.FullWidth"
+            app:layout_constraintEnd_toEndOf="@id/txtTitle"
+            app:layout_constraintStart_toStartOf="@id/txtTitle"
+            app:layout_constraintTop_toBottomOf="@+id/imgPoster"
+            tools:text="@string/placeholder_plot" />
+
+        <View
+            android:id="@+id/vwDivider"
+            style="@style/Field.FullWidth"
+            android:layout_height="2dp"
+            app:layout_constraintEnd_toEndOf="@id/txtTitle"
+            app:layout_constraintStart_toStartOf="@id/txtTitle"
+            app:layout_constraintTop_toBottomOf="@id/txtOverview" />
+
+        <TextView
+            android:id="@+id/txtTrailers"
+            style="@style/Field.FullWidth"
+            app:layout_constraintEnd_toEndOf="@+id/txtTitle"
+            app:layout_constraintStart_toStartOf="@+id/txtTitle"
+            app:layout_constraintTop_toTopOf="@+id/vwDivider"
+            tools:text="@string/lbl_trailers" />
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

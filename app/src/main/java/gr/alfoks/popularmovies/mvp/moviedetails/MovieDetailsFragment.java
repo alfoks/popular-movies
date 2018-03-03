@@ -14,6 +14,7 @@ import gr.alfoks.popularmovies.mvp.model.Trailer;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,6 +38,15 @@ public class MovieDetailsFragment
     TextView txtOverview;
     @BindView(R.id.btnFavorite)
     ImageView btnFavorite;
+    //Constraint layout views behave strangely on rotate, if an visual attribute
+    //(text, background, ...) not set via code. So bind them all and
+    //set attribute through code.
+    @BindView(R.id.vwDivider)
+    View vwDivider;
+    @BindView(R.id.txtTrailers)
+    TextView txtTrailers;
+    @BindView(R.id.txtDummy)
+    TextView txtDummy;
 
     private long movieId;
 
@@ -81,6 +91,12 @@ public class MovieDetailsFragment
         txtYear.setText(String.valueOf(movie.getReleaseYear()));
         txtDuration.setText(movie.getDuration());
         txtRating.setText(String.valueOf(movie.getRating()));
+
+        //See comment on fields declaration about constraint layout
+        txtTitle.setBackground(txtDummy.getBackground());
+        vwDivider.setBackground(getContext().getResources().getDrawable(android.R.drawable.divider_horizontal_dark));
+        txtTrailers.setText(getContext().getResources().getText(R.string.lbl_trailers));
+        btnFavorite.setImageResource(R.drawable.ic_favorite_border);
 
         txtOverview.setText(movie.overview);
         Picasso.with(getContext())

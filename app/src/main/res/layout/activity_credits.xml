@@ -18,16 +18,12 @@
 
         <TextView
             android:id="@+id/txtTmdbDisclaimer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/fragment_horizontal_margin"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
-            android:layout_marginTop="@dimen/field_vertical_separation_margin"
             android:text="@string/msg_powered_by_tmdb"
             android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            style="@style/Field.FullWidth" />
 
         <ImageView
             android:id="@+id/imgTmdbLogo"

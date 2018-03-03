@@ -52,7 +52,7 @@ public class MoviesActivity extends BaseActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        switch(item.getItemId()) {
             case R.id.miCredits:
                 showCredits();
                 return true;
