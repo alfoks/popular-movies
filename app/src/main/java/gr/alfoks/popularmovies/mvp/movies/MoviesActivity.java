@@ -9,6 +9,7 @@ import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsActivity;
 import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsFragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -69,6 +70,9 @@ public class MoviesActivity extends BaseActivity
             R.layout.item_sortby,
             SortBy.values()
         );
+
+        //Remove spinner's arrow
+        spnSortBy.setBackgroundColor(Color.TRANSPARENT);
 
         spnSortBy.setAdapter(sortByAdapter);
         spnSortBy.setOnItemSelectedListener(createOnItemSelectedListener(sortByAdapter));

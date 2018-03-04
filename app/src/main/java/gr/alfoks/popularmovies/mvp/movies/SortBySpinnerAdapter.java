@@ -19,6 +19,7 @@ class SortBySpinnerAdapter extends ArrayAdapter<SortBy> {
     private final LayoutInflater inflater;
     @LayoutRes
     private final int viewResourceId;
+    private View sortIcon;
 
     SortBySpinnerAdapter(Context context, int viewResourceId, SortBy[] sortOptions) {
         super(context, viewResourceId, sortOptions);
@@ -26,6 +27,8 @@ class SortBySpinnerAdapter extends ArrayAdapter<SortBy> {
         this.sortOptions = sortOptions;
         this.inflater = LayoutInflater.from(context);
         this.viewResourceId = viewResourceId;
+
+        sortIcon = inflater.inflate(R.layout.item_sortby_icon, null);
     }
 
     @Override
@@ -46,7 +49,7 @@ class SortBySpinnerAdapter extends ArrayAdapter<SortBy> {
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        return getDisplayNameView(convertView, position, viewResourceId);
+        return sortIcon;
     }
 
     @Override
