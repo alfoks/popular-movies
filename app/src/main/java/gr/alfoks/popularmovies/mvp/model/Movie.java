@@ -51,10 +51,10 @@ public class Movie implements Serializable {
 
         StringBuilder sb = new StringBuilder();
         if(hours > 0) {
-            sb.append(hours).append("h").append(" ");
+            sb.append(hours).append(":");
         }
         if(minutes > 0) {
-            sb.append(minutes).append("min");
+            sb.append(minutes);
         }
 
         return sb.toString();
