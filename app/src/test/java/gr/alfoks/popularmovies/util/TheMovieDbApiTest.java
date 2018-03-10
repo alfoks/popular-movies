@@ -128,11 +128,11 @@ public class TheMovieDbApiTest {
 
         Movie movie = movies.getMovies().get(0);
         assertEquals("title1", movie.title);
-        assertEquals("original title1", movie.original_title);
-        assertEquals("/poster1.jpg", movie.poster_path);
+        assertEquals("original title1", movie.originalTitle);
+        assertEquals("/poster1.jpg", movie.posterPath);
         assertEquals("overview1", movie.overview);
-        assertEquals(1.1, movie.vote_average, 0.001);
-        assertDateEquals(movie.release_date, 1, 1, 2001);
+        assertEquals(1.1, movie.voteAverage, 0.001);
+        assertDateEquals(movie.releaseDate, 1, 1, 2001);
     }
 
     @Test
@@ -152,18 +152,18 @@ public class TheMovieDbApiTest {
 
         Movie movie = movies.getMovies().get(0);
         assertEquals("title1", movie.title);
-        assertEquals("original title1", movie.original_title);
-        assertEquals("/poster1.jpg", movie.poster_path);
+        assertEquals("original title1", movie.originalTitle);
+        assertEquals("/poster1.jpg", movie.posterPath);
         assertEquals("overview1", movie.overview);
-        assertEquals(1.1, movie.vote_average, 0.001);
-        assertDateEquals(movie.release_date, 1, 1, 2001);
+        assertEquals(1.1, movie.voteAverage, 0.001);
+        assertDateEquals(movie.releaseDate, 1, 1, 2001);
 
         movie = movies.getMovies().get(1);
         assertEquals("title2", movie.title);
-        assertEquals("original title2", movie.original_title);
-        assertEquals("/poster2.jpg", movie.poster_path);
+        assertEquals("original title2", movie.originalTitle);
+        assertEquals("/poster2.jpg", movie.posterPath);
         assertEquals("overview2", movie.overview);
-        assertEquals(2.2, movie.vote_average, 0.001);
-        assertDateEquals(movie.release_date, 2, 2, 2002);
+        assertEquals(2.2, movie.voteAverage, 0.001);
+        assertDateEquals(movie.releaseDate, 2, 2, 2002);
     }
 }

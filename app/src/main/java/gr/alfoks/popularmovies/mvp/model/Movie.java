@@ -4,44 +4,50 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Movie implements Serializable {
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
     public final long id;
     public final String title;
-    public final String original_title;
-    public final String poster_path;
+    @SerializedName("original_title")
+    public final String originalTitle;
+    @SerializedName("poster_path")
+    public final String posterPath;
     public final String overview;
-    public final float vote_average;
-    public final Date release_date;
+    @SerializedName("vote_average")
+    public final float voteAverage;
+    @SerializedName("release_date")
+    public final Date releaseDate;
     public final int runtime;
 
     public Movie(
         long id,
         String title,
-        String original_title,
-        String poster_path,
+        String originalTitle,
+        String posterPath,
         String overview,
-        float vote_average,
-        Date release_date,
+        float voteAverage,
+        Date releaseDate,
         int runtime
     ) {
         this.id = id;
         this.title = title;
-        this.original_title = original_title;
-        this.poster_path = poster_path;
+        this.originalTitle = originalTitle;
+        this.posterPath = posterPath;
         this.overview = overview;
-        this.vote_average = vote_average;
-        this.release_date = release_date;
+        this.voteAverage = voteAverage;
+        this.releaseDate = releaseDate;
         this.runtime = runtime;
     }
 
     public String getFullPosterPath() {
-        return POSTER_BASE_URL + poster_path;
+        return POSTER_BASE_URL + posterPath;
     }
 
     public int getReleaseYear() {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(release_date);
+        calendar.setTime(releaseDate);
         return calendar.get(Calendar.YEAR);
     }
 
@@ -61,6 +67,6 @@ public class Movie implements Serializable {
     }
 
     public String getRating() {
-        return vote_average + "/10";
+        return voteAverage + "/10";
     }
 }
