@@ -6,6 +6,11 @@ import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
 
+import gr.alfoks.popularmovies.data.table.MoviesTable;
+
+import android.content.ContentValues;
+import android.database.Cursor;
+
 public class Movie implements Serializable {
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
     public final long id;
@@ -68,5 +73,33 @@ public class Movie implements Serializable {
 
     public String getRating() {
         return voteAverage + "/10";
+    }
+
+    public ContentValues asValues() {
+        ContentValues values = new ContentValues();
+        values.put(MoviesTable.Columns.ID, id);
+        values.put(MoviesTable.Columns.TITLE, title);
+        values.put(MoviesTable.Columns.ORIGINAL_TITLE, originalTitle);
+        values.put(MoviesTable.Columns.OVERVIEW, overview);
+        values.put(MoviesTable.Columns.POSTER_PATH, posterPath);
+        values.put(MoviesTable.Columns.VOTE_AVERAGE, voteAverage);
+        values.put(MoviesTable.Columns.RELEASE_DATE, releaseDate.getTime());
+        values.put(MoviesTable.Columns.RUNTIME, runtime);
+
+        return values;
+    }
+
+    public static Movie create(Cursor c) {
+        long id = c.getLong(c.getColumnIndex(MoviesTable.Columns.ID));
+        String title = c.getString(c.getColumnIndex(MoviesTable.Columns.TITLE));
+        String originalTitle = c.getString(c.getColumnIndex(MoviesTable.Columns.ORIGINAL_TITLE));
+        String overview = c.getString(c.getColumnIndex(MoviesTable.Columns.OVERVIEW));
+        String posterPath = c.getString(c.getColumnIndex(MoviesTable.Columns.POSTER_PATH));
+        float voteAverage = c.getFloat(c.getColumnIndex(MoviesTable.Columns.VOTE_AVERAGE));
+        long date = c.getLong(c.getColumnIndex(MoviesTable.Columns.RELEASE_DATE));
+        Date releaseDate = new Date(date);
+        int runtime = c.getInt(c.getColumnIndex(MoviesTable.Columns.RUNTIME));
+
+        return new Movie(id, title, originalTitle, posterPath, overview, voteAverage, releaseDate, runtime);
     }
 }

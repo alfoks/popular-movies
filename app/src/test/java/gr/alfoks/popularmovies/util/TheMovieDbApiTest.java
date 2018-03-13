@@ -5,7 +5,7 @@ import java.io.IOException;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
-import gr.alfoks.popularmovies.testutils.MoviesResult;
+import gr.alfoks.popularmovies.testutil.MoviesResult;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
 import okhttp3.mockwebserver.MockResponse;
@@ -18,8 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-import static gr.alfoks.popularmovies.testutils.DateUtils.assertDateEquals;
-import static gr.alfoks.popularmovies.testutils.MoviesResult.getTestObserver;
+import static gr.alfoks.popularmovies.testutil.DateUtils.assertDateEquals;
+import static gr.alfoks.popularmovies.testutil.MoviesResult.getTestObserver;
 import static org.junit.Assert.assertEquals;
 
 public class TheMovieDbApiTest {

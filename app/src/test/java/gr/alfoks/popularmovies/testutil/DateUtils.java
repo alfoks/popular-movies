@@ -1,4 +1,4 @@
-package gr.alfoks.popularmovies.testutils;
+package gr.alfoks.popularmovies.testutil;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
