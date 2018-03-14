@@ -23,6 +23,7 @@ public class MoviesTable {
          */
         public static final String RELEASE_DATE = "releaseDate";
         public static final String RUNTIME = "runtime";
+        public static final String FAVORITE = "favorite";
     }
 
     public static final class Content {
@@ -50,7 +51,8 @@ public class MoviesTable {
             Columns.OVERVIEW + " TEXT," +
             Columns.VOTE_AVERAGE + " REAL," +
             Columns.RELEASE_DATE + " DATETIME, " +
-            Columns.RUNTIME + " INTEGER " +
+            Columns.RUNTIME + " INTEGER, " +
+            Columns.FAVORITE + " INTEGER DEFAULT 0" +
             ");";
     }
 }

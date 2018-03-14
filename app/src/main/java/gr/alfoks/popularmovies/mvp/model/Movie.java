@@ -25,6 +25,7 @@ public class Movie implements Serializable {
     @SerializedName("release_date")
     public final Date releaseDate;
     public final int runtime;
+    public final boolean favorite;
 
     public Movie(
         long id,
@@ -34,8 +35,8 @@ public class Movie implements Serializable {
         String overview,
         float voteAverage,
         Date releaseDate,
-        int runtime
-    ) {
+        int runtime,
+        boolean favorite) {
         this.id = id;
         this.title = title;
         this.originalTitle = originalTitle;
@@ -44,6 +45,7 @@ public class Movie implements Serializable {
         this.voteAverage = voteAverage;
         this.releaseDate = releaseDate;
         this.runtime = runtime;
+        this.favorite = favorite;
     }
 
     public String getFullPosterPath() {
@@ -85,6 +87,7 @@ public class Movie implements Serializable {
         values.put(MoviesTable.Columns.VOTE_AVERAGE, voteAverage);
         values.put(MoviesTable.Columns.RELEASE_DATE, releaseDate.getTime());
         values.put(MoviesTable.Columns.RUNTIME, runtime);
+        values.put(MoviesTable.Columns.FAVORITE, favorite);
 
         return values;
     }
@@ -99,7 +102,8 @@ public class Movie implements Serializable {
         long date = c.getLong(c.getColumnIndex(MoviesTable.Columns.RELEASE_DATE));
         Date releaseDate = new Date(date);
         int runtime = c.getInt(c.getColumnIndex(MoviesTable.Columns.RUNTIME));
+        boolean favorite = c.getInt(c.getColumnIndex(MoviesTable.Columns.FAVORITE)) == 1;
 
-        return new Movie(id, title, originalTitle, posterPath, overview, voteAverage, releaseDate, runtime);
+        return new Movie(id, title, originalTitle, posterPath, overview, voteAverage, releaseDate, runtime, favorite);
     }
 }

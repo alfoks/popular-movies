@@ -29,15 +29,15 @@ public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
 
     private Movie movie1 = new Movie(
         100, "title1", "original title1", "poster1.jpg",
-        "overview1", 1.1f, new Date(1), 111);
+        "overview1", 1.1f, new Date(1), 111, false);
 
     private Movie movie1Updated = new Movie(
         100, "title1u", "original title1u", "poster1u.jpg",
-        "overview1u", 1.11f, new Date(11), 1111);
+        "overview1u", 1.11f, new Date(11), 1111, true);
 
     private Movie movie2 = new Movie(
         200, "title2", "original title2", "poster2.jpg",
-        "overview2", 2.2f, new Date(2), 222);
+        "overview2", 2.2f, new Date(2), 222, false);
 
     public MoviesProviderTest() {
         super(MoviesProvider.class, MoviesTable.Content.CONTENT_AUTHORITY);

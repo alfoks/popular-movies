@@ -20,6 +20,7 @@ public class Utils {
         assertEquals(expected.voteAverage, actual.voteAverage, 0.001f);
         assertEquals(expected.releaseDate, actual.releaseDate);
         assertEquals(expected.runtime, actual.runtime);
+        assertEquals(expected.favorite, actual.favorite);
     }
 
     public static <T extends Exception> void assertExceptionIsThrown(Runnable runnable, Class<T> exceptionClass) {

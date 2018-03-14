@@ -34,9 +34,9 @@ class ContentUtils extends ContentUris {
     /**
      * Used to force {@link android.database.sqlite.SQLiteDatabase#delete
      * SQLiteDatabase.delete} to return number of rows deleted when selection
-     * argument is null.
+     * parameter is null.
      *
-     * @return the selection argument if not null, "1" otherwise
+     * @return the selection parameter if it's not null, "1" otherwise
      */
     static String normalizeSelection(String selection) {
         if(selection == null) return "1";
