@@ -4,6 +4,7 @@ import java.util.Date;
 
 import gr.alfoks.popularmovies.data.table.MoviesTable;
 import gr.alfoks.popularmovies.mvp.model.Movie;
+import gr.alfoks.popularmovies.mvp.model.MovieBuilder;
 import gr.alfoks.popularmovies.testutil.Utils;
 
 import android.content.ContentValues;
@@ -27,17 +28,47 @@ import static gr.alfoks.popularmovies.testutil.Utils.assertMoviesEqualNoId;
 public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
     private static final String NON_MATCHING_TITLE = "NonMatchingTitle";
 
-    private Movie movie1 = new Movie(
-        100, "title1", "original title1", "poster1.jpg",
-        "overview1", 1.1f, new Date(1), 111, false);
+    private Movie movie1 = new MovieBuilder()
+        .setId(100)
+        .setTitle("title1")
+        .setOriginalTitle("original title1")
+        .setPosterPath("poster1.jpg")
+        .setOverview("overview1")
+        .setVoteAverage(1.1f)
+        .setReleaseDate(new Date(1))
+        .setRuntime(111)
+        .setFavorite(false)
+        .setPage(1)
+        .setOrder(11)
+        .build();
 
-    private Movie movie1Updated = new Movie(
-        100, "title1u", "original title1u", "poster1u.jpg",
-        "overview1u", 1.11f, new Date(11), 1111, true);
+    private Movie movie1Updated = new MovieBuilder()
+        .setId(100)
+        .setTitle("title1u")
+        .setOriginalTitle("original title1u")
+        .setPosterPath("poster1u.jpg")
+        .setOverview("overview1u")
+        .setVoteAverage(1.11f)
+        .setReleaseDate(new Date(11))
+        .setRuntime(1111)
+        .setFavorite(true)
+        .setPage(11)
+        .setOrder(1111)
+        .build();
 
-    private Movie movie2 = new Movie(
-        200, "title2", "original title2", "poster2.jpg",
-        "overview2", 2.2f, new Date(2), 222, false);
+    private Movie movie2 = new MovieBuilder()
+        .setId(200)
+        .setTitle("title2")
+        .setOriginalTitle("original title2")
+        .setPosterPath("poster2.jpg")
+        .setOverview("overview2")
+        .setVoteAverage(2.2f)
+        .setReleaseDate(new Date(2))
+        .setRuntime(222)
+        .setFavorite(false)
+        .setPage(2)
+        .setOrder(22)
+        .build();
 
     public MoviesProviderTest() {
         super(MoviesProvider.class, MoviesTable.Content.CONTENT_AUTHORITY);

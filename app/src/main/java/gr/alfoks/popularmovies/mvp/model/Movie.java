@@ -26,8 +26,10 @@ public class Movie implements Serializable {
     public final Date releaseDate;
     public final int runtime;
     public final boolean favorite;
+    public final int page;
+    public final int order;
 
-    public Movie(
+    Movie(
         long id,
         String title,
         String originalTitle,
@@ -36,7 +38,9 @@ public class Movie implements Serializable {
         float voteAverage,
         Date releaseDate,
         int runtime,
-        boolean favorite) {
+        boolean favorite,
+        int page,
+        int order) {
         this.id = id;
         this.title = title;
         this.originalTitle = originalTitle;
@@ -46,6 +50,8 @@ public class Movie implements Serializable {
         this.releaseDate = releaseDate;
         this.runtime = runtime;
         this.favorite = favorite;
+        this.page = page;
+        this.order = order;
     }
 
     public String getFullPosterPath() {
@@ -88,6 +94,8 @@ public class Movie implements Serializable {
         values.put(MoviesTable.Columns.RELEASE_DATE, releaseDate.getTime());
         values.put(MoviesTable.Columns.RUNTIME, runtime);
         values.put(MoviesTable.Columns.FAVORITE, favorite);
+        values.put(MoviesTable.Columns.PAGE, page);
+        values.put(MoviesTable.Columns.ORDER, order);
 
         return values;
     }
@@ -103,7 +111,21 @@ public class Movie implements Serializable {
         Date releaseDate = new Date(date);
         int runtime = c.getInt(c.getColumnIndex(MoviesTable.Columns.RUNTIME));
         boolean favorite = c.getInt(c.getColumnIndex(MoviesTable.Columns.FAVORITE)) == 1;
+        int page = c.getInt(c.getColumnIndex(MoviesTable.Columns.PAGE));
+        int order = c.getInt(c.getColumnIndex(MoviesTable.Columns.ORDER));
 
-        return new Movie(id, title, originalTitle, posterPath, overview, voteAverage, releaseDate, runtime, favorite);
+        return new MovieBuilder()
+            .setId(id)
+            .setTitle(title)
+            .setOriginalTitle(originalTitle)
+            .setPosterPath(posterPath)
+            .setOverview(overview)
+            .setVoteAverage(voteAverage)
+            .setReleaseDate(releaseDate)
+            .setRuntime(runtime)
+            .setFavorite(favorite)
+            .setPage(page)
+            .setOrder(order)
+            .build();
     }
 }

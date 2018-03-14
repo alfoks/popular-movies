@@ -5,6 +5,7 @@
     <string name="cnt_movie_poster">Movie poster</string>
     <string name="cnt_favorite_button">Favorite button</string>
     <string name="cnt_tmdb_logo">The Movie Database logo</string>
+    <string name="cnt_sort_icon">Sort icon</string>
 
     <!-- Placeholders -->
     <string name="placeholder_title">Title</string>

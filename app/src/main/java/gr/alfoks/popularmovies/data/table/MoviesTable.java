@@ -24,6 +24,14 @@ public class MoviesTable {
         public static final String RELEASE_DATE = "releaseDate";
         public static final String RUNTIME = "runtime";
         public static final String FAVORITE = "favorite";
+        /**
+         * Page as returned from TMDB
+         */
+        public static final String PAGE = "tmdbPage";
+        /**
+         * Order as returned from TMDB within a page
+         */
+        public static final String ORDER = "tmdbOrder";
     }
 
     public static final class Content {
@@ -50,9 +58,11 @@ public class MoviesTable {
             Columns.POSTER_PATH + " TEXT," +
             Columns.OVERVIEW + " TEXT," +
             Columns.VOTE_AVERAGE + " REAL," +
-            Columns.RELEASE_DATE + " DATETIME, " +
-            Columns.RUNTIME + " INTEGER, " +
-            Columns.FAVORITE + " INTEGER DEFAULT 0" +
+            Columns.RELEASE_DATE + " DATETIME," +
+            Columns.RUNTIME + " INTEGER," +
+            Columns.FAVORITE + " INTEGER DEFAULT 0," +
+            Columns.PAGE + " INTEGER DEFAULT 0," +
+            Columns.ORDER + " INTEGER DEFAULT 0" +
             ");";
     }
 }
