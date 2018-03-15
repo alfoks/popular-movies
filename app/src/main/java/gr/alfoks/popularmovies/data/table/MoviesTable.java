@@ -32,22 +32,30 @@ public class MoviesTable {
          * Order as returned from TMDB within a page
          */
         public static final String ORDER = "tmdbOrder";
+        public static final String TOTAL = "total";
     }
 
     public static final class Content {
         public static final String CONTENT_AUTHORITY = BuildConfig.CONTENT_AUTHORITY;
-        public static final String PATH_MOVIE = "movie";
+        public static final String PATH_MOVIES = "movie";
+        public static final String PATH_MOVIE = PATH_MOVIES + "/#";
+        public static final String PATH_TOTAL = PATH_MOVIES + "/" + Columns.TOTAL;
 
         private static final Uri BASE_CONTENT_URI = Uri.parse(CONTENT_SCHEME + CONTENT_AUTHORITY);
         public static final Uri CONTENT_URI = BASE_CONTENT_URI
             .buildUpon()
-            .appendPath(PATH_MOVIE)
+            .appendPath(PATH_MOVIES)
+            .build();
+
+        public static final Uri CONTENT_URI_TOTAL = CONTENT_URI
+            .buildUpon()
+            .appendPath(Columns.TOTAL)
             .build();
 
         public static final String TYPE_DIR =
-            ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
+            ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIES;
         public static final String TYPE_ITEM =
-            ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
+            ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIES;
     }
 
     public class Ddl {
