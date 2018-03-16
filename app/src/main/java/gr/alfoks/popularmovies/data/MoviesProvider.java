@@ -44,14 +44,7 @@ public class MoviesProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        switch(uriMatcher.match(uri)) {
-            case MOVIE:
-                return MoviesTable.Content.TYPE_DIR;
-            case MOVIES:
-                return MoviesTable.Content.TYPE_ITEM;
-            default:
-                throw new UnsupportedOperationException(String.format(UNKNOWN_URI, uri));
-        }
+        return null;
     }
 
     @Nullable

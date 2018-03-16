@@ -12,7 +12,7 @@ public class MoviesTable {
     public static final String NAME = "Movies";
 
     public static final class Columns {
-        public static final String ID = "movieId";
+        public static final String ID = "id";
         public static final String TITLE = "title";
         public static final String ORIGINAL_TITLE = "originalTitle";
         public static final String POSTER_PATH = "posterPath";
@@ -51,14 +51,9 @@ public class MoviesTable {
             .buildUpon()
             .appendPath(Columns.TOTAL)
             .build();
-
-        public static final String TYPE_DIR =
-            ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIES;
-        public static final String TYPE_ITEM =
-            ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIES;
     }
 
-    public class Ddl {
+    public static final class Ddl {
         public static final String CREATE_TABLE = "CREATE TABLE " + NAME + " (" +
             Columns.ID + " INTEGER PRIMARY KEY," +
             Columns.TITLE + " TEXT," +
