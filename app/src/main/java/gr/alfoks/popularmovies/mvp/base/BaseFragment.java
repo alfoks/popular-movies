@@ -37,9 +37,7 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
         super.onDetach();
     }
 
-    /**
-     * Layout resource to be inflated
-     */
+    /** Layout resource to be inflated */
     @LayoutRes
     protected abstract int getContentResource();
     protected abstract P providePresenter();

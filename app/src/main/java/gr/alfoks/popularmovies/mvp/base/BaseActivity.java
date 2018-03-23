@@ -3,13 +3,13 @@ package gr.alfoks.popularmovies.mvp.base;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import gr.alfoks.popularmovies.R;
+import gr.alfoks.popularmovies.util.NetworkUtils;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -48,9 +48,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         unregisterReceiver(connectivityChangeReceiver);
     }
 
-    /**
-     * Get layout resource to be inflated
-     */
+    /** Get layout resource to be inflated */
     @LayoutRes
     protected abstract int getContentResource();
     protected abstract void init(@Nullable Bundle state);
@@ -58,25 +56,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     private final BroadcastReceiver connectivityChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int connectionType = getConnectionType(context);
-            boolean connectionOn = connectionType == ConnectivityManager.TYPE_WIFI
-                || connectionType == ConnectivityManager.TYPE_MOBILE;
-
-            onConnectivityChangedPrivate(connectionOn);
+            onConnectivityChangedPrivate(NetworkUtils.isNetworkAvailable(BaseActivity.this));
         }
     };
-
-    private int getConnectionType(Context context) {
-        NetworkInfo activeNetwork = null;
-        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(cm != null) {
-            activeNetwork = cm.getActiveNetworkInfo();
-        }
-        if(activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-            return activeNetwork.getType();
-        }
-        return -1;
-    }
 
     private void onConnectivityChangedPrivate(boolean connectionOn) {
         if(txtConnection != null) {
@@ -85,7 +67,5 @@ public abstract class BaseActivity extends AppCompatActivity {
         onConnectivityChanged(connectionOn);
     }
 
-    protected void onConnectivityChanged(boolean connectionOn) {
-
-    }
+    protected abstract void onConnectivityChanged(boolean connectionOn);
 }
