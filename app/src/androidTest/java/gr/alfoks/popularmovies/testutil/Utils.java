@@ -21,8 +21,6 @@ public class Utils {
         assertEquals(expected.releaseDate, actual.releaseDate);
         assertEquals(expected.runtime, actual.runtime);
         assertEquals(expected.favorite, actual.favorite);
-        assertEquals(expected.page, actual.page);
-        assertEquals(expected.order, actual.order);
     }
 
     public static <T extends Exception> void assertExceptionIsThrown(Runnable runnable, Class<T> exceptionClass) {

@@ -10,23 +10,26 @@ import android.content.Context;
 import android.util.Log;
 
 public enum SortBy implements Serializable {
-    POPULAR("popular"),
-    TOP_RATED("top_rated"),
-    NOW_PLAYING("now_playing"),
-    UPCOMING("upcoming");
+    POPULAR(1, "popular"),
+    TOP_RATED(2, "top_rated"),
+    FAVORITES(3, "favorites"),
+    NOW_PLAYING(4, "now_playing"),
+    UPCOMING(5, "upcoming");
 
     private static final String TAG = SortBy.class.getSimpleName();
 
+    private final int id;
     private final String value;
     private String displayName;
 
-    SortBy(String value) {
+    SortBy(int id, String value) {
         this.value = value;
         this.displayName = value;
+        this.id = id;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public int getId() {
+        return id;
     }
 
     /**
@@ -45,6 +48,10 @@ public enum SortBy implements Serializable {
             }
 
         }
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     @Override

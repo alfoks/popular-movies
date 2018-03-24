@@ -1,5 +1,6 @@
 package gr.alfoks.popularmovies.data;
 
+import gr.alfoks.popularmovies.data.table.MoviesSortTable;
 import gr.alfoks.popularmovies.data.table.MoviesTable;
 
 import android.content.Context;
@@ -17,6 +18,7 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(MoviesTable.Ddl.CREATE_TABLE);
+        db.execSQL(MoviesSortTable.Ddl.CREATE_TABLE);
     }
 
     @Override

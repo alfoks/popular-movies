@@ -12,8 +12,6 @@ public class MovieBuilder {
     private Date releaseDate;
     private int runtime;
     private boolean favorite = false;
-    private int page;
-    private int order = 0;
 
     public MovieBuilder setId(long id) {
         this.id = id;
@@ -60,20 +58,10 @@ public class MovieBuilder {
         return this;
     }
 
-    public MovieBuilder setPage(int page) {
-        this.page = page;
-        return this;
-    }
-
-    public MovieBuilder setOrder(int order) {
-        this.order = order;
-        return this;
-    }
-
     public Movie build() {
         return new Movie(
             id, title, originalTitle, posterPath, overview, voteAverage,
-            releaseDate, runtime, favorite, page, order
+            releaseDate, runtime, favorite
         );
     }
 }

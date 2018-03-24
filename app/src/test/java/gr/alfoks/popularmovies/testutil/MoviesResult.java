@@ -36,11 +36,11 @@ public class MoviesResult {
 
             @Override
             public void
-            onError(Throwable t) {
-                if(t instanceof HttpException) {
-                    moviesResult.httpStatusCode = ((HttpException)t).code();
+            onError(Throwable e) {
+                if(e instanceof HttpException) {
+                    moviesResult.httpStatusCode = ((HttpException)e).code();
                     try {
-                        ResponseBody error = ((HttpException)t).response().errorBody();
+                        ResponseBody error = ((HttpException)e).response().errorBody();
                         if(error != null) {
                             moviesResult.message = error.string();
                         }
@@ -48,7 +48,7 @@ public class MoviesResult {
                         ex.printStackTrace();
                     }
                 } else {
-                    moviesResult.message = t.getMessage();
+                    moviesResult.message = e.getMessage();
                 }
             }
         };

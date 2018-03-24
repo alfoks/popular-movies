@@ -2,7 +2,9 @@ package gr.alfoks.popularmovies;
 
 import java.util.HashMap;
 
-import gr.alfoks.popularmovies.mvp.model.TheMovieDbRepository;
+import gr.alfoks.popularmovies.data.source.ContentProviderDataSource;
+import gr.alfoks.popularmovies.data.source.MoviesRepository;
+import gr.alfoks.popularmovies.data.source.TheMovieDbDataSource;
 import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsPresenter;
 import gr.alfoks.popularmovies.mvp.movies.MoviesPresenter;
 import gr.alfoks.popularmovies.util.RestClient;
@@ -20,7 +22,9 @@ public class PopularMoviesApplication extends Application {
         super.onCreate();
 
         TheMovieDbApi theMovieDbApi = createApi();
-        TheMovieDbRepository repository = new TheMovieDbRepository(theMovieDbApi);
+        ContentProviderDataSource contentProviderDataSource = new ContentProviderDataSource(this);
+        TheMovieDbDataSource theMovieDbDataSource = new TheMovieDbDataSource(theMovieDbApi);
+        MoviesRepository repository = new MoviesRepository(this, contentProviderDataSource, theMovieDbDataSource);
 
         moviesPresenter = new MoviesPresenter(repository);
         movieDetailsPresenter = new MovieDetailsPresenter(repository);

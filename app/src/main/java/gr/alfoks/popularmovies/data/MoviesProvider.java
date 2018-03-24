@@ -1,5 +1,6 @@
 package gr.alfoks.popularmovies.data;
 
+import gr.alfoks.popularmovies.data.table.MoviesSortTable;
 import gr.alfoks.popularmovies.data.table.MoviesTable;
 
 import android.content.ContentProvider;
@@ -18,11 +19,13 @@ import static android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE;
 import static gr.alfoks.popularmovies.data.ContentUtils.notifyChange;
 
 public class MoviesProvider extends ContentProvider {
-    private static final int SQLITE_ERROR = -1;
+    public static final int SQLITE_ERROR = -1;
 
     private static final int MOVIE = 100;
     private static final int MOVIES = 101;
     private static final int MOVIE_COUNT = 102;
+    private static final int MOVIES_SORT = 103;
+
     private static final UriMatcher uriMatcher;
     private static final String UNKNOWN_URI = "Unknown uri: %s";
 
@@ -31,6 +34,7 @@ public class MoviesProvider extends ContentProvider {
         uriMatcher.addURI(MoviesTable.Content.CONTENT_AUTHORITY, MoviesTable.Content.PATH_MOVIE, MOVIE);
         uriMatcher.addURI(MoviesTable.Content.CONTENT_AUTHORITY, MoviesTable.Content.PATH_MOVIES, MOVIES);
         uriMatcher.addURI(MoviesTable.Content.CONTENT_AUTHORITY, MoviesTable.Content.PATH_TOTAL, MOVIE_COUNT);
+        uriMatcher.addURI(MoviesTable.Content.CONTENT_AUTHORITY, MoviesSortTable.Content.PATH_MOVIES_SORT, MOVIES_SORT);
     }
 
     private SQLiteOpenHelper dbHelper;
@@ -60,35 +64,41 @@ public class MoviesProvider extends ContentProvider {
 
     private Uri insertMovie(@NonNull Uri uri, ContentValues values) {
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        if(values == null || values.size() == 0) {
-            throw new IllegalArgumentException("Empty values");
-        }
+        checkNonNullValues(values);
 
         long movieId = db.insertWithOnConflict(MoviesTable.NAME, null, values, CONFLICT_REPLACE);
         if(movieId != SQLITE_ERROR) notifyChange(getContext(), uri);
         return ContentUtils.withAppendedId(MoviesTable.Content.CONTENT_URI, movieId);
     }
 
+    private void checkNonNullValues(ContentValues values) {
+        if(values == null || values.size() == 0) {
+            throw new IllegalArgumentException("Empty values");
+        }
+    }
+
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
         switch(uriMatcher.match(uri)) {
             case MOVIES:
-                return bulkInsertMovies(uri, values);
+                return bulkInsert(MoviesTable.NAME, uri, values);
+            case MOVIES_SORT:
+                return bulkInsert(MoviesSortTable.NAME, uri, values);
             default:
                 throw new UnsupportedOperationException(String.format(UNKNOWN_URI, uri));
         }
     }
 
-    private int bulkInsertMovies(@NonNull Uri uri, @NonNull ContentValues[] values) {
+    private int bulkInsert(String tableName, @NonNull Uri uri, @NonNull ContentValues[] values) {
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
         int numInserted = 0;
 
         db.beginTransaction();
         try {
-            for(ContentValues oneMovieValues : values) {
+            for(ContentValues recordValues : values) {
+                checkNonNullValues(recordValues);
                 long id = db.insertWithOnConflict(
-                    MoviesTable.NAME, null, oneMovieValues, CONFLICT_REPLACE
+                    tableName, null, recordValues, CONFLICT_REPLACE
                 );
 
                 if(id != -1) {
@@ -114,19 +124,15 @@ public class MoviesProvider extends ContentProvider {
         String[] selectionArgs, String sortOrder
     ) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(MoviesTable.NAME);
+        qb.setTables(MoviesTable.NAME_FOR_JOIN);
 
         switch(uriMatcher.match(uri)) {
-            case MOVIE: {
+            case MOVIE:
                 String id = String.valueOf(ContentUtils.parseId(uri));
                 qb.appendWhere(MoviesTable.Columns.ID + "=" + id);
                 break;
-            }
-
-            case MOVIES: {
+            case MOVIES:
                 break;
-            }
-
             case MOVIE_COUNT:
                 projection = new String[] { "count(1) AS total" };
                 break;
@@ -147,7 +153,7 @@ public class MoviesProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        int numDeleted = 0;
+        int numDeleted;
 
         switch(uriMatcher.match(uri)) {
             case MOVIE:
@@ -155,6 +161,9 @@ public class MoviesProvider extends ContentProvider {
                 break;
             case MOVIES:
                 numDeleted = deleteMovies(selection, selectionArgs);
+                break;
+            case MOVIES_SORT:
+                numDeleted = deleteSortOrders(selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException(String.format(UNKNOWN_URI, uri));
@@ -184,12 +193,19 @@ public class MoviesProvider extends ContentProvider {
         return db.delete(MoviesTable.NAME, selection, selectionArgs);
     }
 
+    private int deleteSortOrders(String selection, String[] selectionArgs) {
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        selection = ContentUtils.normalizeSelection(selection);
+        return db.delete(MoviesSortTable.NAME, selection, selectionArgs);
+    }
+
     @Override
     public int update(
         @NonNull Uri uri, ContentValues values,
         String selection, String[] selectionArgs
     ) {
-        int numUpdated = 0;
+        int numUpdated;
 
         switch(uriMatcher.match(uri)) {
             case MOVIE:

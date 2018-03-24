@@ -1,16 +1,20 @@
-package gr.alfoks.popularmovies.mvp.model;
+package gr.alfoks.popularmovies.data.source;
 
+import gr.alfoks.popularmovies.mvp.model.Movie;
+import gr.alfoks.popularmovies.mvp.model.Movies;
+import gr.alfoks.popularmovies.mvp.model.SortBy;
 import gr.alfoks.popularmovies.util.TheMovieDbApi;
 import io.reactivex.Single;
 
 import android.support.annotation.NonNull;
 
-public class TheMovieDbRepository implements MoviesRepository {
-
+public class TheMovieDbDataSource implements MoviesDataSource {
+    static final int DEFAULT_PAGE_SIZE = 20;
+    private static final String TAG = TheMovieDbDataSource.class.getSimpleName();
     @NonNull
     private final TheMovieDbApi theMovieDbApi;
 
-    public TheMovieDbRepository(@NonNull TheMovieDbApi theMovieDbApi) {
+    public TheMovieDbDataSource(@NonNull TheMovieDbApi theMovieDbApi) {
         this.theMovieDbApi = theMovieDbApi;
     }
 

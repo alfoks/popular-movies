@@ -26,8 +26,6 @@ public class Movie implements Serializable {
     public final Date releaseDate;
     public final int runtime;
     public final boolean favorite;
-    public final int page;
-    public final int order;
 
     Movie(
         long id,
@@ -38,9 +36,8 @@ public class Movie implements Serializable {
         float voteAverage,
         Date releaseDate,
         int runtime,
-        boolean favorite,
-        int page,
-        int order) {
+        boolean favorite
+    ) {
         this.id = id;
         this.title = title;
         this.originalTitle = originalTitle;
@@ -50,8 +47,31 @@ public class Movie implements Serializable {
         this.releaseDate = releaseDate;
         this.runtime = runtime;
         this.favorite = favorite;
-        this.page = page;
-        this.order = order;
+    }
+
+    public static Movie create(Cursor c) {
+        long id = c.getLong(c.getColumnIndex(MoviesTable.Columns.ID));
+        String title = c.getString(c.getColumnIndex(MoviesTable.Columns.TITLE));
+        String originalTitle = c.getString(c.getColumnIndex(MoviesTable.Columns.ORIGINAL_TITLE));
+        String overview = c.getString(c.getColumnIndex(MoviesTable.Columns.OVERVIEW));
+        String posterPath = c.getString(c.getColumnIndex(MoviesTable.Columns.POSTER_PATH));
+        float voteAverage = c.getFloat(c.getColumnIndex(MoviesTable.Columns.VOTE_AVERAGE));
+        long date = c.getLong(c.getColumnIndex(MoviesTable.Columns.RELEASE_DATE));
+        Date releaseDate = new Date(date);
+        int runtime = c.getInt(c.getColumnIndex(MoviesTable.Columns.RUNTIME));
+        boolean favorite = c.getInt(c.getColumnIndex(MoviesTable.Columns.FAVORITE)) == 1;
+
+        return new MovieBuilder()
+            .setId(id)
+            .setTitle(title)
+            .setOriginalTitle(originalTitle)
+            .setPosterPath(posterPath)
+            .setOverview(overview)
+            .setVoteAverage(voteAverage)
+            .setReleaseDate(releaseDate)
+            .setRuntime(runtime)
+            .setFavorite(favorite)
+            .build();
     }
 
     public String getFullPosterPath() {
@@ -94,38 +114,7 @@ public class Movie implements Serializable {
         values.put(MoviesTable.Columns.RELEASE_DATE, releaseDate.getTime());
         values.put(MoviesTable.Columns.RUNTIME, runtime);
         values.put(MoviesTable.Columns.FAVORITE, favorite);
-        values.put(MoviesTable.Columns.PAGE, page);
-        values.put(MoviesTable.Columns.ORDER, order);
 
         return values;
-    }
-
-    public static Movie create(Cursor c) {
-        long id = c.getLong(c.getColumnIndex(MoviesTable.Columns.ID));
-        String title = c.getString(c.getColumnIndex(MoviesTable.Columns.TITLE));
-        String originalTitle = c.getString(c.getColumnIndex(MoviesTable.Columns.ORIGINAL_TITLE));
-        String overview = c.getString(c.getColumnIndex(MoviesTable.Columns.OVERVIEW));
-        String posterPath = c.getString(c.getColumnIndex(MoviesTable.Columns.POSTER_PATH));
-        float voteAverage = c.getFloat(c.getColumnIndex(MoviesTable.Columns.VOTE_AVERAGE));
-        long date = c.getLong(c.getColumnIndex(MoviesTable.Columns.RELEASE_DATE));
-        Date releaseDate = new Date(date);
-        int runtime = c.getInt(c.getColumnIndex(MoviesTable.Columns.RUNTIME));
-        boolean favorite = c.getInt(c.getColumnIndex(MoviesTable.Columns.FAVORITE)) == 1;
-        int page = c.getInt(c.getColumnIndex(MoviesTable.Columns.PAGE));
-        int order = c.getInt(c.getColumnIndex(MoviesTable.Columns.ORDER));
-
-        return new MovieBuilder()
-            .setId(id)
-            .setTitle(title)
-            .setOriginalTitle(originalTitle)
-            .setPosterPath(posterPath)
-            .setOverview(overview)
-            .setVoteAverage(voteAverage)
-            .setReleaseDate(releaseDate)
-            .setRuntime(runtime)
-            .setFavorite(favorite)
-            .setPage(page)
-            .setOrder(order)
-            .build();
     }
 }
