@@ -12,7 +12,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 public class Movie implements Serializable {
+    private static final long EMPTY_ID = -1;
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
+
     public final long id;
     public final String title;
     @SerializedName("original_title")
@@ -27,51 +29,24 @@ public class Movie implements Serializable {
     public final int runtime;
     public final boolean favorite;
 
-    Movie(
-        long id,
-        String title,
-        String originalTitle,
-        String posterPath,
-        String overview,
-        float voteAverage,
-        Date releaseDate,
-        int runtime,
-        boolean favorite
-    ) {
-        this.id = id;
-        this.title = title;
-        this.originalTitle = originalTitle;
-        this.posterPath = posterPath;
-        this.overview = overview;
-        this.voteAverage = voteAverage;
-        this.releaseDate = releaseDate;
-        this.runtime = runtime;
-        this.favorite = favorite;
+    private Movie(MovieBuilder builder) {
+        this.id = builder.id;
+        this.title = builder.title;
+        this.originalTitle = builder.originalTitle;
+        this.posterPath = builder.posterPath;
+        this.overview = builder.overview;
+        this.voteAverage = builder.voteAverage;
+        this.releaseDate = builder.releaseDate;
+        this.runtime = builder.runtime;
+        this.favorite = builder.favorite;
     }
 
-    public static Movie create(Cursor c) {
-        long id = c.getLong(c.getColumnIndex(MoviesTable.Columns.ID));
-        String title = c.getString(c.getColumnIndex(MoviesTable.Columns.TITLE));
-        String originalTitle = c.getString(c.getColumnIndex(MoviesTable.Columns.ORIGINAL_TITLE));
-        String overview = c.getString(c.getColumnIndex(MoviesTable.Columns.OVERVIEW));
-        String posterPath = c.getString(c.getColumnIndex(MoviesTable.Columns.POSTER_PATH));
-        float voteAverage = c.getFloat(c.getColumnIndex(MoviesTable.Columns.VOTE_AVERAGE));
-        long date = c.getLong(c.getColumnIndex(MoviesTable.Columns.RELEASE_DATE));
-        Date releaseDate = new Date(date);
-        int runtime = c.getInt(c.getColumnIndex(MoviesTable.Columns.RUNTIME));
-        boolean favorite = c.getInt(c.getColumnIndex(MoviesTable.Columns.FAVORITE)) == 1;
+    public static MovieBuilder builder() {
+        return new MovieBuilder();
+    }
 
-        return new MovieBuilder()
-            .setId(id)
-            .setTitle(title)
-            .setOriginalTitle(originalTitle)
-            .setPosterPath(posterPath)
-            .setOverview(overview)
-            .setVoteAverage(voteAverage)
-            .setReleaseDate(releaseDate)
-            .setRuntime(runtime)
-            .setFavorite(favorite)
-            .build();
+    public boolean isEmpty() {
+        return id == EMPTY_ID;
     }
 
     public String getFullPosterPath() {
@@ -113,8 +88,97 @@ public class Movie implements Serializable {
         values.put(MoviesTable.Columns.VOTE_AVERAGE, voteAverage);
         values.put(MoviesTable.Columns.RELEASE_DATE, releaseDate.getTime());
         values.put(MoviesTable.Columns.RUNTIME, runtime);
-        values.put(MoviesTable.Columns.FAVORITE, favorite);
+        values.put(MoviesTable.Columns.FAVORITE, favorite ? 1 : 0);
 
         return values;
+    }
+
+    public static class MovieBuilder {
+        private long id = EMPTY_ID;
+        private String title;
+        private String originalTitle;
+        private String posterPath;
+        private String overview;
+        private float voteAverage;
+        private Date releaseDate = new Date();
+        private int runtime;
+        private boolean favorite = false;
+
+        public MovieBuilder setId(long id) {
+            this.id = id;
+            return this;
+        }
+
+        public MovieBuilder setTitle(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public MovieBuilder setOriginalTitle(String originalTitle) {
+            this.originalTitle = originalTitle;
+            return this;
+        }
+
+        public MovieBuilder setPosterPath(String posterPath) {
+            this.posterPath = posterPath;
+            return this;
+        }
+
+        public MovieBuilder setOverview(String overview) {
+            this.overview = overview;
+            return this;
+        }
+
+        public MovieBuilder setVoteAverage(float voteAverage) {
+            this.voteAverage = voteAverage;
+            return this;
+        }
+
+        public MovieBuilder setReleaseDate(Date releaseDate) {
+            this.releaseDate = releaseDate;
+            return this;
+        }
+
+        public MovieBuilder setRuntime(int runtime) {
+            this.runtime = runtime;
+            return this;
+        }
+
+        public MovieBuilder setFavorite(boolean favorite) {
+            this.favorite = favorite;
+            return this;
+        }
+
+        public Movie build() {
+            return new Movie(this);
+        }
+
+        public MovieBuilder from(Movie movie) {
+            setId(movie.id);
+            setTitle(movie.title);
+            setOriginalTitle(movie.originalTitle);
+            setOverview(movie.overview);
+            setPosterPath(movie.posterPath);
+            setVoteAverage(movie.voteAverage);
+            setReleaseDate(movie.releaseDate);
+            setRuntime(movie.runtime);
+
+            return this;
+        }
+
+        public MovieBuilder from(Cursor c) {
+            setId(c.getLong(c.getColumnIndex(MoviesTable.Columns.ID)));
+            setTitle(c.getString(c.getColumnIndex(MoviesTable.Columns.TITLE)));
+            setOriginalTitle(c.getString(c.getColumnIndex(MoviesTable.Columns.ORIGINAL_TITLE)));
+            setOverview(c.getString(c.getColumnIndex(MoviesTable.Columns.OVERVIEW)));
+            setPosterPath(c.getString(c.getColumnIndex(MoviesTable.Columns.POSTER_PATH)));
+            setVoteAverage(c.getFloat(c.getColumnIndex(MoviesTable.Columns.VOTE_AVERAGE)));
+            long date = c.getLong(c.getColumnIndex(MoviesTable.Columns.RELEASE_DATE));
+            setReleaseDate(new Date(date));
+            setRuntime(c.getInt(c.getColumnIndex(MoviesTable.Columns.RUNTIME)));
+            setFavorite(c.getInt(c.getColumnIndex(MoviesTable.Columns.FAVORITE)) == 1);
+
+            return this;
+        }
     }
 }

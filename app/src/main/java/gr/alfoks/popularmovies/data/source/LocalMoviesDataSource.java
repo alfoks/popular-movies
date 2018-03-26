@@ -7,5 +7,5 @@ import io.reactivex.Single;
 public interface LocalMoviesDataSource extends MoviesDataSource {
     int getCount(SortBy sortBy, int page);
     void saveMovies(Movies movies, SortBy sortBy, int page);
-    Single<Boolean> favorite(long movieId);
+    Single<Boolean> updateFavorite(long movieId, boolean favorite);
 }

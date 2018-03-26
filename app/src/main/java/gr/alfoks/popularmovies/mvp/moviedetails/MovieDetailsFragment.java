@@ -14,6 +14,7 @@ import gr.alfoks.popularmovies.mvp.model.Trailer;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -49,6 +50,7 @@ public class MovieDetailsFragment
     TextView txtDummy;
 
     private long movieId;
+    private Movie movie = Movie.builder().build();
 
     public MovieDetailsFragment() {
     }
@@ -96,7 +98,7 @@ public class MovieDetailsFragment
         txtTitle.setBackground(txtDummy.getBackground());
         vwDivider.setBackground(getContext().getResources().getDrawable(android.R.drawable.divider_horizontal_dark));
         txtTrailers.setText(getContext().getResources().getText(R.string.lbl_trailers));
-        btnFavorite.setImageResource(R.drawable.ic_favorite_border);
+        setFavoriteButtonIcon(movie.favorite);
 
         txtOverview.setText(movie.overview);
         Picasso.with(getContext())
@@ -104,16 +106,24 @@ public class MovieDetailsFragment
                .placeholder(R.drawable.anim_loading)
                .error(R.drawable.ic_warning)
                .into(imgPoster);
+
+        this.movie = movie;
+    }
+
+    private void setFavoriteButtonIcon(boolean favorite) {
+        int icon = favorite ? R.drawable.ic_favorite : R.drawable.ic_favorite_border;
+        btnFavorite.setImageResource(icon);
     }
 
     @OnClick(R.id.btnFavorite)
-    void markFavorite() {
-        getPresenter().markFavorite(movieId);
+    void updateFavorite() {
+        getPresenter().updateFavorite(movieId, !movie.favorite);
     }
 
     @Override
-    public void onFavored() {
-        btnFavorite.setImageResource(R.drawable.ic_favorite);
+    public void onFavoriteUpdated(boolean favorite) {
+        movie = Movie.builder().from(movie).setFavorite(favorite).build();
+        setFavoriteButtonIcon(favorite);
     }
 
     @Override
@@ -122,7 +132,8 @@ public class MovieDetailsFragment
     }
 
     public void onConnectivityChanged(boolean connectionOn) {
-        if(connectionOn) {
+        //When we have internet again, load the movie, if not loaded already
+        if(connectionOn && movie.isEmpty()) {
             getPresenter().loadMovie(movieId);
         }
     }

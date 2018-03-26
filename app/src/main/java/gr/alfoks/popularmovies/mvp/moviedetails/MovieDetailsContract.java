@@ -11,13 +11,13 @@ public interface MovieDetailsContract {
 
     interface Presenter extends MvpPresenter<MovieDetailsContract.View> {
         void loadMovie(long movieId);
-        void markFavorite(long movieId);
+        void updateFavorite(long movieId, boolean favorite);
         void loadTrailers(long movieId);
     }
 
     interface View extends MvpView {
         void onMovieLoaded(Movie movie);
-        void onFavored();
+        void onFavoriteUpdated(boolean favorite);
         void onTrailersLoaded(List<Trailer> trailers);
     }
 }

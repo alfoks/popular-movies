@@ -6,11 +6,12 @@ import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
 import gr.alfoks.popularmovies.util.NetworkUtils;
-import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.SingleSource;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 public class MoviesRepository implements Repository {
     private static final String TAG = MoviesRepository.class.getSimpleName();
@@ -34,21 +35,11 @@ public class MoviesRepository implements Repository {
 
     @Override
     public Single<Movie> getMovie(long movieId) {
-        final MoviesDataSource primary;
-        final MoviesDataSource failover;
-
         if(shouldQueryLocalDataSource()) {
-            primary = localDataSource;
-            failover = remoteDataSource;
+            return getMovieFromLocalDataSource(movieId);
         } else {
-            primary = remoteDataSource;
-            failover = localDataSource;
+            return getMovieFromRemoteDataSource(movieId, true);
         }
-
-        return primary
-            .getMovie(movieId)
-            //If error occurs fetching from primary datasource, try failover
-            .onErrorResumeNext(t -> failover.getMovie(movieId));
     }
 
     /**
@@ -64,6 +55,40 @@ public class MoviesRepository implements Repository {
         long cacheActiveTime = new Date().getTime() - cacheRefreshTime;
 
         return cacheActiveTime <= CACHE_EXPIRATION_TIMEOUT;
+    }
+
+    private Single<Movie> getMovieFromLocalDataSource(long movieId) {
+        return localDataSource
+            .getMovie(movieId)
+            .onErrorResumeNext(getMovieFromRemoteDataSource(movieId, false));
+    }
+
+    private Single<Movie> getMovieFromRemoteDataSource(long movieId, boolean failover) {
+        Single<Movie> movieSingle = remoteDataSource.getMovie(movieId);
+        if(failover) {
+            movieSingle = movieSingle.onErrorResumeNext(t -> localDataSource.getMovie(movieId));
+        }
+
+        //When querying remote datasource check to see if movie is stored
+        //locally and get its "favorite" field value
+        movieSingle = movieSingle.flatMap(this::getMovieWithFavorite);
+
+        return movieSingle;
+    }
+
+    private SingleSource<Movie> getMovieWithFavorite(Movie movie) {
+        Single<Movie> movieSingle = localDataSource.getMovie(movie.id);
+        final Movie[] movieWithFavorite = new Movie[1];
+
+        movieSingle
+            .onErrorReturnItem(movie)
+            .subscribe(m -> movieWithFavorite[0] = Movie.builder().from(movie).setFavorite(m.favorite).build());
+
+        if(movieWithFavorite[0] != null) {
+            return Single.create(e -> e.onSuccess(movieWithFavorite[0]));
+        } else {
+            return Single.create(e -> e.onSuccess(movie));
+        }
     }
 
     @Override
@@ -107,15 +132,7 @@ public class MoviesRepository implements Repository {
 
         if(failover) {
             moviesSingle = moviesSingle
-                .onErrorResumeNext(t -> getMoviesFromRemoteDataSource(sortBy, page, false))
-                .flatMap(movies -> {
-                    if(movies.getMovies().size() == 0) {
-                        //If no results in local datasource, try remote
-                        return getMoviesFromRemoteDataSource(sortBy, page, false);
-                    }
-
-                    return Single.fromObservable(Observable.just(movies));
-                });
+                .onErrorResumeNext(t -> getMoviesFromRemoteDataSource(sortBy, page, false));
         }
 
         return moviesSingle;
@@ -162,7 +179,7 @@ public class MoviesRepository implements Repository {
     }
 
     @Override
-    public Single<Boolean> favorite(long movieId) {
-        return null;
+    public Single<Boolean> updateFavorite(long movieId, boolean favorite) {
+        return localDataSource.updateFavorite(movieId, favorite);
     }
 }

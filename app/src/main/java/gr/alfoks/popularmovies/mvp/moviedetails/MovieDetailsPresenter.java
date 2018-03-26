@@ -63,8 +63,12 @@ public class MovieDetailsPresenter
     }
 
     @Override
-    public void markFavorite(long movieId) {
-        getView().onFavored();
+    public void updateFavorite(long movieId, boolean favorite) {
+        repository
+            .updateFavorite(movieId, favorite)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(success -> getView().onFavoriteUpdated(favorite));
     }
 
     @Override

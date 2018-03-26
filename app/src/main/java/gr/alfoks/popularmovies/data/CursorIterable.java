@@ -13,6 +13,10 @@ public class CursorIterable implements Iterable<Cursor> {
         this.cursor = cursor;
     }
 
+    public static CursorIterable from(Cursor cursor) {
+        return new CursorIterable(cursor);
+    }
+
     @NonNull
     @Override
     public Iterator<Cursor> iterator() {

@@ -1,5 +1,7 @@
 package gr.alfoks.popularmovies.data.source;
 
+import java.util.NoSuchElementException;
+
 import gr.alfoks.popularmovies.data.ContentUtils;
 import gr.alfoks.popularmovies.data.CursorIterable;
 import gr.alfoks.popularmovies.data.table.MoviesSortTable;
@@ -10,6 +12,7 @@ import gr.alfoks.popularmovies.mvp.model.SortBy;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -31,12 +34,14 @@ public class ContentProviderDataSource implements LocalMoviesDataSource {
         Cursor c = getMovieCursor(movieId);
 
         return Observable
-            .fromIterable(new CursorIterable(c))
+            .fromIterable(CursorIterable.from(c))
             .doAfterNext(cursor -> {
                 if(cursor.getPosition() == cursor.getCount() - 1) {
                     cursor.close();
                 }
-            }).map(Movie::create).elementAtOrError(0);
+            })
+            .map(cursor -> Movie.builder().from(cursor).build())
+            .elementAtOrError(0);
     }
 
     private Cursor getMovieCursor(long movieId) {
@@ -61,15 +66,19 @@ public class ContentProviderDataSource implements LocalMoviesDataSource {
         Cursor c = getCursor(uri, selection, selectionArgs, sortOrder);
 
         return Observable
-            .fromIterable(new CursorIterable(c))
+            .fromIterable(CursorIterable.from(c))
             .doAfterNext(cursor -> {
                 if(cursor.getPosition() == cursor.getCount() - 1) {
                     cursor.close();
                 }
             })
-            .map(Movie::create)
+            .map(cursor -> Movie.builder().from(cursor).build())
             .toList()
-            .map(movies -> new Movies(movies, Integer.MAX_VALUE, Integer.MAX_VALUE));
+            .map(movies -> new Movies(movies, Integer.MAX_VALUE, Integer.MAX_VALUE))
+            .doOnSuccess(movies -> {
+                if(movies.getMovies().size() == 0)
+                    throw new NoSuchElementException("Could not fetch movies.");
+            });
     }
 
     @Override
@@ -110,7 +119,13 @@ public class ContentProviderDataSource implements LocalMoviesDataSource {
     }
 
     @Override
-    public Single<Boolean> favorite(long movieId) {
-        return null;
+    public Single<Boolean> updateFavorite(long movieId, boolean favorite) {
+        Uri uri = ContentUtils.withAppendedId(MoviesTable.Content.CONTENT_URI, movieId);
+        ContentValues values = new ContentValues();
+        values.put(MoviesTable.Columns.FAVORITE, favorite);
+
+        return Single.create(e -> e.onSuccess(
+            context.getContentResolver().update(uri, values, null, null) > 0
+        ));
     }
 }
