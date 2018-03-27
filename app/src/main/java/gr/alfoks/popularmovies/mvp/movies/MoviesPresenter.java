@@ -24,6 +24,15 @@ public class MoviesPresenter extends BasePresenter<MoviesContract.View>
 
     public MoviesPresenter(@NonNull Repository repository) {
         this.repository = repository;
+        subscribeToDataChanges();
+    }
+
+    private void subscribeToDataChanges() {
+        repository
+            .dataChanged()
+            .subscribeOn(Schedulers.single())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(n -> resetList(SortBy.FAVORITES));
     }
 
     @Override
@@ -49,6 +58,15 @@ public class MoviesPresenter extends BasePresenter<MoviesContract.View>
     public void resetList() {
         nextPage = 1;
         getView().onListReset();
+    }
+
+    /**
+     * Reset list only if current sorting matches sortBy parameter
+     */
+    public void resetList(SortBy sortBy) {
+        if(this.sortBy == sortBy) {
+            resetList();
+        }
     }
 
     @Override

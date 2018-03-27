@@ -1,7 +1,10 @@
 package gr.alfoks.popularmovies.data.source;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.NoSuchElementException;
 
+import gr.alfoks.popularmovies.BuildConfig;
 import gr.alfoks.popularmovies.data.ContentUtils;
 import gr.alfoks.popularmovies.data.CursorIterable;
 import gr.alfoks.popularmovies.data.table.MoviesSortTable;
@@ -12,16 +15,22 @@ import gr.alfoks.popularmovies.mvp.model.SortBy;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
+import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 
 
 import static gr.alfoks.popularmovies.data.MoviesProvider.SQLITE_ERROR;
 
 public class ContentProviderDataSource implements LocalMoviesDataSource {
+    private static final String SORTING_SELECTION = MoviesSortTable.Columns.PAGE + "=? " +
+        "AND " + MoviesSortTable.Columns.SORT_TYPE + "=?";
+
     @NonNull
     private final Context context;
 
@@ -58,12 +67,10 @@ public class ContentProviderDataSource implements LocalMoviesDataSource {
     @Override
     public Single<Movies> getMovies(SortBy sortBy, int page) {
         String sortOrder = MoviesSortTable.Columns.SORT_ORDER;
-        String selection = MoviesSortTable.Columns.PAGE + "=? " +
-            "AND " + MoviesSortTable.Columns.SORT_TYPE + "=?";
-        String[] selectionArgs = new String[] { String.valueOf(page), String.valueOf(sortBy.getId()) };
+        String[] selectionArgs = getSortingSelectionArgs(sortBy, page);
 
         Uri uri = MoviesTable.Content.CONTENT_URI;
-        Cursor c = getCursor(uri, selection, selectionArgs, sortOrder);
+        Cursor c = getCursor(uri, SORTING_SELECTION, selectionArgs, sortOrder);
 
         return Observable
             .fromIterable(CursorIterable.from(c))
@@ -86,13 +93,10 @@ public class ContentProviderDataSource implements LocalMoviesDataSource {
         Uri uri = MoviesTable.Content.CONTENT_URI_TOTAL;
 
         int totalPages = 0;
-        String selection = MoviesSortTable.Columns.PAGE + "=? " +
-            "AND " + MoviesSortTable.Columns.SORT_TYPE + "=?";
-
-        String[] selectionArgs = new String[] { String.valueOf(page), String.valueOf(sortBy.getId()) };
+        String[] selectionArgs = getSortingSelectionArgs(sortBy, page);
 
         try(
-            Cursor c = getCursor(uri, selection, selectionArgs, null)
+            Cursor c = getCursor(uri, SORTING_SELECTION, selectionArgs, null)
         ) {
             if(c != null && c.moveToNext()) {
                 totalPages = c.getInt(c.getColumnIndex(MoviesTable.Columns.Agr.TOTAL));
@@ -100,6 +104,11 @@ public class ContentProviderDataSource implements LocalMoviesDataSource {
         }
 
         return totalPages;
+    }
+
+    @NonNull
+    private String[] getSortingSelectionArgs(SortBy sortBy, int page) {
+        return new String[] { String.valueOf(page), String.valueOf(sortBy.getId()) };
     }
 
     @Override
@@ -120,12 +129,52 @@ public class ContentProviderDataSource implements LocalMoviesDataSource {
 
     @Override
     public Single<Boolean> updateFavorite(long movieId, boolean favorite) {
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        operations.add(getDeleteSortingOperation(movieId, SortBy.FAVORITES));
+
+        if(favorite) {
+            operations.add(getInsertSortingOperation(movieId, SortBy.FAVORITES));
+        }
+
+        operations.add(getUpdateFavoriteOperation(movieId, favorite));
+
+        return Single.create(e -> e.onSuccess(applyOperations(operations)));
+    }
+
+    private boolean applyOperations(ArrayList<ContentProviderOperation> operations)
+        throws RemoteException, OperationApplicationException {
+
+        String authority = BuildConfig.CONTENT_AUTHORITY;
+        context.getContentResolver().applyBatch(authority, operations);
+
+        return true;
+    }
+
+    private ContentProviderOperation getUpdateFavoriteOperation(long movieId, boolean favorite) {
         Uri uri = ContentUtils.withAppendedId(MoviesTable.Content.CONTENT_URI, movieId);
         ContentValues values = new ContentValues();
         values.put(MoviesTable.Columns.FAVORITE, favorite);
 
-        return Single.create(e -> e.onSuccess(
-            context.getContentResolver().update(uri, values, null, null) > 0
-        ));
+        return ContentProviderOperation.newUpdate(uri).withValues(values).build();
+    }
+
+    private ContentProviderOperation getInsertSortingOperation(long movieId, SortBy sortBy) {
+        Uri uri = MoviesSortTable.Content.CONTENT_URI;
+        ContentValues orderValues = new ContentValues();
+        orderValues.put(MoviesSortTable.Columns.MOVIE_ID, movieId);
+        orderValues.put(MoviesSortTable.Columns.PAGE, 1);
+        orderValues.put(MoviesSortTable.Columns.SORT_ORDER, new Date().getTime());
+        orderValues.put(MoviesSortTable.Columns.SORT_TYPE, sortBy.getId());
+
+        return ContentProviderOperation.newInsert(uri).withValues(orderValues).build();
+    }
+
+    private ContentProviderOperation getDeleteSortingOperation(long movieId, SortBy sortBy) {
+        Uri uri = MoviesSortTable.Content.CONTENT_URI;
+        String selection = MoviesSortTable.Columns.MOVIE_ID +
+            "=? AND " + MoviesSortTable.Columns.SORT_TYPE + "=?";
+        String[] selectionArgs = new String[] { String.valueOf(movieId), String.valueOf(sortBy.getId()) };
+
+        return ContentProviderOperation.newDelete(uri).withSelection(selection, selectionArgs).build();
     }
 }

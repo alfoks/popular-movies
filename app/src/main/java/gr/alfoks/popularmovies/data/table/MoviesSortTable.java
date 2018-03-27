@@ -33,9 +33,7 @@ public class MoviesSortTable {
         private static final String PRIMARY_KEY =
             "PRIMARY KEY(" +
                 Columns.MOVIE_ID + "," +
-                Columns.PAGE + "," +
-                Columns.SORT_TYPE + "," +
-                Columns.SORT_ORDER +
+                Columns.SORT_TYPE +
                 ")";
 
         private static final String FOREIGN_KEY =

@@ -1,10 +1,15 @@
 package gr.alfoks.popularmovies.data;
 
+import java.util.ArrayList;
+
 import gr.alfoks.popularmovies.data.table.MoviesSortTable;
 import gr.alfoks.popularmovies.data.table.MoviesTable;
 
 import android.content.ContentProvider;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentValues;
+import android.content.OperationApplicationException;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -57,8 +62,29 @@ public class MoviesProvider extends ContentProvider {
         switch(uriMatcher.match(uri)) {
             case MOVIES:
                 return insertMovie(uri, values);
+            case MOVIES_SORT:
+                return insertMovieSort(uri, values);
             default:
                 throw new UnsupportedOperationException(String.format(UNKNOWN_URI, uri));
+        }
+    }
+
+    @NonNull
+    @Override
+    public ContentProviderResult[] applyBatch(@NonNull ArrayList<ContentProviderOperation> operations) throws OperationApplicationException {
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        db.beginTransaction();
+        try {
+            ContentProviderResult[] results = super.applyBatch(operations);
+            if(results.length != operations.size()) {
+                throw new OperationApplicationException("Transaction failed");
+            }
+            db.setTransactionSuccessful();
+
+            return results;
+        } finally {
+            db.endTransaction();
         }
     }
 
@@ -69,6 +95,15 @@ public class MoviesProvider extends ContentProvider {
         long movieId = db.insertWithOnConflict(MoviesTable.NAME, null, values, CONFLICT_REPLACE);
         if(movieId != SQLITE_ERROR) notifyChange(getContext(), uri);
         return ContentUtils.withAppendedId(MoviesTable.Content.CONTENT_URI, movieId);
+    }
+
+    private Uri insertMovieSort(@NonNull Uri uri, ContentValues values) {
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+        checkNonNullValues(values);
+
+        long movieId = db.insertWithOnConflict(MoviesSortTable.NAME, null, values, CONFLICT_REPLACE);
+        if(movieId != SQLITE_ERROR) notifyChange(getContext(), uri);
+        return ContentUtils.withAppendedId(MoviesSortTable.Content.CONTENT_URI, movieId);
     }
 
     private void checkNonNullValues(ContentValues values) {

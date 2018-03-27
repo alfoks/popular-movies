@@ -8,10 +8,10 @@ import gr.alfoks.popularmovies.mvp.model.SortBy;
 import gr.alfoks.popularmovies.util.NetworkUtils;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
+import io.reactivex.subjects.PublishSubject;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 public class MoviesRepository implements Repository {
     private static final String TAG = MoviesRepository.class.getSimpleName();
@@ -22,6 +22,8 @@ public class MoviesRepository implements Repository {
     private final Context context;
     private final LocalMoviesDataSource localDataSource;
     private final MoviesDataSource remoteDataSource;
+
+    private PublishSubject<Boolean> notifier = PublishSubject.create();
 
     public MoviesRepository(
         @NonNull Context context,
@@ -94,7 +96,9 @@ public class MoviesRepository implements Repository {
     @Override
     public Single<Movies> getMovies(SortBy sortBy, int page) {
         if(shouldQueryLocalDataSource(sortBy, page)) {
-            return getMoviesFromLocalDataSource(sortBy, page, true);
+            //Don't try remote on failover, if we are requesting favorites
+            boolean failover = sortBy != SortBy.FAVORITES;
+            return getMoviesFromLocalDataSource(sortBy, page, failover);
         } else {
             return getMoviesFromRemoteDataSource(sortBy, page, true);
         }
@@ -105,9 +109,11 @@ public class MoviesRepository implements Repository {
      * If no results in local db <b>or</b> different size than TMDB page size
      * <b>or</b> cache refresh time has expired, we should query remote
      * repository. If however there is no internet connection, we should fetch
-     * whatever there is in local datasource.
+     * whatever there is in local datasource. Also query local if we are
+     * requesting favorites.
      */
     private boolean shouldQueryLocalDataSource(SortBy sortBy, int page) {
+        if(sortBy == SortBy.FAVORITES) return true;
         if(!NetworkUtils.isNetworkAvailable(context)) return true;
 
         long cacheRefreshTime = Utils.getCacheRefreshTime(context);
@@ -180,6 +186,21 @@ public class MoviesRepository implements Repository {
 
     @Override
     public Single<Boolean> updateFavorite(long movieId, boolean favorite) {
-        return localDataSource.updateFavorite(movieId, favorite);
+        return localDataSource
+            .updateFavorite(movieId, favorite)
+            .doOnSuccess(success -> notifyDataChanged());
+    }
+
+    /**
+     * Clients should subscribe to the observable subject returned by this
+     * method, in order to be notified about changes in data.
+     */
+    @Override
+    public PublishSubject<Boolean> dataChanged() {
+        return notifier;
+    }
+
+    private void notifyDataChanged() {
+        notifier.onNext(true);
     }
 }
