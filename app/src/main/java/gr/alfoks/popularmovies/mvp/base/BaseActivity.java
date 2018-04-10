@@ -31,7 +31,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         registerConnectivityReceiver();
-        connectionOn = NetworkUtils.isNetworkAvailable(this);
+        connectionOn = NetworkUtils.getInstance().isNetworkAvailable(this);
         showConnectivityIndicator(connectionOn);
         init(savedInstanceState);
     }
@@ -60,7 +60,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private final BroadcastReceiver connectivityChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            boolean newConnectionState = NetworkUtils.isNetworkAvailable(BaseActivity.this);
+            boolean newConnectionState = NetworkUtils.getInstance().isNetworkAvailable(BaseActivity.this);
 
             if(connectionOn != newConnectionState) {
                 onConnectivityChangedPrivate(newConnectionState);

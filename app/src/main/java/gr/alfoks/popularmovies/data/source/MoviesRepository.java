@@ -5,6 +5,7 @@ import java.util.Arrays;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
+import gr.alfoks.popularmovies.util.NetworkAvailabilityChecker;
 import gr.alfoks.popularmovies.util.NetworkUtils;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -21,6 +22,8 @@ public class MoviesRepository implements Repository {
 
     private PublishSubject<DataChange> notifier = PublishSubject.create();
 
+    private NetworkAvailabilityChecker networkAvailabilityChecker = NetworkUtils.getInstance();
+
     public MoviesRepository(
         @NonNull Context context,
         @NonNull LocalMoviesDataSource localDataSource,
@@ -29,6 +32,10 @@ public class MoviesRepository implements Repository {
         this.context = context;
         this.localDataSource = localDataSource;
         this.remoteDataSource = remoteDataSource;
+    }
+
+    public void setNetworkAvailabilityChecker(NetworkAvailabilityChecker checker) {
+        networkAvailabilityChecker = checker;
     }
 
     @Override
@@ -45,7 +52,7 @@ public class MoviesRepository implements Repository {
      * movie. Query local if there is no internet connection, remote otherwise.
      */
     private boolean shouldQueryLocalDataSource() {
-        return !NetworkUtils.isNetworkAvailable(context);
+        return !networkAvailabilityChecker.isNetworkAvailable(context);
     }
 
     /**
