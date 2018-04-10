@@ -21,6 +21,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @BindView(R.id.txtNoConnection)
     TextView txtConnection;
 
+    private boolean connectionOn;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +31,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         registerConnectivityReceiver();
+        connectionOn = NetworkUtils.isNetworkAvailable(this);
+        showConnectivityIndicator(connectionOn);
         init(savedInstanceState);
     }
 
@@ -56,15 +60,25 @@ public abstract class BaseActivity extends AppCompatActivity {
     private final BroadcastReceiver connectivityChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            onConnectivityChangedPrivate(NetworkUtils.isNetworkAvailable(BaseActivity.this));
+            boolean newConnectionState = NetworkUtils.isNetworkAvailable(BaseActivity.this);
+
+            if(connectionOn != newConnectionState) {
+                onConnectivityChangedPrivate(newConnectionState);
+            }
+
+            connectionOn = newConnectionState;
         }
     };
 
     private void onConnectivityChangedPrivate(boolean connectionOn) {
+        showConnectivityIndicator(connectionOn);
+        onConnectivityChanged(connectionOn);
+    }
+
+    private void showConnectivityIndicator(boolean connectionOn) {
         if(txtConnection != null) {
             txtConnection.setVisibility(connectionOn ? View.GONE : View.VISIBLE);
         }
-        onConnectivityChanged(connectionOn);
     }
 
     protected abstract void onConnectivityChanged(boolean connectionOn);
