@@ -4,4 +4,5 @@ public interface MvpPresenter<V extends MvpView> {
     void attach(V view);
     void detach();
     void onError(Throwable e);
+    void onConnectivityChanged(boolean connectionOn);
 }

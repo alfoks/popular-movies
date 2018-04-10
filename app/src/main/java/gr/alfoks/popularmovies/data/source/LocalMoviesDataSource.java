@@ -5,7 +5,6 @@ import gr.alfoks.popularmovies.mvp.model.SortBy;
 import io.reactivex.Single;
 
 public interface LocalMoviesDataSource extends MoviesDataSource {
-    int getCount(SortBy sortBy, int page);
     void saveMovies(Movies movies, SortBy sortBy, int page);
     Single<Boolean> updateFavorite(long movieId, boolean favorite);
 }

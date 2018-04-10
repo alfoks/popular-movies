@@ -11,8 +11,8 @@ public interface MovieDetailsContract {
 
     interface Presenter extends MvpPresenter<MovieDetailsContract.View> {
         void loadMovie(long movieId);
-        void updateFavorite(long movieId, boolean favorite);
-        void loadTrailers(long movieId);
+        void toggleFavorite();
+        void loadTrailers();
     }
 
     interface View extends MvpView {

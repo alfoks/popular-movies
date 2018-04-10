@@ -5,7 +5,6 @@ import java.util.Date;
 import gr.alfoks.popularmovies.data.table.MoviesSortTable;
 import gr.alfoks.popularmovies.data.table.MoviesTable;
 import gr.alfoks.popularmovies.mvp.model.Movie;
-import gr.alfoks.popularmovies.mvp.model.MovieBuilder;
 import gr.alfoks.popularmovies.testutil.Utils;
 
 import android.content.ContentValues;
@@ -29,7 +28,8 @@ import static gr.alfoks.popularmovies.testutil.Utils.assertMoviesEqualNoId;
 public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
     private static final String NON_MATCHING_TITLE = "NonMatchingTitle";
 
-    private static Movie movie1 = new MovieBuilder()
+    private static Movie movie1 = Movie
+        .builder()
         .setId(100)
         .setTitle("title1")
         .setOriginalTitle("original title1")
@@ -45,14 +45,12 @@ public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
 
     static {
         sortOrder1.put(MoviesSortTable.Columns.MOVIE_ID, movie1.id);
-        sortOrder1.put(MoviesSortTable.Columns.PAGE, 1);
         sortOrder1.put(MoviesSortTable.Columns.SORT_ORDER, 11);
         sortOrder1.put(MoviesSortTable.Columns.SORT_TYPE, 111);
     }
 
-    ;
-
-    private Movie movie1Updated = new MovieBuilder()
+    private Movie movie1Updated = Movie
+        .builder()
         .setId(100)
         .setTitle("title1u")
         .setOriginalTitle("original title1u")
@@ -64,7 +62,8 @@ public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
         .setFavorite(true)
         .build();
 
-    private static Movie movie2 = new MovieBuilder()
+    private static Movie movie2 = Movie
+        .builder()
         .setId(200)
         .setTitle("title2")
         .setOriginalTitle("original title2")
@@ -80,12 +79,9 @@ public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
 
     static {
         sortOrder2.put(MoviesSortTable.Columns.MOVIE_ID, movie2.id);
-        sortOrder2.put(MoviesSortTable.Columns.PAGE, 2);
         sortOrder2.put(MoviesSortTable.Columns.SORT_ORDER, 22);
         sortOrder2.put(MoviesSortTable.Columns.SORT_TYPE, 222);
     }
-
-    ;
 
     public MoviesProviderTest() {
         super(MoviesProvider.class, MoviesTable.Content.CONTENT_AUTHORITY);
@@ -169,7 +165,7 @@ public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
         assertTrue(c != null);
         assertEquals(1, c.getCount());
         c.moveToFirst();
-        assertMoviesEqual(movie1, Movie.create(c));
+        assertMoviesEqual(movie1, Movie.builder().from(c).build());
         c.close();
     }
 
@@ -195,7 +191,7 @@ public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
         assertTrue(c != null);
         assertEquals(1, c.getCount());
         c.moveToFirst();
-        assertMoviesEqual(movie1, Movie.create(c));
+        assertMoviesEqual(movie1, Movie.builder().from(c).build());
         c.close();
     }
 
@@ -223,9 +219,9 @@ public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
         assertTrue(c != null);
         assertEquals(2, c.getCount());
         c.moveToFirst();
-        assertMoviesEqual(movie1, Movie.create(c));
+        assertMoviesEqual(movie1, Movie.builder().from(c).build());
         c.moveToNext();
-        assertMoviesEqual(movie2, Movie.create(c));
+        assertMoviesEqual(movie2, Movie.builder().from(c).build());
         c.close();
     }
 
@@ -241,7 +237,7 @@ public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
         assertTrue(c != null);
         assertEquals(1, c.getCount());
         c.moveToFirst();
-        assertMoviesEqual(movie2, Movie.create(c));
+        assertMoviesEqual(movie2, Movie.builder().from(c).build());
         c.close();
     }
 
@@ -514,7 +510,7 @@ public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
         );
 
         c.moveToFirst();
-        Movie movie = Movie.create(c);
+        Movie movie = Movie.builder().from(c).build();
         c.close();
 
         return movie;

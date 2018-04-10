@@ -43,6 +43,7 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     protected abstract P providePresenter();
     protected abstract V getThis();
     protected abstract void init(@Nullable Bundle state);
+    protected abstract void onConnectivityChanged(boolean connectionOn);
 
     protected P getPresenter() {
         return presenter;

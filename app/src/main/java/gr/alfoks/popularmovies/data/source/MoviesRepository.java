@@ -1,29 +1,25 @@
 package gr.alfoks.popularmovies.data.source;
 
-import java.util.Date;
+import java.util.Arrays;
 
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
 import gr.alfoks.popularmovies.util.NetworkUtils;
+import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.SingleSource;
 import io.reactivex.subjects.PublishSubject;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
 public class MoviesRepository implements Repository {
-    private static final String TAG = MoviesRepository.class.getSimpleName();
-
-    /** Two hours */
-    private static final long CACHE_EXPIRATION_TIMEOUT = 2 * 60 * 60 * 1000;
-
     private final Context context;
     private final LocalMoviesDataSource localDataSource;
     private final MoviesDataSource remoteDataSource;
 
-    private PublishSubject<Boolean> notifier = PublishSubject.create();
+    private PublishSubject<DataChange> notifier = PublishSubject.create();
 
     public MoviesRepository(
         @NonNull Context context,
@@ -46,19 +42,15 @@ public class MoviesRepository implements Repository {
 
     /**
      * Decide if we should query local or remote datasource for fetching a
-     * movie. If cache refresh time has expired, we should query remote
-     * repository. If however there is no internet connection, we should try
-     * local datasource.
+     * movie. Query local if there is no internet connection, remote otherwise.
      */
     private boolean shouldQueryLocalDataSource() {
-        if(!NetworkUtils.isNetworkAvailable(context)) return true;
-
-        long cacheRefreshTime = Utils.getCacheRefreshTime(context);
-        long cacheActiveTime = new Date().getTime() - cacheRefreshTime;
-
-        return cacheActiveTime <= CACHE_EXPIRATION_TIMEOUT;
+        return !NetworkUtils.isNetworkAvailable(context);
     }
 
+    /**
+     * Fetch movie from remote datasource. On error try local.
+     */
     private Single<Movie> getMovieFromLocalDataSource(long movieId) {
         return localDataSource
             .getMovie(movieId)
@@ -78,8 +70,9 @@ public class MoviesRepository implements Repository {
         return movieSingle;
     }
 
-    private SingleSource<Movie> getMovieWithFavorite(Movie movie) {
-        Single<Movie> movieSingle = localDataSource.getMovie(movie.id);
+    @SuppressLint("CheckResult")
+    private Single<Movie> getMovieWithFavorite(Movie movie) {
+        final Single<Movie> movieSingle = localDataSource.getMovie(movie.id);
         final Movie[] movieWithFavorite = new Movie[1];
 
         movieSingle
@@ -95,85 +88,40 @@ public class MoviesRepository implements Repository {
 
     @Override
     public Single<Movies> getMovies(SortBy sortBy, int page) {
-        if(shouldQueryLocalDataSource(sortBy, page)) {
-            //Don't try remote on failover, if we are requesting favorites
-            boolean failover = sortBy != SortBy.FAVORITES;
-            return getMoviesFromLocalDataSource(sortBy, page, failover);
+        if(shouldQueryLocalDataSource(sortBy)) {
+            return getMoviesFromLocalDataSource(sortBy, page);
         } else {
-            return getMoviesFromRemoteDataSource(sortBy, page, true);
+            return getMoviesFromRemoteDataSource(sortBy, page);
         }
     }
 
     /**
      * Decide if we should query local or remote datasource for fetching movies.
-     * If no results in local db <b>or</b> different size than TMDB page size
-     * <b>or</b> cache refresh time has expired, we should query remote
-     * repository. If however there is no internet connection, we should fetch
-     * whatever there is in local datasource. Also query local if we are
-     * requesting favorites.
+     * Query local if sort by is "Favorites" <b>or</b> there is no internet
+     * connection, remote otherwise.
      */
-    private boolean shouldQueryLocalDataSource(SortBy sortBy, int page) {
-        if(sortBy == SortBy.FAVORITES) return true;
-        if(!NetworkUtils.isNetworkAvailable(context)) return true;
-
-        long cacheRefreshTime = Utils.getCacheRefreshTime(context);
-        long cacheActiveTime = new Date().getTime() - cacheRefreshTime;
-        if(cacheActiveTime > CACHE_EXPIRATION_TIMEOUT) return false;
-
-        int numInLocal = localDataSource.getCount(sortBy, page);
-        int pageSize = Utils.getPageSize(context);
-
-        return numInLocal != 0 && numInLocal == pageSize;
+    private boolean shouldQueryLocalDataSource(SortBy sortBy) {
+        final boolean isFavorites = sortBy == SortBy.FAVORITES;
+        return isFavorites || shouldQueryLocalDataSource();
     }
 
-    /**
-     * Query the local datasource for movies. If not available, query remote.
-     *
-     * @param failover when true, query remote datasource if error occurs or no
-     *                 results.
-     */
     @NonNull
-    private Single<Movies> getMoviesFromLocalDataSource(SortBy sortBy, int page, boolean failover) {
-        Single<Movies> moviesSingle = localDataSource.getMovies(sortBy, page);
-
-        if(failover) {
-            moviesSingle = moviesSingle
-                .onErrorResumeNext(t -> getMoviesFromRemoteDataSource(sortBy, page, false));
-        }
-
-        return moviesSingle;
+    private Single<Movies> getMoviesFromLocalDataSource(SortBy sortBy, int page) {
+        return localDataSource.getMovies(sortBy, page);
     }
 
-    /**
-     * Query the remote datasource for movies. If not available, query local.
-     *
-     * @param failover when true, try local datasource if error occurs.
-     */
     @NonNull
-    private Single<Movies> getMoviesFromRemoteDataSource(SortBy sortBy, int page, boolean failover) {
-        Single<Movies> moviesSingle = remoteDataSource.getMovies(sortBy, page);
-
-        if(failover) {
-            moviesSingle = moviesSingle
-                .onErrorResumeNext(t -> getMoviesFromLocalDataSource(sortBy, page, false));
-        }
-
-        return moviesSingle
+    private Single<Movies> getMoviesFromRemoteDataSource(SortBy sortBy, int page) {
+        return remoteDataSource
+            .getMovies(sortBy, page)
             .doOnSuccess(movies -> onRemoteSuccess(movies, sortBy, page));
     }
 
     /**
-     * Save the results from remote datasource in local. Also update cache
-     * settings.
+     * Save the results from remote datasource in local.
      */
     private void onRemoteSuccess(Movies movies, SortBy sortBy, int page) {
-        refreshCacheSettings(movies);
         saveMoviesInLocalDataSource(movies, sortBy, page);
-    }
-
-    private void refreshCacheSettings(Movies movies) {
-        Utils.setCacheRefreshTime(context, new Date().getTime());
-        Utils.setPageSize(context, movies.getPageSize());
     }
 
     private void saveMoviesInLocalDataSource(Movies movies, SortBy sortBy, int page) {
@@ -181,26 +129,27 @@ public class MoviesRepository implements Repository {
     }
 
     @Override
-    public void reset() {
-    }
-
-    @Override
     public Single<Boolean> updateFavorite(long movieId, boolean favorite) {
+        final Movie movie = Movie.builder().setId(movieId).setFavorite(favorite).build();
         return localDataSource
             .updateFavorite(movieId, favorite)
-            .doOnSuccess(success -> notifyDataChanged());
+            .doOnSuccess(success -> notifyDataChanged(new DataChange(DataChangeType.FAVORITE, movie)));
     }
 
     /**
      * Clients should subscribe to the observable subject returned by this
      * method, in order to be notified about changes in data.
+     *
+     * @param dataChangeType varargs of {@link DataChangeType} containing the
+     *                       data change types the client wishes to subscribe
+     *                       to.
      */
     @Override
-    public PublishSubject<Boolean> dataChanged() {
-        return notifier;
+    public Observable<DataChange> getDataChangedObservable(DataChangeType... dataChangeType) {
+        return notifier.filter(data -> Arrays.asList(dataChangeType).contains(data.type));
     }
 
-    private void notifyDataChanged() {
-        notifier.onNext(true);
+    private void notifyDataChanged(DataChange dataChange) {
+        notifier.onNext(dataChange);
     }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import gr.alfoks.popularmovies.data.table.MoviesSortTable;
 import gr.alfoks.popularmovies.data.table.MoviesTable;
+import gr.alfoks.popularmovies.util.Utils;
 
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
@@ -12,6 +13,7 @@ import android.content.ContentValues;
 import android.content.OperationApplicationException;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -20,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 
+import static android.database.sqlite.SQLiteDatabase.CONFLICT_FAIL;
 import static android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE;
 import static gr.alfoks.popularmovies.data.ContentUtils.notifyChange;
 
@@ -33,6 +36,10 @@ public class MoviesProvider extends ContentProvider {
 
     private static final UriMatcher uriMatcher;
     private static final String UNKNOWN_URI = "Unknown uri: %s";
+    /** Which page to query. 1 index based. **/
+    public static final String QUERY_PARAMETER_PAGE = "page";
+    /** Page size to be used in combination with {@link #QUERY_PARAMETER_PAGE} **/
+    public static final String QUERY_PARAMETER_PAGE_SIZE = "page_size";
 
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -101,9 +108,9 @@ public class MoviesProvider extends ContentProvider {
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
         checkNonNullValues(values);
 
-        long movieId = db.insertWithOnConflict(MoviesSortTable.NAME, null, values, CONFLICT_REPLACE);
-        if(movieId != SQLITE_ERROR) notifyChange(getContext(), uri);
-        return ContentUtils.withAppendedId(MoviesSortTable.Content.CONTENT_URI, movieId);
+        long rowId = db.insertWithOnConflict(MoviesSortTable.NAME, null, values, CONFLICT_REPLACE);
+        if(rowId != SQLITE_ERROR) notifyChange(getContext(), uri);
+        return ContentUtils.withAppendedId(MoviesSortTable.Content.CONTENT_URI, rowId);
     }
 
     private void checkNonNullValues(ContentValues values) {
@@ -127,16 +134,27 @@ public class MoviesProvider extends ContentProvider {
     private int bulkInsert(String tableName, @NonNull Uri uri, @NonNull ContentValues[] values) {
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
         int numInserted = 0;
+        int conflictAlgorithm = tableName.equals(MoviesTable.NAME) ? CONFLICT_FAIL : CONFLICT_REPLACE;
 
         db.beginTransaction();
         try {
             for(ContentValues recordValues : values) {
                 checkNonNullValues(recordValues);
-                long id = db.insertWithOnConflict(
-                    tableName, null, recordValues, CONFLICT_REPLACE
-                );
+                long id = SQLITE_ERROR;
 
-                if(id != -1) {
+                try {
+                    id = db.insertWithOnConflict(
+                        tableName, null, recordValues, conflictAlgorithm
+                    );
+                } catch(SQLiteConstraintException ex) {
+                    if(tableName.equals(MoviesTable.NAME)) {
+                        String selection = MoviesTable.Columns.ID + "=?";
+                        String[] selectionArgs = new String[] { recordValues.getAsString(MoviesTable.Columns.ID) };
+                        id = db.update(tableName, recordValues, selection, selectionArgs);
+                    }
+                }
+
+                if(id != SQLITE_ERROR) {
                     numInserted++;
                 }
             }
@@ -158,6 +176,7 @@ public class MoviesProvider extends ContentProvider {
         @NonNull Uri uri, String[] projection, String selection,
         String[] selectionArgs, String sortOrder
     ) {
+        String limitString = "";
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(MoviesTable.NAME_FOR_JOIN);
 
@@ -167,6 +186,7 @@ public class MoviesProvider extends ContentProvider {
                 qb.appendWhere(MoviesTable.Columns.ID + "=" + id);
                 break;
             case MOVIES:
+                limitString = buildLimitString(uri);
                 break;
             case MOVIE_COUNT:
                 projection = new String[] { "count(1) AS total" };
@@ -182,8 +202,20 @@ public class MoviesProvider extends ContentProvider {
             selectionArgs,
             null,
             null,
-            sortOrder
+            sortOrder,
+            limitString
         );
+    }
+
+    private String buildLimitString(Uri uri) {
+        int page = Utils.parseInt(uri.getQueryParameter(QUERY_PARAMETER_PAGE));
+        int pageSize = Utils.parseInt(uri.getQueryParameter(QUERY_PARAMETER_PAGE_SIZE));
+
+        if(page == 0) {
+            return "";
+        } else {
+            return ((page - 1) * pageSize) + "," + pageSize;
+        }
     }
 
     @Override

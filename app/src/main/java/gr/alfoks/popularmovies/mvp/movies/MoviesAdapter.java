@@ -9,7 +9,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import gr.alfoks.popularmovies.R;
 import gr.alfoks.popularmovies.mvp.model.Movie;
+import io.reactivex.Observable;
+import io.reactivex.Single;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MoviesAdapter
     extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
@@ -40,14 +44,7 @@ public class MoviesAdapter
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
-        Movie movie = movies.get(position);
-
-        Picasso.with(context)
-               .load(movie.getFullPosterPath())
-               .placeholder(R.drawable.anim_loading)
-               .error(R.drawable.ic_warning)
-               .fit()
-               .into(holder.imgPoster);
+        holder.bindData(movies.get(position));
     }
 
     @Override
@@ -65,6 +62,18 @@ public class MoviesAdapter
         notifyDataSetChanged();
     }
 
+    @SuppressLint("CheckResult")
+    public void removeMovie(long movieId) {
+        Observable
+            .fromIterable(movies)
+            .filter(movie -> movie.id == movieId)
+            .subscribe(movie -> {
+                movies.remove(movie);
+                notifyDataSetChanged();
+            }, throwable -> {
+            });
+    }
+
     public interface OnItemClickedListener {
         void onItemClicked(Movie movie);
     }
@@ -72,6 +81,8 @@ public class MoviesAdapter
     class MovieViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.imgPoster)
         ImageView imgPoster;
+        @BindView(R.id.txtTitle)
+        TextView txtTitle;
 
         private MovieViewHolder(android.view.View itemView) {
             super(itemView);
@@ -80,14 +91,20 @@ public class MoviesAdapter
             imgPoster.setOnClickListener(createOnClickedListener());
         }
 
+        private void bindData(Movie movie) {
+            Picasso.with(context)
+                   .load(movie.getFullPosterPath())
+                   .placeholder(R.drawable.anim_loading)
+                   .error(R.drawable.ic_warning)
+                   .fit()
+                   .into(imgPoster);
+        }
+
         @NonNull
         private View.OnClickListener createOnClickedListener() {
-            return new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(listener != null) {
-                        listener.onItemClicked(movies.get(getLayoutPosition()));
-                    }
+            return v -> {
+                if(listener != null) {
+                    listener.onItemClicked(movies.get(getLayoutPosition()));
                 }
             };
         }

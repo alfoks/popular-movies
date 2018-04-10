@@ -10,15 +10,15 @@ public interface MoviesContract {
 
     interface Presenter extends MvpPresenter<MoviesContract.View> {
         void setSortBy(SortBy sortBy);
-        void resetList();
         void fetchNextMoviesPage();
         void showMovieDetails(Movie movie);
     }
 
     interface View extends MvpView {
-        void onSetSortBy();
-        void onListReset();
+        void onMovieRemoved(Movie movie);
+        void reset();
         void onMoviesFetched(Movies movies);
+        void onErrorFetchingMovies(Throwable e);
         void onShowMovieDetails(Movie movie);
     }
 

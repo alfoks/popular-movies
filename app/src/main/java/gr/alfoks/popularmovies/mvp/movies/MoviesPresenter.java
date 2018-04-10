@@ -1,16 +1,17 @@
 package gr.alfoks.popularmovies.mvp.movies;
 
+import gr.alfoks.popularmovies.data.source.DataChange;
+import gr.alfoks.popularmovies.data.source.DataChangeType;
 import gr.alfoks.popularmovies.data.source.Repository;
 import gr.alfoks.popularmovies.mvp.base.BasePresenter;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
 import io.reactivex.Single;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 
 public class MoviesPresenter extends BasePresenter<MoviesContract.View>
@@ -19,7 +20,6 @@ public class MoviesPresenter extends BasePresenter<MoviesContract.View>
     @NonNull
     private final Repository repository;
     private int nextPage = 1;
-    private int totalPages = 1;
     private SortBy sortBy = SortBy.POPULAR;
 
     public MoviesPresenter(@NonNull Repository repository) {
@@ -27,46 +27,62 @@ public class MoviesPresenter extends BasePresenter<MoviesContract.View>
         subscribeToDataChanges();
     }
 
+    @SuppressLint("CheckResult")
     private void subscribeToDataChanges() {
         repository
-            .dataChanged()
+            .getDataChangedObservable(DataChangeType.FAVORITE)
             .subscribeOn(Schedulers.single())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(n -> resetList(SortBy.FAVORITES));
+            .subscribe(this::dataChanged);
+    }
+
+    private void dataChanged(DataChange dataChange) {
+        switch(dataChange.type) {
+            case FAVORITE:
+                removeFavorite(dataChange);
+                break;
+        }
+    }
+
+    private void removeFavorite(DataChange dataChange) {
+        //TODO: Implement it correctly (i.e. move data access in view adapter, to presenter
+        if(!(dataChange.data instanceof Movie)) return;
+        Movie movie = (Movie)dataChange.data;
+        if(!movie.favorite) {
+            getView().onMovieRemoved(movie);
+        }
     }
 
     @Override
     public void setSortBy(SortBy sortBy) {
         this.sortBy = sortBy;
-        getView().onSetSortBy();
+        resetPage();
+        getView().reset();
     }
 
+    private void resetPage() {
+        nextPage = 1;
+    }
+
+    @SuppressLint("CheckResult")
     @Override
     public void fetchNextMoviesPage() {
-        //Don't try to load more pages than those the api can provide
-        if(nextPage > totalPages) return;
-
         final Single<Movies> moviesSingle = repository.getMovies(sortBy, nextPage);
 
         moviesSingle
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(createMoviesObserver());
+            .subscribe(this::onMoviesFetched, this::onError);
+    }
+
+    private void onMoviesFetched(Movies movies) {
+        nextPage++;
+        getView().onMoviesFetched(movies);
     }
 
     @Override
-    public void resetList() {
-        nextPage = 1;
-        getView().onListReset();
-    }
-
-    /**
-     * Reset list only if current sorting matches sortBy parameter
-     */
-    public void resetList(SortBy sortBy) {
-        if(this.sortBy == sortBy) {
-            resetList();
-        }
+    public void onError(Throwable e) {
+        getView().onErrorFetchingMovies(e);
     }
 
     @Override
@@ -75,32 +91,38 @@ public class MoviesPresenter extends BasePresenter<MoviesContract.View>
     }
 
     @Override
-    public void onError(Throwable e) {
-        super.onError(e);
-        //Todo: Show error
+    public void onConnectivityChanged(boolean connectionOn) {
+        getView().reset();
+        resetPage();
+        fetchNextMoviesPage();
     }
 
-    @NonNull
-    private SingleObserver<Movies> createMoviesObserver() {
-        return new SingleObserver<Movies>() {
+    @Override
+    protected MoviesContract.View getView() {
+        if(isViewAttached()) return super.getView();
 
-            @Override
-            public void onSubscribe(Disposable d) {
-            }
-
-            @Override
-            public void onSuccess(Movies movies) {
-                if(isViewAttached()) {
-                    totalPages = movies.totalPages;
-                    nextPage++;
-                    getView().onMoviesFetched(movies);
-                }
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                MoviesPresenter.this.onError(e);
-            }
-        };
+        return nullView;
     }
+
+    private MoviesContract.View nullView = new MoviesContract.View() {
+        @Override
+        public void onMovieRemoved(Movie movie) {
+        }
+
+        @Override
+        public void reset() {
+        }
+
+        @Override
+        public void onMoviesFetched(Movies movies) {
+        }
+
+        @Override
+        public void onErrorFetchingMovies(Throwable e) {
+        }
+
+        @Override
+        public void onShowMovieDetails(Movie movie) {
+        }
+    };
 }

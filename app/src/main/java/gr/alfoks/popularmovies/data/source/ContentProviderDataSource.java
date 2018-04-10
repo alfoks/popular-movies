@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 import gr.alfoks.popularmovies.BuildConfig;
 import gr.alfoks.popularmovies.data.ContentUtils;
 import gr.alfoks.popularmovies.data.CursorIterable;
+import gr.alfoks.popularmovies.data.MoviesProvider;
 import gr.alfoks.popularmovies.data.table.MoviesSortTable;
 import gr.alfoks.popularmovies.data.table.MoviesTable;
 import gr.alfoks.popularmovies.mvp.model.Movie;
@@ -28,8 +29,8 @@ import android.support.annotation.NonNull;
 import static gr.alfoks.popularmovies.data.MoviesProvider.SQLITE_ERROR;
 
 public class ContentProviderDataSource implements LocalMoviesDataSource {
-    private static final String SORTING_SELECTION = MoviesSortTable.Columns.PAGE + "=? " +
-        "AND " + MoviesSortTable.Columns.SORT_TYPE + "=?";
+    private static final String SORTING_SELECTION = MoviesSortTable.Columns.SORT_TYPE + "=?";
+    private static final int PAGE_SIZE = 20;
 
     @NonNull
     private final Context context;
@@ -67,10 +68,12 @@ public class ContentProviderDataSource implements LocalMoviesDataSource {
     @Override
     public Single<Movies> getMovies(SortBy sortBy, int page) {
         String sortOrder = MoviesSortTable.Columns.SORT_ORDER;
-        String[] selectionArgs = getSortingSelectionArgs(sortBy, page);
+        String selection = SORTING_SELECTION;
+        String[] selectionArgs = getSortingSelectionArgs(sortBy);
 
-        Uri uri = MoviesTable.Content.CONTENT_URI;
-        Cursor c = getCursor(uri, SORTING_SELECTION, selectionArgs, sortOrder);
+        int totalResults = getCount(selection, selectionArgs);
+        Uri uri = buildMoviesUri(page);
+        Cursor c = getCursor(uri, selection, selectionArgs, sortOrder);
 
         return Observable
             .fromIterable(CursorIterable.from(c))
@@ -81,22 +84,31 @@ public class ContentProviderDataSource implements LocalMoviesDataSource {
             })
             .map(cursor -> Movie.builder().from(cursor).build())
             .toList()
-            .map(movies -> new Movies(movies, Integer.MAX_VALUE, Integer.MAX_VALUE))
+            .map(Movies::new)
             .doOnSuccess(movies -> {
                 if(movies.getMovies().size() == 0)
-                    throw new NoSuchElementException("Could not fetch movies.");
+                    throw new NoSuchElementException("No more movies.");
             });
     }
 
-    @Override
-    public int getCount(SortBy sortBy, int page) {
+    private Uri buildMoviesUri(int page) {
+        return MoviesTable.Content.CONTENT_URI
+            .buildUpon()
+            .appendQueryParameter(MoviesProvider.QUERY_PARAMETER_PAGE, String.valueOf(page))
+            .appendQueryParameter(
+                MoviesProvider.QUERY_PARAMETER_PAGE_SIZE,
+                String.valueOf(PAGE_SIZE)
+            )
+            .build();
+    }
+
+    private int getCount(String selection, String[] selectionArgs) {
         Uri uri = MoviesTable.Content.CONTENT_URI_TOTAL;
 
         int totalPages = 0;
-        String[] selectionArgs = getSortingSelectionArgs(sortBy, page);
 
         try(
-            Cursor c = getCursor(uri, SORTING_SELECTION, selectionArgs, null)
+            Cursor c = getCursor(uri, selection, selectionArgs, null)
         ) {
             if(c != null && c.moveToNext()) {
                 totalPages = c.getInt(c.getColumnIndex(MoviesTable.Columns.Agr.TOTAL));
@@ -106,9 +118,13 @@ public class ContentProviderDataSource implements LocalMoviesDataSource {
         return totalPages;
     }
 
+    private int getNumPages(int totalResults) {
+        return (int)Math.ceil((double)totalResults / PAGE_SIZE);
+    }
+
     @NonNull
-    private String[] getSortingSelectionArgs(SortBy sortBy, int page) {
-        return new String[] { String.valueOf(page), String.valueOf(sortBy.getId()) };
+    private String[] getSortingSelectionArgs(SortBy sortBy) {
+        return new String[] { String.valueOf(sortBy.getId()) };
     }
 
     @Override
@@ -153,7 +169,7 @@ public class ContentProviderDataSource implements LocalMoviesDataSource {
     private ContentProviderOperation getUpdateFavoriteOperation(long movieId, boolean favorite) {
         Uri uri = ContentUtils.withAppendedId(MoviesTable.Content.CONTENT_URI, movieId);
         ContentValues values = new ContentValues();
-        values.put(MoviesTable.Columns.FAVORITE, favorite);
+        values.put(MoviesTable.Columns.FAVORITE, favorite ? 1 : 0);
 
         return ContentProviderOperation.newUpdate(uri).withValues(values).build();
     }
@@ -162,7 +178,6 @@ public class ContentProviderDataSource implements LocalMoviesDataSource {
         Uri uri = MoviesSortTable.Content.CONTENT_URI;
         ContentValues orderValues = new ContentValues();
         orderValues.put(MoviesSortTable.Columns.MOVIE_ID, movieId);
-        orderValues.put(MoviesSortTable.Columns.PAGE, 1);
         orderValues.put(MoviesSortTable.Columns.SORT_ORDER, new Date().getTime());
         orderValues.put(MoviesSortTable.Columns.SORT_TYPE, sortBy.getId());
 

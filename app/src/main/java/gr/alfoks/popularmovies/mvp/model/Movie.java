@@ -79,6 +79,13 @@ public class Movie implements Serializable {
     }
 
     public ContentValues asValues() {
+        ContentValues values = asValuesNoFavorite();
+        values.put(MoviesTable.Columns.FAVORITE, favorite ? 1 : 0);
+
+        return values;
+    }
+
+    public ContentValues asValuesNoFavorite() {
         ContentValues values = new ContentValues();
         values.put(MoviesTable.Columns.ID, id);
         values.put(MoviesTable.Columns.TITLE, title);
@@ -88,7 +95,6 @@ public class Movie implements Serializable {
         values.put(MoviesTable.Columns.VOTE_AVERAGE, voteAverage);
         values.put(MoviesTable.Columns.RELEASE_DATE, releaseDate.getTime());
         values.put(MoviesTable.Columns.RUNTIME, runtime);
-        values.put(MoviesTable.Columns.FAVORITE, favorite ? 1 : 0);
 
         return values;
     }

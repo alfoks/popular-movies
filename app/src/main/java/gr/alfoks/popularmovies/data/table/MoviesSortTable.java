@@ -12,10 +12,7 @@ public class MoviesSortTable {
 
     public static final class Columns {
         public static final String MOVIE_ID = "movieId";
-        /** Page as returned from TMDB */
-        public static final String PAGE = "page";
         public static final String SORT_TYPE = "sortType";
-        /** Order as returned from TMDB within a page */
         public static final String SORT_ORDER = "sortOrder";
     }
 
@@ -42,7 +39,6 @@ public class MoviesSortTable {
 
         public static final String CREATE_TABLE = "CREATE TABLE " + NAME + " (" +
             Columns.MOVIE_ID + " INTEGER " + FOREIGN_KEY + "," +
-            Columns.PAGE + " INTEGER," +
             Columns.SORT_TYPE + " INTEGER," +
             Columns.SORT_ORDER + " INTEGER," +
             PRIMARY_KEY +

@@ -70,17 +70,18 @@ public class MoviesFragment
         scrollListener = createScrollListener(layoutManager);
         rcvMovies.addOnScrollListener(scrollListener);
 
-        getPresenter().setSortBy(getSortBy());
-        getPresenter().resetList();
+        setSortBy(getSortBy());
+    }
+
+    public void setSortBy(SortBy sortBy) {
+        getArguments().putSerializable(KEY_SORT_BY, sortBy);
+        getPresenter().setSortBy(sortBy);
+        getPresenter().fetchNextMoviesPage();
     }
 
     @NonNull
-    private final MoviesAdapter.OnItemClickedListener onItemClickedListener = new MoviesAdapter.OnItemClickedListener() {
-        @Override
-        public void onItemClicked(Movie movie) {
-            getPresenter().showMovieDetails(movie);
-        }
-    };
+    private final MoviesAdapter.OnItemClickedListener onItemClickedListener =
+        movie -> getPresenter().showMovieDetails(movie);
 
     @NonNull
     private EndlessRecyclerViewScrollListener createScrollListener(final GridLayoutManager layoutManager) {
@@ -93,15 +94,9 @@ public class MoviesFragment
     }
 
     @Override
-    public void onSetSortBy() {
-    }
-
-    @Override
-    public void onListReset() {
+    public void reset() {
         adapter.reset();
         scrollListener.resetState();
-
-        getPresenter().fetchNextMoviesPage();
     }
 
     @Override
@@ -109,6 +104,11 @@ public class MoviesFragment
         for(Movie movie : movies.getMovies()) {
             adapter.addMovie(movie);
         }
+    }
+
+    @Override
+    public void onErrorFetchingMovies(Throwable e) {
+        //TODO: Show error
     }
 
     @Override
@@ -132,30 +132,24 @@ public class MoviesFragment
         listener = null;
     }
 
+    @Override
+    public void onMovieRemoved(Movie movie) {
+        adapter.removeMovie(movie.id);
+    }
+
     private SortBy getSortBy() {
         SortBy sortBy = (SortBy)getArguments().getSerializable(KEY_SORT_BY);
         return sortBy == null ? SortBy.POPULAR : sortBy;
     }
 
-    public void setSortBy(SortBy sortBy) {
-        getArguments().putSerializable(KEY_SORT_BY, sortBy);
-        getPresenter().setSortBy(sortBy);
-        getPresenter().resetList();
-    }
-
     public void onConnectivityChanged(boolean connectionOn) {
-        if(connectionOn) {
-            getPresenter().fetchNextMoviesPage();
-        }
+        getPresenter().onConnectivityChanged(connectionOn);
     }
 
     public interface OnMovieClickedListener {
         void onMovieClicked(long movieId);
     }
 
-    private final OnMovieClickedListener nullListener = new OnMovieClickedListener() {
-        @Override
-        public void onMovieClicked(long movieId) {
-        }
+    private final OnMovieClickedListener nullListener = movieId -> {
     };
 }

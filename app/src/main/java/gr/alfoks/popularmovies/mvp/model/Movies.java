@@ -12,15 +12,9 @@ import android.content.ContentValues;
 public class Movies {
     @SerializedName("results")
     private final List<Movie> movies;
-    @SerializedName("total_pages")
-    public final int totalPages;
-    @SerializedName("total_results")
-    private final int totalResults;
 
-    public Movies(List<Movie> movies, int totalPages, int totalResults) {
+    public Movies(List<Movie> movies) {
         this.movies = movies;
-        this.totalPages = totalPages;
-        this.totalResults = totalResults;
     }
 
     public List<Movie> getMovies() {
@@ -30,30 +24,23 @@ public class Movies {
     public ContentValues[] asValues() {
         ContentValues[] values = new ContentValues[movies.size()];
         for(int i = 0; i < movies.size(); i++) {
-            values[i] = movies.get(i).asValues();
+            values[i] = movies.get(i).asValuesNoFavorite();
         }
 
         return values;
     }
 
     public ContentValues[] asSortOrderValues(SortBy sortBy, int page) {
+        long order = page * 10000000;
         ContentValues[] values = new ContentValues[movies.size()];
         for(int i = 0; i < movies.size(); i++) {
             ContentValues orderValues = new ContentValues();
             orderValues.put(MoviesSortTable.Columns.MOVIE_ID, movies.get(i).id);
-            orderValues.put(MoviesSortTable.Columns.PAGE, page);
-            orderValues.put(MoviesSortTable.Columns.SORT_ORDER, i);
+            orderValues.put(MoviesSortTable.Columns.SORT_ORDER, order + i);
             orderValues.put(MoviesSortTable.Columns.SORT_TYPE, sortBy.getId());
             values[i] = orderValues;
         }
 
         return values;
-    }
-
-    public int getPageSize() {
-        if(totalPages > 0) {
-            return (int)Math.ceil((double)totalResults / totalPages);
-        }
-        return 0;
     }
 }

@@ -48,9 +48,6 @@ public class MovieDetailsFragment
     @BindView(R.id.txtDummy)
     TextView txtDummy;
 
-    private long movieId;
-    private Movie movie = Movie.builder().build();
-
     public MovieDetailsFragment() {
     }
 
@@ -82,7 +79,7 @@ public class MovieDetailsFragment
 
     @Override
     protected void init(@Nullable Bundle state) {
-        movieId = getArguments().getLong(KEY_MOVIE_ID);
+        long movieId = getArguments().getLong(KEY_MOVIE_ID);
         getPresenter().loadMovie(movieId);
     }
 
@@ -105,8 +102,6 @@ public class MovieDetailsFragment
                .placeholder(R.drawable.anim_loading)
                .error(R.drawable.ic_warning)
                .into(imgPoster);
-
-        this.movie = movie;
     }
 
     private void setFavoriteButtonIcon(boolean favorite) {
@@ -115,13 +110,12 @@ public class MovieDetailsFragment
     }
 
     @OnClick(R.id.btnFavorite)
-    void updateFavorite() {
-        getPresenter().updateFavorite(movieId, !movie.favorite);
+    void toggleFavorite() {
+        getPresenter().toggleFavorite();
     }
 
     @Override
     public void onFavoriteUpdated(boolean favorite) {
-        movie = Movie.builder().from(movie).setFavorite(favorite).build();
         setFavoriteButtonIcon(favorite);
     }
 
@@ -131,9 +125,6 @@ public class MovieDetailsFragment
     }
 
     public void onConnectivityChanged(boolean connectionOn) {
-        //When we have internet again, load the movie, if not loaded already
-        if(connectionOn && movie.isEmpty()) {
-            getPresenter().loadMovie(movieId);
-        }
+        getPresenter().onConnectivityChanged(connectionOn);
     }
 }
