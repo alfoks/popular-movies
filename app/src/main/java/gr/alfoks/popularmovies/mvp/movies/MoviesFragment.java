@@ -1,5 +1,7 @@
 package gr.alfoks.popularmovies.mvp.movies;
 
+import java.util.List;
+
 import butterknife.BindView;
 import gr.alfoks.popularmovies.PopularMoviesApplication;
 import gr.alfoks.popularmovies.R;
@@ -21,6 +23,8 @@ public class MoviesFragment
     extends BaseFragment<MoviesContract.View, MoviesContract.Presenter>
     implements MoviesContract.View {
     private static final String KEY_SORT_BY = "SORT_BY";
+    private static final String KEY_LAYOUT_MANAGER_STATE = "LM_STATE";
+    private static final String KEY_MOVIES = "MOVIES";
 
     @BindView(R.id.rcvMovies)
     RecyclerView rcvMovies;
@@ -28,6 +32,9 @@ public class MoviesFragment
     private MoviesAdapter adapter;
     private EndlessRecyclerViewScrollListener scrollListener;
     private OnMovieClickedListener listener;
+    private GridLayoutManager layoutManager;
+
+    private boolean stateRestored = false;
 
     public MoviesFragment() {
     }
@@ -60,7 +67,7 @@ public class MoviesFragment
 
     @Override
     protected void init(@Nullable Bundle state) {
-        final GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+        layoutManager = new GridLayoutManager(getContext(), 2);
         rcvMovies.setLayoutManager(layoutManager);
         rcvMovies.setItemAnimator(new DefaultItemAnimator());
 
@@ -70,13 +77,27 @@ public class MoviesFragment
         scrollListener = createScrollListener(layoutManager);
         rcvMovies.addOnScrollListener(scrollListener);
 
-        setSortBy(getSortBy());
+        if(state != null) {
+            List<Movie> movies =
+                Movie.listFromValuesArrayList(
+                    state.getParcelableArrayList(KEY_MOVIES)
+                );
+
+            adapter.addMovies(movies);
+            layoutManager.onRestoreInstanceState(state.getParcelable(KEY_LAYOUT_MANAGER_STATE));
+            stateRestored = true;
+        } else {
+            setSortBy(getSortBy());
+        }
     }
 
     public void setSortBy(SortBy sortBy) {
-        getArguments().putSerializable(KEY_SORT_BY, sortBy);
-        getPresenter().setSortBy(sortBy);
-        getPresenter().fetchNextMoviesPage();
+        if(!stateRestored) {
+            getArguments().putSerializable(KEY_SORT_BY, sortBy);
+            getPresenter().setSortBy(sortBy);
+            getPresenter().fetchNextMoviesPage();
+        }
+        stateRestored = false;
     }
 
     @NonNull
@@ -91,6 +112,13 @@ public class MoviesFragment
                 getPresenter().fetchNextMoviesPage();
             }
         };
+    }
+
+    public void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+
+        state.putParcelable(KEY_LAYOUT_MANAGER_STATE, layoutManager.onSaveInstanceState());
+        state.putParcelableArrayList(KEY_MOVIES, Movie.listAsValuesArrayList(adapter.getMovies()));
     }
 
     @Override

@@ -22,13 +22,19 @@ import android.widget.Spinner;
 
 public class MoviesActivity extends BaseActivity
     implements MoviesFragment.OnMovieClickedListener {
+    private static final String KEY_SORT_BY = "SORT_BY";
+
     @BindView(R.id.tlbMain)
     Toolbar tlbMovies;
+
+    private Spinner spnSortBy = null;
 
     @Override
     protected int getContentResource() {
         return R.layout.activity_movies;
     }
+
+    private SortBy sortBy = SortBy.POPULAR;
 
     @Override
     protected void init(@Nullable Bundle state) {
@@ -44,11 +50,49 @@ public class MoviesActivity extends BaseActivity
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if(savedInstanceState.containsKey(KEY_SORT_BY)) {
+            sortBy = SortBy.fromId(savedInstanceState.getInt(KEY_SORT_BY));
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         setupSortBySpinner(menu);
 
         return true;
+    }
+
+    private void setupSortBySpinner(Menu menu) {
+        SortBy.setLocalizedDisplayNames(this);
+        spnSortBy = (Spinner)menu.findItem(R.id.miSortBy).getActionView();
+        final SortBySpinnerAdapter sortByAdapter = new SortBySpinnerAdapter(
+            this,
+            R.layout.item_sortby,
+            SortBy.values()
+        );
+
+        //Remove spinner's arrow
+        spnSortBy.setBackgroundColor(Color.TRANSPARENT);
+
+        spnSortBy.setAdapter(sortByAdapter);
+
+        //Initial selected item. On configuration change it will have been read
+        //from restored state. Does not (and should not) trigger select listener
+        //because it's set before setting the listener itself.
+        setSelectedSortByItem(sortBy);
+        spnSortBy.setOnItemSelectedListener(createOnItemSelectedListener(sortByAdapter));
+    }
+
+    private void setSelectedSortByItem(SortBy sortBy) {
+        for(int i = 0; i < spnSortBy.getAdapter().getCount(); i++) {
+            if(spnSortBy.getAdapter().getItem(i) == sortBy) {
+                spnSortBy.setSelection(i);
+            }
+        }
     }
 
     @Override
@@ -62,22 +106,6 @@ public class MoviesActivity extends BaseActivity
         }
     }
 
-    private void setupSortBySpinner(Menu menu) {
-        SortBy.setLocalizedDisplayNames(this);
-        Spinner spnSortBy = (Spinner)menu.findItem(R.id.miSortBy).getActionView();
-        final SortBySpinnerAdapter sortByAdapter = new SortBySpinnerAdapter(
-            this,
-            R.layout.item_sortby,
-            SortBy.values()
-        );
-
-        //Remove spinner's arrow
-        spnSortBy.setBackgroundColor(Color.TRANSPARENT);
-
-        spnSortBy.setAdapter(sortByAdapter);
-        spnSortBy.setOnItemSelectedListener(createOnItemSelectedListener(sortByAdapter));
-    }
-
     private void showCredits() {
         final Intent showLegalIntent = new Intent(this, CreditsActivity.class);
         startActivity(showLegalIntent);
@@ -88,11 +116,11 @@ public class MoviesActivity extends BaseActivity
         return new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                SortBy sortBy = sortByAdapter.getItem(position);
+                sortBy = sortByAdapter.getItem(position);
 
-                MoviesFragment fragment = (MoviesFragment)getSupportFragmentManager().findFragmentById(R.id.frgPlaceholder);
+                MoviesFragment fragment = getFragment();
                 if(fragment == null) {
-                    attachFragment(SortBy.POPULAR);
+                    attachFragment(sortBy);
                 } else {
                     fragment.setSortBy(sortBy);
                 }
@@ -100,9 +128,12 @@ public class MoviesActivity extends BaseActivity
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         };
+    }
+
+    private MoviesFragment getFragment() {
+        return (MoviesFragment)getSupportFragmentManager().findFragmentById(R.id.frgPlaceholder);
     }
 
     private void attachFragment(SortBy sortBy) {
@@ -110,6 +141,12 @@ public class MoviesActivity extends BaseActivity
             .beginTransaction()
             .add(R.id.frgPlaceholder, MoviesFragment.newInstance(sortBy))
             .commit();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_SORT_BY, sortBy.getId());
     }
 
     @Override
@@ -124,7 +161,7 @@ public class MoviesActivity extends BaseActivity
 
     @Override
     protected void onConnectivityChanged(boolean connectionOn) {
-        MoviesFragment fragment = (MoviesFragment)getSupportFragmentManager().findFragmentById(R.id.frgPlaceholder);
+        MoviesFragment fragment = getFragment();
         if(fragment != null) {
             fragment.onConnectivityChanged(connectionOn);
         }

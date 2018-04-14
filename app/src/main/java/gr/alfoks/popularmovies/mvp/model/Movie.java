@@ -1,8 +1,10 @@
 package gr.alfoks.popularmovies.mvp.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -99,6 +101,25 @@ public class Movie implements Serializable {
         return values;
     }
 
+    public static ArrayList<ContentValues> listAsValuesArrayList(List<Movie> movies) {
+        ArrayList<ContentValues> valuesArrayList = new ArrayList<>(movies.size());
+        for(Movie movie : movies) {
+            valuesArrayList.add(movie.asValues());
+        }
+
+        return valuesArrayList;
+    }
+
+    public static List<Movie> listFromValuesArrayList(ArrayList<ContentValues> valuesArrayList) {
+        List<Movie> movies = new ArrayList<>();
+        if(valuesArrayList == null) return movies;
+
+        for(ContentValues values : valuesArrayList) {
+            movies.add(Movie.builder().from(values).build());
+        }
+        return movies;
+    }
+
     public static class MovieBuilder {
         private long id = EMPTY_ID;
         private String title;
@@ -183,6 +204,21 @@ public class Movie implements Serializable {
             setReleaseDate(new Date(date));
             setRuntime(c.getInt(c.getColumnIndex(MoviesTable.Columns.RUNTIME)));
             setFavorite(c.getInt(c.getColumnIndex(MoviesTable.Columns.FAVORITE)) == 1);
+
+            return this;
+        }
+
+        public MovieBuilder from(ContentValues values) {
+            setId(values.getAsLong(MoviesTable.Columns.ID));
+            setTitle(values.getAsString(MoviesTable.Columns.TITLE));
+            setOriginalTitle(values.getAsString(MoviesTable.Columns.ORIGINAL_TITLE));
+            setOverview(values.getAsString(MoviesTable.Columns.OVERVIEW));
+            setPosterPath(values.getAsString(MoviesTable.Columns.POSTER_PATH));
+            setVoteAverage(values.getAsFloat(MoviesTable.Columns.VOTE_AVERAGE));
+            long date = values.getAsLong(MoviesTable.Columns.RELEASE_DATE);
+            setReleaseDate(new Date(date));
+            setRuntime(values.getAsInteger(MoviesTable.Columns.RUNTIME));
+            setFavorite(values.getAsInteger(MoviesTable.Columns.FAVORITE) == 1);
 
             return this;
         }

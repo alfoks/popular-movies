@@ -10,7 +10,6 @@ import butterknife.ButterKnife;
 import gr.alfoks.popularmovies.R;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import io.reactivex.Observable;
-import io.reactivex.Single;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -57,6 +56,10 @@ public class MoviesAdapter
         notifyDataSetChanged();
     }
 
+    void addMovies(List<Movie> movies) {
+        this.movies.addAll(movies);
+    }
+
     void reset() {
         movies.clear();
         notifyDataSetChanged();
@@ -72,6 +75,16 @@ public class MoviesAdapter
                 notifyDataSetChanged();
             }, throwable -> {
             });
+    }
+
+    //TODO: Don't keep data in adapter
+
+    /**
+     * Expose movies. This method should be removed and the data not stored in
+     * adapter at all.
+     **/
+    public List<Movie> getMovies() {
+        return movies;
     }
 
     public interface OnItemClickedListener {

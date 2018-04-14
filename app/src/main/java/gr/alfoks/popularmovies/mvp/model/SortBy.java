@@ -32,6 +32,23 @@ public enum SortBy implements Serializable {
         return id;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
+
+    public static SortBy fromId(int id) {
+        for(SortBy sortBy : SortBy.values()) {
+            if(id == sortBy.id) return sortBy;
+        }
+
+        return null;
+    }
+
     /**
      * Sets the display name for each value to it's localized string.
      *
@@ -48,14 +65,5 @@ public enum SortBy implements Serializable {
             }
 
         }
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    @Override
-    public String toString() {
-        return value;
     }
 }
