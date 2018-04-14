@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -69,9 +70,7 @@ public class Movie implements Serializable {
         if(hours > 0) {
             sb.append(hours).append(":");
         }
-        if(minutes > 0) {
-            sb.append(minutes);
-        }
+        sb.append(String.format(Locale.US, "%02d", minutes));
 
         return sb.toString();
     }
