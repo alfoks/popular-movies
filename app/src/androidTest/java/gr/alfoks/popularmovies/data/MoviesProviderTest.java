@@ -28,7 +28,7 @@ import static gr.alfoks.popularmovies.testutil.Utils.assertMoviesEqualNoId;
 public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
     private static final String NON_MATCHING_TITLE = "NonMatchingTitle";
 
-    private static Movie movie1 = Movie
+    private final static Movie movie1 = Movie
         .builder()
         .setId(100)
         .setTitle("title1")
@@ -41,7 +41,7 @@ public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
         .setFavorite(false)
         .build();
 
-    private static ContentValues sortOrder1 = new ContentValues();
+    private final static ContentValues sortOrder1 = new ContentValues();
 
     static {
         sortOrder1.put(MoviesSortTable.Columns.MOVIE_ID, movie1.id);
@@ -49,7 +49,7 @@ public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
         sortOrder1.put(MoviesSortTable.Columns.SORT_TYPE, 111);
     }
 
-    private Movie movie1Updated = Movie
+    private final Movie movie1Updated = Movie
         .builder()
         .setId(100)
         .setTitle("title1u")
@@ -62,7 +62,7 @@ public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
         .setFavorite(true)
         .build();
 
-    private static Movie movie2 = Movie
+    private final static Movie movie2 = Movie
         .builder()
         .setId(200)
         .setTitle("title2")
@@ -75,7 +75,7 @@ public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
         .setFavorite(false)
         .build();
 
-    private static ContentValues sortOrder2 = new ContentValues();
+    private final static ContentValues sortOrder2 = new ContentValues();
 
     static {
         sortOrder2.put(MoviesSortTable.Columns.MOVIE_ID, movie2.id);

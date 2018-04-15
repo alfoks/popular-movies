@@ -15,12 +15,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-public class MoviesRepository implements Repository {
+public final class MoviesRepository implements Repository {
     private final Context context;
     private final LocalMoviesDataSource localDataSource;
     private final MoviesDataSource remoteDataSource;
 
-    private PublishSubject<DataChange> notifier = PublishSubject.create();
+    private final PublishSubject<DataChange> notifier = PublishSubject.create();
 
     private NetworkAvailabilityChecker networkAvailabilityChecker = NetworkUtils.getInstance();
 

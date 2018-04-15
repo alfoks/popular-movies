@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-public class CreditsActivity extends AppCompatActivity {
+public final class CreditsActivity extends AppCompatActivity {
     @BindView(R.id.tlbMain)
     Toolbar tlbMain;
 

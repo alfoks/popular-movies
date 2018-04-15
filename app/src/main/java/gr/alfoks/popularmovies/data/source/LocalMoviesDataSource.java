@@ -4,7 +4,7 @@ import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
 import io.reactivex.Single;
 
-public interface LocalMoviesDataSource extends MoviesDataSource {
+interface LocalMoviesDataSource extends MoviesDataSource {
     void saveMovies(Movies movies, SortBy sortBy, int page);
     Single<Boolean> updateFavorite(long movieId, boolean favorite);
 }

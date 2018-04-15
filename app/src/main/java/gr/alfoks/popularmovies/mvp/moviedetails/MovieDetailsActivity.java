@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 
-public class MovieDetailsActivity extends BaseActivity {
+public final class MovieDetailsActivity extends BaseActivity {
     @BindView(R.id.tlbMain)
     Toolbar tlbMovieDetails;
 

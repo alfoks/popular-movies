@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-public class Utils {
+public final class Utils {
 
     @NonNull
     public static Bundle getExtras(Intent intent) {

@@ -11,7 +11,6 @@ import io.reactivex.Single;
 import android.support.annotation.NonNull;
 
 public class TheMovieDbDataSource implements MoviesDataSource {
-    private static final String TAG = TheMovieDbDataSource.class.getSimpleName();
     @NonNull
     private final TheMovieDbApi theMovieDbApi;
 

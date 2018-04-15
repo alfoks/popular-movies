@@ -5,11 +5,10 @@ import java.util.Iterator;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
-public class CursorIterable implements Iterable<Cursor> {
+public final class CursorIterable implements Iterable<Cursor> {
+    private final Cursor cursor;
 
-    private Cursor cursor;
-
-    public CursorIterable(Cursor cursor) {
+    private CursorIterable(Cursor cursor) {
         this.cursor = cursor;
     }
 

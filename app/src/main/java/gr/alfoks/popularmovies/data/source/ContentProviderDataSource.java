@@ -28,7 +28,7 @@ import android.support.annotation.NonNull;
 
 import static gr.alfoks.popularmovies.data.MoviesProvider.SQLITE_ERROR;
 
-public class ContentProviderDataSource implements LocalMoviesDataSource {
+public final class ContentProviderDataSource implements LocalMoviesDataSource {
     private static final String SORTING_SELECTION = MoviesSortTable.Columns.SORT_TYPE + "=?";
     private static final int PAGE_SIZE = 20;
 
@@ -68,12 +68,10 @@ public class ContentProviderDataSource implements LocalMoviesDataSource {
     @Override
     public Single<Movies> getMovies(SortBy sortBy, int page) {
         String sortOrder = MoviesSortTable.Columns.SORT_ORDER;
-        String selection = SORTING_SELECTION;
         String[] selectionArgs = getSortingSelectionArgs(sortBy);
 
-        int totalResults = getCount(selection, selectionArgs);
         Uri uri = buildMoviesUri(page);
-        Cursor c = getCursor(uri, selection, selectionArgs, sortOrder);
+        Cursor c = getCursor(uri, SORTING_SELECTION, selectionArgs, sortOrder);
 
         return Observable
             .fromIterable(CursorIterable.from(c))
@@ -100,26 +98,6 @@ public class ContentProviderDataSource implements LocalMoviesDataSource {
                 String.valueOf(PAGE_SIZE)
             )
             .build();
-    }
-
-    private int getCount(String selection, String[] selectionArgs) {
-        Uri uri = MoviesTable.Content.CONTENT_URI_TOTAL;
-
-        int totalPages = 0;
-
-        try(
-            Cursor c = getCursor(uri, selection, selectionArgs, null)
-        ) {
-            if(c != null && c.moveToNext()) {
-                totalPages = c.getInt(c.getColumnIndex(MoviesTable.Columns.Agr.TOTAL));
-            }
-        }
-
-        return totalPages;
-    }
-
-    private int getNumPages(int totalResults) {
-        return (int)Math.ceil((double)totalResults / PAGE_SIZE);
     }
 
     @NonNull

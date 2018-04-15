@@ -14,7 +14,7 @@ import gr.alfoks.popularmovies.data.table.MoviesTable;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-public class Movie implements Serializable {
+public final class Movie implements Serializable {
     private static final long EMPTY_ID = -1;
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
 
@@ -188,6 +188,7 @@ public class Movie implements Serializable {
             setVoteAverage(movie.voteAverage);
             setReleaseDate(movie.releaseDate);
             setRuntime(movie.runtime);
+            setFavorite(movie.favorite);
 
             return this;
         }

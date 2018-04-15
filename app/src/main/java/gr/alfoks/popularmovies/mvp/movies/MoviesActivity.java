@@ -20,7 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
-public class MoviesActivity extends BaseActivity
+public final class MoviesActivity extends BaseActivity
     implements MoviesFragment.OnMovieClickedListener {
     private static final String KEY_SORT_BY = "SORT_BY";
 

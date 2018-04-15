@@ -7,7 +7,7 @@ import android.net.Uri;
 
 import static gr.alfoks.popularmovies.data.Constants.CONTENT_SCHEME;
 
-public class MoviesSortTable {
+public final class MoviesSortTable {
     public static final String NAME = "MoviesSort";
 
     public static final class Columns {

@@ -6,7 +6,7 @@ import gr.alfoks.popularmovies.mvp.model.Movie;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class Utils {
+public final class Utils {
     public static void assertMoviesEqual(Movie expected, Movie actual) {
         assertEquals(expected.id, actual.id);
         assertMoviesEqualNoId(expected, actual);

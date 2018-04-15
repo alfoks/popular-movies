@@ -19,7 +19,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-public class MoviesFragment
+public final class MoviesFragment
     extends BaseFragment<MoviesContract.View, MoviesContract.Presenter>
     implements MoviesContract.View {
     private static final String KEY_SORT_BY = "SORT_BY";

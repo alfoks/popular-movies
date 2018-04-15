@@ -7,7 +7,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 
-public class ContentUtils extends ContentUris {
+public final class ContentUtils extends ContentUris {
     static String[] appendValueToSelectionArgs(String[] selectionArgs, String value) {
         String[] newSelectionArgs;
 

@@ -5,6 +5,7 @@ import butterknife.ButterKnife;
 import gr.alfoks.popularmovies.R;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -14,13 +15,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-class SortBySpinnerAdapter extends ArrayAdapter<SortBy> {
+final class SortBySpinnerAdapter extends ArrayAdapter<SortBy> {
     private final SortBy[] sortOptions;
     private final LayoutInflater inflater;
     @LayoutRes
     private final int viewResourceId;
-    private View sortIcon;
+    private final View sortIcon;
 
+    @SuppressLint("InflateParams")
     SortBySpinnerAdapter(Context context, int viewResourceId, SortBy[] sortOptions) {
         super(context, viewResourceId, sortOptions);
 

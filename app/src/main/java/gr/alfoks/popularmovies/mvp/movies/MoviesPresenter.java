@@ -14,7 +14,7 @@ import io.reactivex.schedulers.Schedulers;
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 
-public class MoviesPresenter extends BasePresenter<MoviesContract.View>
+public final class MoviesPresenter extends BasePresenter<MoviesContract.View>
     implements MoviesContract.Presenter {
 
     @NonNull
@@ -104,7 +104,7 @@ public class MoviesPresenter extends BasePresenter<MoviesContract.View>
         return nullView;
     }
 
-    private MoviesContract.View nullView = new MoviesContract.View() {
+    private final MoviesContract.View nullView = new MoviesContract.View() {
         @Override
         public void onMovieRemoved(Movie movie) {
         }

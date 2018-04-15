@@ -9,7 +9,7 @@ import gr.alfoks.popularmovies.data.table.MoviesSortTable;
 
 import android.content.ContentValues;
 
-public class Movies {
+public final class Movies {
     @SerializedName("results")
     private final List<Movie> movies;
 

@@ -7,7 +7,7 @@ import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 
-public class DateUtils {
+public final class DateUtils {
     public static void assertDateEquals(Date date, int day, int month, int year) {
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         assertEquals(day, localDate.getDayOfMonth());

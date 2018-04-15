@@ -26,13 +26,12 @@ import static android.database.sqlite.SQLiteDatabase.CONFLICT_FAIL;
 import static android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE;
 import static gr.alfoks.popularmovies.data.ContentUtils.notifyChange;
 
-public class MoviesProvider extends ContentProvider {
+public final class MoviesProvider extends ContentProvider {
     public static final int SQLITE_ERROR = -1;
 
     private static final int MOVIE = 100;
     private static final int MOVIES = 101;
-    private static final int MOVIE_COUNT = 102;
-    private static final int MOVIES_SORT = 103;
+    private static final int MOVIES_SORT = 102;
 
     private static final UriMatcher uriMatcher;
     private static final String UNKNOWN_URI = "Unknown uri: %s";
@@ -45,7 +44,6 @@ public class MoviesProvider extends ContentProvider {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(MoviesTable.Content.CONTENT_AUTHORITY, MoviesTable.Content.PATH_MOVIE, MOVIE);
         uriMatcher.addURI(MoviesTable.Content.CONTENT_AUTHORITY, MoviesTable.Content.PATH_MOVIES, MOVIES);
-        uriMatcher.addURI(MoviesTable.Content.CONTENT_AUTHORITY, MoviesTable.Content.PATH_TOTAL, MOVIE_COUNT);
         uriMatcher.addURI(MoviesTable.Content.CONTENT_AUTHORITY, MoviesSortTable.Content.PATH_MOVIES_SORT, MOVIES_SORT);
     }
 
@@ -187,9 +185,6 @@ public class MoviesProvider extends ContentProvider {
                 break;
             case MOVIES:
                 limitString = buildLimitString(uri);
-                break;
-            case MOVIE_COUNT:
-                projection = new String[] { "count(1) AS total" };
                 break;
             default:
                 throw new UnsupportedOperationException(String.format(UNKNOWN_URI, uri));

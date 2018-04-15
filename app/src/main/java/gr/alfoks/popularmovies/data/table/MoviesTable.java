@@ -7,7 +7,7 @@ import android.net.Uri;
 
 import static gr.alfoks.popularmovies.data.Constants.CONTENT_SCHEME;
 
-public class MoviesTable {
+public final class MoviesTable {
     public static final String NAME = "Movies";
     public static final String NAME_FOR_JOIN = NAME + " m " +
         "INNER JOIN " +
@@ -15,8 +15,6 @@ public class MoviesTable {
         "ON " +
         "ms." + MoviesSortTable.Columns.MOVIE_ID +
         " = m." + Columns.ID;
-
-    public static final String KEY_PAGE_SIZE = "pageSize";
 
     public static final class Columns {
         public static final String ID = "id";
@@ -29,28 +27,17 @@ public class MoviesTable {
         public static final String RELEASE_DATE = "releaseDate";
         public static final String RUNTIME = "runtime";
         public static final String FAVORITE = "favorite";
-
-        /** Aggregate columns */
-        public static final class Agr {
-            public static final String TOTAL = "total";
-        }
     }
 
     public static final class Content {
         public static final String CONTENT_AUTHORITY = BuildConfig.CONTENT_AUTHORITY;
         public static final String PATH_MOVIES = "movie";
         public static final String PATH_MOVIE = PATH_MOVIES + "/#";
-        public static final String PATH_TOTAL = PATH_MOVIES + "/" + Columns.Agr.TOTAL;
 
         private static final Uri BASE_CONTENT_URI = Uri.parse(CONTENT_SCHEME + CONTENT_AUTHORITY);
         public static final Uri CONTENT_URI = BASE_CONTENT_URI
             .buildUpon()
             .appendPath(PATH_MOVIES)
-            .build();
-
-        public static final Uri CONTENT_URI_TOTAL = CONTENT_URI
-            .buildUpon()
-            .appendPath(Columns.Agr.TOTAL)
             .build();
     }
 

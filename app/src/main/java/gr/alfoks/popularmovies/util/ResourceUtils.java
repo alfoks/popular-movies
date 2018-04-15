@@ -25,24 +25,28 @@ public class ResourceUtils {
             int eventType = parser.getEventType();
 
             while(eventType != XmlPullParser.END_DOCUMENT) {
-                if(eventType == XmlPullParser.START_TAG) {
-                    if(parser.getName().equals("key")) {
-                        key = parser.getAttributeValue(null, "name");
+                switch(eventType) {
+                    case XmlPullParser.START_TAG:
+                        if(parser.getName().equals("key")) {
+                            key = parser.getAttributeValue(null, "name");
 
-                        if(key == null) {
-                            parser.close();
+                            if(key == null) {
+                                parser.close();
+                            }
                         }
-                    }
-                } else if(eventType == XmlPullParser.END_TAG) {
-                    if(parser.getName().equals("key")) {
-                        map.put(key, value);
-                        key = null;
-                        value = null;
-                    }
-                } else if(eventType == XmlPullParser.TEXT) {
-                    if(key != null) {
-                        value = parser.getText();
-                    }
+                        break;
+                    case XmlPullParser.END_TAG:
+                        if(parser.getName().equals("key")) {
+                            map.put(key, value);
+                            key = null;
+                            value = null;
+                        }
+                        break;
+                    case XmlPullParser.TEXT:
+                        if(key != null) {
+                            value = parser.getText();
+                        }
+                        break;
                 }
                 eventType = parser.next();
             }

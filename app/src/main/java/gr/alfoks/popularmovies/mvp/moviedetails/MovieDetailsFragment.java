@@ -18,7 +18,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MovieDetailsFragment
+public final class MovieDetailsFragment
     extends
     BaseFragment<MovieDetailsContract.View, MovieDetailsContract.Presenter>
     implements MovieDetailsContract.View {

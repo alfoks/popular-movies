@@ -9,7 +9,7 @@ import retrofit2.HttpException;
 
 import android.support.annotation.NonNull;
 
-public class MoviesResult {
+public final class MoviesResult {
     private Movies movies;
     private int httpStatusCode;
     private String message;

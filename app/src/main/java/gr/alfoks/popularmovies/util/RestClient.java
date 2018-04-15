@@ -1,18 +1,13 @@
 package gr.alfoks.popularmovies.util;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import android.support.annotation.NonNull;
 
 public final class RestClient<RestApi> {
     private final String baseUrl;
@@ -27,8 +22,8 @@ public final class RestClient<RestApi> {
         HashMap<String, String> headers) {
         this.baseUrl = baseUrl;
         this.restApiClass = restApiClass;
-        this.parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<String, String>();
-        this.headers = headers != null ? new HashMap<>(headers) : new HashMap<String, String>();
+        this.parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<>();
+        this.headers = headers != null ? new HashMap<>(headers) : new HashMap<>();
     }
 
     public RestApi create() {
@@ -46,21 +41,18 @@ public final class RestClient<RestApi> {
 
     private OkHttpClient createHttpClient() {
         return new OkHttpClient.Builder()
-            .addInterceptor(new Interceptor() {
-                @Override
-                public Response intercept(@NonNull Chain chain) throws IOException {
-                    Request request = chain.request();
-                    HttpUrl originalUrl = request.url();
-                    HttpUrl newUrl = addQueryParameters(originalUrl).build();
+            .addInterceptor(chain -> {
+                Request request = chain.request();
+                HttpUrl originalUrl = request.url();
+                HttpUrl newUrl = addQueryParameters(originalUrl).build();
 
-                    Request.Builder requestBuilder = request
-                        .newBuilder()
-                        .url(newUrl);
+                Request.Builder requestBuilder = request
+                    .newBuilder()
+                    .url(newUrl);
 
-                    addHeaders(requestBuilder);
+                addHeaders(requestBuilder);
 
-                    return chain.proceed(requestBuilder.build());
-                }
+                return chain.proceed(requestBuilder.build());
             })
             .build();
     }

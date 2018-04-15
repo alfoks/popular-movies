@@ -73,8 +73,8 @@ public class TheMovieDbApiTest {
         server.enqueue(new MockResponse().setBody(""));
         server.enqueue(new MockResponse().setBody(""));
 
-        api.getMovies(SortBy.POPULAR, 1).subscribe(new TestObserver<Movies>());
-        api.getMovies(SortBy.TOP_RATED, 1).subscribe(new TestObserver<Movies>());
+        api.getMovies(SortBy.POPULAR, 1).subscribe(new TestObserver<>());
+        api.getMovies(SortBy.TOP_RATED, 1).subscribe(new TestObserver<>());
 
         RecordedRequest request = server.takeRequest();
         assertEquals(TheMovieDbApi.API_PATH + "/popular?page=1", request.getPath());
@@ -84,7 +84,7 @@ public class TheMovieDbApiTest {
     }
 
     @Test
-    public void testGetMoviesErrorResponse() throws Exception {
+    public void testGetMoviesErrorResponse() {
         int code = 401;
         String message = "{\"status_message\": \"error\", \"status_code\": 401 }";
 
@@ -101,7 +101,7 @@ public class TheMovieDbApiTest {
     }
 
     @Test
-    public void testGetMoviesEmptyResponse() throws Exception {
+    public void testGetMoviesEmptyResponse() {
         server.enqueue(new MockResponse().setResponseCode(200).setBody(NO_MOVIES_JSON_RESULT));
 
         MoviesResult moviesResult = new MoviesResult();
@@ -112,7 +112,7 @@ public class TheMovieDbApiTest {
     }
 
     @Test
-    public void testGetMoviesOneResult() throws Exception {
+    public void testGetMoviesOneResult() {
         server.enqueue(new MockResponse()
             .setResponseCode(200)
             .setBody(ONE_MOVIE_ALL_FIELDS_JSON_RESULT));
@@ -136,7 +136,7 @@ public class TheMovieDbApiTest {
     }
 
     @Test
-    public void testGetMoviesTwoResults() throws Exception {
+    public void testGetMoviesTwoResults() {
         server.enqueue(new MockResponse()
             .setResponseCode(200)
             .setBody(TWO_MOVIES_JSON_RESULT));

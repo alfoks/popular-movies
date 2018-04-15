@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MoviesAdapter
+public final class MoviesAdapter
     extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
     private final Context context;
     private final List<Movie> movies = new ArrayList<>();
