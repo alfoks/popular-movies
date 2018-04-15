@@ -7,8 +7,8 @@ import gr.alfoks.popularmovies.data.source.MoviesRepository;
 import gr.alfoks.popularmovies.data.source.TheMovieDbDataSource;
 import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsPresenter;
 import gr.alfoks.popularmovies.mvp.movies.MoviesPresenter;
-import gr.alfoks.popularmovies.util.RestClient;
-import gr.alfoks.popularmovies.util.TheMovieDbApi;
+import gr.alfoks.popularmovies.api.RestClient;
+import gr.alfoks.popularmovies.api.TheMovieDbApi;
 
 import android.app.Application;
 import android.support.annotation.NonNull;

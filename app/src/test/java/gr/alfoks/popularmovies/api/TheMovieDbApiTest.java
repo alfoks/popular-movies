@@ -1,7 +1,9 @@
-package gr.alfoks.popularmovies.util;
+package gr.alfoks.popularmovies.api;
 
 import java.io.IOException;
 
+import gr.alfoks.popularmovies.api.RestClient;
+import gr.alfoks.popularmovies.api.TheMovieDbApi;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.mvp.model.SortBy;

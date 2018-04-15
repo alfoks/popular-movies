@@ -1,4 +1,4 @@
-package gr.alfoks.popularmovies.util;
+package gr.alfoks.popularmovies.api;
 
 import java.util.HashMap;
 
