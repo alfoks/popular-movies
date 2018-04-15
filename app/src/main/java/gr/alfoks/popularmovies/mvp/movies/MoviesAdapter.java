@@ -105,10 +105,12 @@ public class MoviesAdapter
         }
 
         private void bindData(Movie movie) {
+            txtTitle.setText(movie.title);
+
             Picasso.with(context)
                    .load(movie.getFullPosterPath())
                    .placeholder(R.drawable.anim_loading)
-                   .error(R.drawable.ic_warning)
+                   .error(android.R.color.transparent)
                    .fit()
                    .into(imgPoster);
         }
