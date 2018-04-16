@@ -1,11 +1,9 @@
 package gr.alfoks.popularmovies.data.table;
 
-import gr.alfoks.popularmovies.BuildConfig;
-
 import android.net.Uri;
 
 
-import static gr.alfoks.popularmovies.data.Constants.CONTENT_SCHEME;
+import static gr.alfoks.popularmovies.data.Constants.BASE_CONTENT_URI;
 
 public final class MoviesTable {
     public static final String NAME = "Movies";
@@ -30,11 +28,9 @@ public final class MoviesTable {
     }
 
     public static final class Content {
-        public static final String CONTENT_AUTHORITY = BuildConfig.CONTENT_AUTHORITY;
         public static final String PATH_MOVIES = "movie";
         public static final String PATH_MOVIE = PATH_MOVIES + "/#";
 
-        private static final Uri BASE_CONTENT_URI = Uri.parse(CONTENT_SCHEME + CONTENT_AUTHORITY);
         public static final Uri CONTENT_URI = BASE_CONTENT_URI
             .buildUpon()
             .appendPath(PATH_MOVIES)

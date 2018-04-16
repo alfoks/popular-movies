@@ -2,6 +2,7 @@ package gr.alfoks.popularmovies.data;
 
 import java.util.Date;
 
+import gr.alfoks.popularmovies.BuildConfig;
 import gr.alfoks.popularmovies.data.table.MoviesSortTable;
 import gr.alfoks.popularmovies.data.table.MoviesTable;
 import gr.alfoks.popularmovies.mvp.model.Movie;
@@ -84,7 +85,7 @@ public class MoviesProviderTest extends ProviderTestCase2<MoviesProvider> {
     }
 
     public MoviesProviderTest() {
-        super(MoviesProvider.class, MoviesTable.Content.CONTENT_AUTHORITY);
+        super(MoviesProvider.class, BuildConfig.CONTENT_AUTHORITY);
     }
 
     @Before

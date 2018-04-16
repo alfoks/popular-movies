@@ -2,8 +2,10 @@ package gr.alfoks.popularmovies.data;
 
 import java.util.ArrayList;
 
+import gr.alfoks.popularmovies.BuildConfig;
 import gr.alfoks.popularmovies.data.table.MoviesSortTable;
 import gr.alfoks.popularmovies.data.table.MoviesTable;
+import gr.alfoks.popularmovies.data.table.TrailersTable;
 import gr.alfoks.popularmovies.util.Utils;
 
 import android.content.ContentProvider;
@@ -32,6 +34,7 @@ public final class MoviesProvider extends ContentProvider {
     private static final int MOVIE = 100;
     private static final int MOVIES = 101;
     private static final int MOVIES_SORT = 102;
+    private static final int TRAILERS = 103;
 
     private static final UriMatcher uriMatcher;
     private static final String UNKNOWN_URI = "Unknown uri: %s";
@@ -41,10 +44,12 @@ public final class MoviesProvider extends ContentProvider {
     public static final String QUERY_PARAMETER_PAGE_SIZE = "page_size";
 
     static {
+        String authority = BuildConfig.CONTENT_AUTHORITY;
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(MoviesTable.Content.CONTENT_AUTHORITY, MoviesTable.Content.PATH_MOVIE, MOVIE);
-        uriMatcher.addURI(MoviesTable.Content.CONTENT_AUTHORITY, MoviesTable.Content.PATH_MOVIES, MOVIES);
-        uriMatcher.addURI(MoviesTable.Content.CONTENT_AUTHORITY, MoviesSortTable.Content.PATH_MOVIES_SORT, MOVIES_SORT);
+        uriMatcher.addURI(authority, MoviesTable.Content.PATH_MOVIE, MOVIE);
+        uriMatcher.addURI(authority, MoviesTable.Content.PATH_MOVIES, MOVIES);
+        uriMatcher.addURI(authority, MoviesSortTable.Content.PATH_MOVIES_SORT, MOVIES_SORT);
+        uriMatcher.addURI(authority, TrailersTable.Content.PATH_TRAILERS, TRAILERS);
     }
 
     private SQLiteOpenHelper dbHelper;
@@ -124,6 +129,8 @@ public final class MoviesProvider extends ContentProvider {
                 return bulkInsert(MoviesTable.NAME, uri, values);
             case MOVIES_SORT:
                 return bulkInsert(MoviesSortTable.NAME, uri, values);
+            case TRAILERS:
+                return bulkInsert(TrailersTable.NAME, uri, values);
             default:
                 throw new UnsupportedOperationException(String.format(UNKNOWN_URI, uri));
         }
@@ -132,6 +139,9 @@ public final class MoviesProvider extends ContentProvider {
     private int bulkInsert(String tableName, @NonNull Uri uri, @NonNull ContentValues[] values) {
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
         int numInserted = 0;
+        /* TODO: Remove "Favorite" column from movies table. It's unnecessary
+        and results in code like the following. We know if a movie is favorite
+        from it's presence in MoviesSort table with the corresponding sort type.*/
         int conflictAlgorithm = tableName.equals(MoviesTable.NAME) ? CONFLICT_FAIL : CONFLICT_REPLACE;
 
         db.beginTransaction();
@@ -214,55 +224,6 @@ public final class MoviesProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        int numDeleted;
-
-        switch(uriMatcher.match(uri)) {
-            case MOVIE:
-                numDeleted = deleteMovie(uri, selection, selectionArgs);
-                break;
-            case MOVIES:
-                numDeleted = deleteMovies(selection, selectionArgs);
-                break;
-            case MOVIES_SORT:
-                numDeleted = deleteSortOrders(selection, selectionArgs);
-                break;
-            default:
-                throw new UnsupportedOperationException(String.format(UNKNOWN_URI, uri));
-        }
-
-        if(numDeleted != 0) {
-            notifyChange(getContext(), uri);
-        }
-
-        return numDeleted;
-    }
-
-    private int deleteMovie(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        String movieId = ContentUtils.getStringId(uri);
-        String newSelection = ContentUtils.appendFieldToSelection(selection, MoviesTable.Columns.ID);
-        String[] newArgs = ContentUtils.appendValueToSelectionArgs(selectionArgs, movieId);
-
-        return db.delete(MoviesTable.NAME, newSelection, newArgs);
-    }
-
-    private int deleteMovies(String selection, String[] selectionArgs) {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        selection = ContentUtils.normalizeSelection(selection);
-        return db.delete(MoviesTable.NAME, selection, selectionArgs);
-    }
-
-    private int deleteSortOrders(String selection, String[] selectionArgs) {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        selection = ContentUtils.normalizeSelection(selection);
-        return db.delete(MoviesSortTable.NAME, selection, selectionArgs);
-    }
-
-    @Override
     public int update(
         @NonNull Uri uri, ContentValues values,
         String selection, String[] selectionArgs
@@ -299,5 +260,50 @@ public final class MoviesProvider extends ContentProvider {
     private int updateMovies(ContentValues values, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
         return db.update(MoviesTable.NAME, values, selection, selectionArgs);
+    }
+
+    @Override
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
+        int numDeleted;
+
+        switch(uriMatcher.match(uri)) {
+            case MOVIE:
+                numDeleted = deleteMovie(uri, selection, selectionArgs);
+                break;
+            case MOVIES:
+                numDeleted = deleteTable(MoviesTable.NAME, selection, selectionArgs);
+                break;
+            case MOVIES_SORT:
+                numDeleted = deleteTable(MoviesSortTable.NAME, selection, selectionArgs);
+                break;
+            case TRAILERS:
+                numDeleted = deleteTable(TrailersTable.NAME, selection, selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException(String.format(UNKNOWN_URI, uri));
+        }
+
+        if(numDeleted != 0) {
+            notifyChange(getContext(), uri);
+        }
+
+        return numDeleted;
+    }
+
+    private int deleteMovie(@NonNull Uri uri, String selection, String[] selectionArgs) {
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        String movieId = ContentUtils.getStringId(uri);
+        String newSelection = ContentUtils.appendFieldToSelection(selection, MoviesTable.Columns.ID);
+        String[] newArgs = ContentUtils.appendValueToSelectionArgs(selectionArgs, movieId);
+
+        return db.delete(MoviesTable.NAME, newSelection, newArgs);
+    }
+
+    private int deleteTable(String tableName, String selection, String[] selectionArgs) {
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        selection = ContentUtils.normalizeSelection(selection);
+        return db.delete(tableName, selection, selectionArgs);
     }
 }
