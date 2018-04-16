@@ -48,6 +48,7 @@ public final class MoviesPresenter extends BasePresenter<MoviesContract.View>
         //TODO: Implement it correctly (i.e. move data access in view adapter, to presenter
         if(!(dataChange.data instanceof Movie)) return;
         Movie movie = (Movie)dataChange.data;
+        //TODO: Account for fact that unfavorited movie maybe favorited again before returning to list
         if(!movie.favorite) {
             getView().onMovieRemoved(movie);
         }
@@ -66,35 +67,35 @@ public final class MoviesPresenter extends BasePresenter<MoviesContract.View>
 
     @SuppressLint("CheckResult")
     @Override
-    public void fetchNextMoviesPage() {
-        final Single<Movies> moviesSingle = repository.getMovies(sortBy, nextPage);
+    public void loadMovies() {
+        final Single<Movies> moviesSingle = repository.loadMovies(sortBy, nextPage);
 
         moviesSingle
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::onMoviesFetched, this::onError);
+            .subscribe(this::onMoviesLoaded, this::onError);
     }
 
-    private void onMoviesFetched(Movies movies) {
+    private void onMoviesLoaded(Movies movies) {
         nextPage++;
-        getView().onMoviesFetched(movies);
+        getView().onMoviesLoaded(movies);
     }
 
     @Override
     public void onError(Throwable e) {
-        getView().onErrorFetchingMovies(e);
+        getView().onErrorLoadingMovies(e);
     }
 
     @Override
-    public void showMovieDetails(Movie movie) {
-        getView().onShowMovieDetails(movie);
+    public void movieClicked(Movie movie) {
+        getView().onMovieClicked(movie);
     }
 
     @Override
     public void onConnectivityChanged(boolean connectionOn) {
         getView().reset();
         resetPage();
-        fetchNextMoviesPage();
+        loadMovies();
     }
 
     @Override
@@ -114,15 +115,15 @@ public final class MoviesPresenter extends BasePresenter<MoviesContract.View>
         }
 
         @Override
-        public void onMoviesFetched(Movies movies) {
+        public void onMoviesLoaded(Movies movies) {
         }
 
         @Override
-        public void onErrorFetchingMovies(Throwable e) {
+        public void onErrorLoadingMovies(Throwable e) {
         }
 
         @Override
-        public void onShowMovieDetails(Movie movie) {
+        public void onMovieClicked(Movie movie) {
         }
     };
 }

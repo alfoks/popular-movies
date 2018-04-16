@@ -95,21 +95,21 @@ public final class MoviesFragment
         if(!stateRestored) {
             getArguments().putSerializable(KEY_SORT_BY, sortBy);
             getPresenter().setSortBy(sortBy);
-            getPresenter().fetchNextMoviesPage();
+            getPresenter().loadMovies();
         }
         stateRestored = false;
     }
 
     @NonNull
     private final MoviesAdapter.OnItemClickedListener onItemClickedListener =
-        movie -> getPresenter().showMovieDetails(movie);
+        movie -> getPresenter().movieClicked(movie);
 
     @NonNull
     private EndlessRecyclerViewScrollListener createScrollListener(final GridLayoutManager layoutManager) {
         return new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                getPresenter().fetchNextMoviesPage();
+                getPresenter().loadMovies();
             }
         };
     }
@@ -128,19 +128,19 @@ public final class MoviesFragment
     }
 
     @Override
-    public void onMoviesFetched(Movies movies) {
+    public void onMoviesLoaded(Movies movies) {
         for(Movie movie : movies.getMovies()) {
             adapter.addMovie(movie);
         }
     }
 
     @Override
-    public void onErrorFetchingMovies(Throwable e) {
+    public void onErrorLoadingMovies(Throwable e) {
         //TODO: Show error
     }
 
     @Override
-    public void onShowMovieDetails(Movie movie) {
+    public void onMovieClicked(Movie movie) {
         listener.onMovieClicked(movie.id);
     }
 

@@ -13,8 +13,8 @@ public interface TheMovieDbApi {
     String API_PATH = "/3/movie";
 
     @GET(API_PATH + "/{movie-id}")
-    Single<Movie> getMovie(@Path("movie-id") long movieId);
+    Single<Movie> loadMovie(@Path("movie-id") long movieId);
 
     @GET(API_PATH + "/{sort-by}")
-    Single<Movies> getMovies(@Path("sort-by") SortBy sortBy, @Query("page") int page);
+    Single<Movies> loadMovies(@Path("sort-by") SortBy sortBy, @Query("page") int page);
 }

@@ -115,8 +115,8 @@ public final class MovieDetailsFragment
     }
 
     @Override
-    public void onFavoriteUpdated(boolean favorite) {
-        setFavoriteButtonIcon(favorite);
+    public void onMovieUpdated(Movie movie) {
+        setFavoriteButtonIcon(movie.favorite);
     }
 
     @Override

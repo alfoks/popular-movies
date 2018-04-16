@@ -19,14 +19,14 @@ public class TheMovieDbDataSource implements MoviesDataSource {
     }
 
     @Override
-    public Single<Movie> getMovie(long movieId) {
-        return theMovieDbApi.getMovie(movieId);
+    public Single<Movie> loadMovie(long movieId) {
+        return theMovieDbApi.loadMovie(movieId);
     }
 
     @Override
-    public Single<Movies> getMovies(SortBy sortBy, int page) {
+    public Single<Movies> loadMovies(SortBy sortBy, int page) {
         return theMovieDbApi
-            .getMovies(sortBy, page)
+            .loadMovies(sortBy, page)
             .doOnSuccess(movies -> {
                 if(movies.getMovies().size() == 0)
                     throw new NoSuchElementException("No more movies.");

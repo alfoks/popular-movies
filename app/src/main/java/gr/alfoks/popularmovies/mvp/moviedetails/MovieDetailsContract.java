@@ -17,7 +17,7 @@ public interface MovieDetailsContract {
 
     interface View extends MvpView {
         void onMovieLoaded(Movie movie);
-        void onFavoriteUpdated(boolean favorite);
+        void onMovieUpdated(Movie movie);
         void onTrailersLoaded(List<Trailer> trailers);
     }
 }

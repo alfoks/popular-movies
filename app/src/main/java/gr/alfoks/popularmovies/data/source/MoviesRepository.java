@@ -39,16 +39,16 @@ public final class MoviesRepository implements Repository {
     }
 
     @Override
-    public Single<Movie> getMovie(long movieId) {
+    public Single<Movie> loadMovie(long movieId) {
         if(shouldQueryLocalDataSource()) {
-            return getMovieFromLocalDataSource(movieId);
+            return loadMovieFromLocalDataSource(movieId);
         } else {
-            return getMovieFromRemoteDataSource(movieId, true);
+            return loadMovieFromRemoteDataSource(movieId, true);
         }
     }
 
     /**
-     * Decide if we should query local or remote datasource for fetching a
+     * Decide if we should query local or remote datasource for loading a
      * movie. Query local if there is no internet connection, remote otherwise.
      */
     private boolean shouldQueryLocalDataSource() {
@@ -56,18 +56,18 @@ public final class MoviesRepository implements Repository {
     }
 
     /**
-     * Fetch movie from remote datasource. On error try local.
+     * Load movie from remote datasource. On error try local.
      */
-    private Single<Movie> getMovieFromLocalDataSource(long movieId) {
+    private Single<Movie> loadMovieFromLocalDataSource(long movieId) {
         return localDataSource
-            .getMovie(movieId)
-            .onErrorResumeNext(getMovieFromRemoteDataSource(movieId, false));
+            .loadMovie(movieId)
+            .onErrorResumeNext(loadMovieFromRemoteDataSource(movieId, false));
     }
 
-    private Single<Movie> getMovieFromRemoteDataSource(long movieId, boolean failover) {
-        Single<Movie> movieSingle = remoteDataSource.getMovie(movieId);
+    private Single<Movie> loadMovieFromRemoteDataSource(long movieId, boolean failover) {
+        Single<Movie> movieSingle = remoteDataSource.loadMovie(movieId);
         if(failover) {
-            movieSingle = movieSingle.onErrorResumeNext(t -> localDataSource.getMovie(movieId));
+            movieSingle = movieSingle.onErrorResumeNext(t -> localDataSource.loadMovie(movieId));
         }
 
         //When querying remote datasource check to see if movie is stored
@@ -79,7 +79,7 @@ public final class MoviesRepository implements Repository {
 
     @SuppressLint("CheckResult")
     private Single<Movie> getMovieWithFavorite(Movie movie) {
-        final Single<Movie> movieSingle = localDataSource.getMovie(movie.id);
+        final Single<Movie> movieSingle = localDataSource.loadMovie(movie.id);
         final Movie[] movieWithFavorite = new Movie[1];
 
         movieSingle
@@ -93,17 +93,18 @@ public final class MoviesRepository implements Repository {
         }
     }
 
+    //TODO: Move no more movies exception here
     @Override
-    public Single<Movies> getMovies(SortBy sortBy, int page) {
+    public Single<Movies> loadMovies(SortBy sortBy, int page) {
         if(shouldQueryLocalDataSource(sortBy)) {
-            return getMoviesFromLocalDataSource(sortBy, page);
+            return loadMoviesFromLocalDataSource(sortBy, page);
         } else {
-            return getMoviesFromRemoteDataSource(sortBy, page);
+            return loadMoviesFromRemoteDataSource(sortBy, page);
         }
     }
 
     /**
-     * Decide if we should query local or remote datasource for fetching movies.
+     * Decide if we should query local or remote datasource for loading movies.
      * Query local if sort by is "Favorites" <b>or</b> there is no internet
      * connection, remote otherwise.
      */
@@ -113,14 +114,14 @@ public final class MoviesRepository implements Repository {
     }
 
     @NonNull
-    private Single<Movies> getMoviesFromLocalDataSource(SortBy sortBy, int page) {
-        return localDataSource.getMovies(sortBy, page);
+    private Single<Movies> loadMoviesFromLocalDataSource(SortBy sortBy, int page) {
+        return localDataSource.loadMovies(sortBy, page);
     }
 
     @NonNull
-    private Single<Movies> getMoviesFromRemoteDataSource(SortBy sortBy, int page) {
+    private Single<Movies> loadMoviesFromRemoteDataSource(SortBy sortBy, int page) {
         return remoteDataSource
-            .getMovies(sortBy, page)
+            .loadMovies(sortBy, page)
             .doOnSuccess(movies -> onRemoteSuccess(movies, sortBy, page));
     }
 

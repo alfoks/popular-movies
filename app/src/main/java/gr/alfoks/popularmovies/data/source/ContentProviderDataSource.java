@@ -40,7 +40,7 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
     }
 
     @Override
-    public Single<Movie> getMovie(long movieId) {
+    public Single<Movie> loadMovie(long movieId) {
         Cursor c = getMovieCursor(movieId);
 
         return Observable
@@ -66,7 +66,7 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
     }
 
     @Override
-    public Single<Movies> getMovies(SortBy sortBy, int page) {
+    public Single<Movies> loadMovies(SortBy sortBy, int page) {
         String sortOrder = MoviesSortTable.Columns.SORT_ORDER;
         String[] selectionArgs = getSortingSelectionArgs(sortBy);
 

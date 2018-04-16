@@ -28,7 +28,7 @@ public final class MovieDetailsPresenter
     @SuppressLint("CheckResult")
     @Override
     public void loadMovie(long movieId) {
-        Single<Movie> movieObservable = repository.getMovie(movieId);
+        Single<Movie> movieObservable = repository.loadMovie(movieId);
 
         movieObservable
             .subscribeOn(Schedulers.io())
@@ -53,7 +53,7 @@ public final class MovieDetailsPresenter
 
     private void onToggleFavoriteSuccess() {
         movie = Movie.builder().from(movie).setFavorite(!movie.favorite).build();
-        getView().onFavoriteUpdated(movie.favorite);
+        getView().onMovieUpdated(movie);
     }
 
     @Override
@@ -87,7 +87,7 @@ public final class MovieDetailsPresenter
         }
 
         @Override
-        public void onFavoriteUpdated(boolean favorite) {
+        public void onMovieUpdated(Movie movie) {
         }
 
         @Override

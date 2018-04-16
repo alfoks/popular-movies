@@ -6,6 +6,6 @@ import gr.alfoks.popularmovies.mvp.model.SortBy;
 import io.reactivex.Single;
 
 interface MoviesDataSource {
-    Single<Movie> getMovie(long movieId);
-    Single<Movies> getMovies(SortBy sortBy, int page);
+    Single<Movie> loadMovie(long movieId);
+    Single<Movies> loadMovies(SortBy sortBy, int page);
 }
