@@ -2,6 +2,7 @@ package gr.alfoks.popularmovies.data.source;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import gr.alfoks.popularmovies.BuildConfig;
 import gr.alfoks.popularmovies.data.ContentUtils;
@@ -13,6 +14,8 @@ import gr.alfoks.popularmovies.data.table.TrailersTable;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
+import gr.alfoks.popularmovies.mvp.model.Trailer;
+import gr.alfoks.popularmovies.mvp.model.Trailers;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
@@ -51,7 +54,31 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
                 }
             })
             .map(cursor -> Movie.builder().from(cursor).build())
-            .elementAtOrError(0);
+            .elementAtOrError(0)
+            .flatMap(this::loadMovieTrailers);
+    }
+
+    private Single<Movie> loadMovieTrailers(Movie movie) {
+        Uri uri = TrailersTable.Content.CONTENT_URI;
+        String selection = TrailersTable.Columns.MOVIE_ID + "=?";
+        String[] selectionArgs = new String[] { String.valueOf(movie.id) };
+        String sortOrder = TrailersTable.Columns.ID;
+
+        Cursor c = getCursor(uri, selection, selectionArgs, sortOrder);
+
+        return Observable
+            .fromIterable(CursorIterable.from(c))
+            .doAfterNext(cursor -> {
+                if(cursor.getPosition() == cursor.getCount() - 1) {
+                    cursor.close();
+                }
+            })
+            .map(cursor -> Trailer.builder().from(c).build())
+            .toList()
+            .map(trailersList -> {
+                Trailers trailers = new Trailers(trailersList);
+                return Movie.builder().from(movie).setTrailers(trailers).build();
+            });
     }
 
     private Cursor getMovieCursor(long movieId) {

@@ -3,6 +3,7 @@ package gr.alfoks.popularmovies.mvp.model;
 import gr.alfoks.popularmovies.data.table.TrailersTable;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
 public class Trailer {
     private static final String YOUTUBE_SITE = "YouTube";
@@ -12,10 +13,14 @@ public class Trailer {
     public final String key;
     public final String site;
 
-    public Trailer(String id, String key, String site) {
-        this.id = id;
-        this.key = key;
-        this.site = site;
+    private Trailer(TrailerBuilder builder) {
+        this.id = builder.id;
+        this.key = builder.key;
+        this.site = builder.site;
+    }
+
+    public static TrailerBuilder builder() {
+        return new TrailerBuilder();
     }
 
     public String getUrl() {
@@ -35,4 +40,38 @@ public class Trailer {
 
         return values;
     }
+
+    public static class TrailerBuilder {
+        private String id;
+        private String key;
+        private String site;
+
+        public TrailerBuilder setId(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public TrailerBuilder setKey(String key) {
+            this.key = key;
+            return this;
+        }
+
+        public TrailerBuilder setSite(String site) {
+            this.site = site;
+            return this;
+        }
+
+        public Trailer build() {
+            return new Trailer(this);
+        }
+
+        public Trailer.TrailerBuilder from(Cursor c) {
+            setId(c.getString(c.getColumnIndex(TrailersTable.Columns.ID)));
+            setKey(c.getString(c.getColumnIndex(TrailersTable.Columns.KEY)));
+            setSite(c.getString(c.getColumnIndex(TrailersTable.Columns.SITE)));
+
+            return this;
+        }
+    }
+
 }

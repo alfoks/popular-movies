@@ -196,6 +196,9 @@ public final class MoviesProvider extends ContentProvider {
             case MOVIES:
                 limitString = buildLimitString(uri);
                 break;
+            case TRAILERS:
+                qb.setTables(TrailersTable.NAME);
+                break;
             default:
                 throw new UnsupportedOperationException(String.format(UNKNOWN_URI, uri));
         }
