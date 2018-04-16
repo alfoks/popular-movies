@@ -1,6 +1,7 @@
 package gr.alfoks.popularmovies.data.source;
 
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
@@ -48,8 +49,8 @@ public final class MoviesRepository implements Repository {
     }
 
     /**
-     * Decide if we should query local or remote datasource for loading a
-     * movie. Query local if there is no internet connection, remote otherwise.
+     * Decide if we should query local or remote datasource for loading a movie.
+     * Query local if there is no internet connection, remote otherwise.
      */
     private boolean shouldQueryLocalDataSource() {
         return !networkAvailabilityChecker.isNetworkAvailable(context);
@@ -93,14 +94,19 @@ public final class MoviesRepository implements Repository {
         }
     }
 
-    //TODO: Move no more movies exception here
     @Override
     public Single<Movies> loadMovies(SortBy sortBy, int page) {
+        final Single<Movies> moviesSingle;
         if(shouldQueryLocalDataSource(sortBy)) {
-            return loadMoviesFromLocalDataSource(sortBy, page);
+            moviesSingle = loadMoviesFromLocalDataSource(sortBy, page);
         } else {
-            return loadMoviesFromRemoteDataSource(sortBy, page);
+            moviesSingle = loadMoviesFromRemoteDataSource(sortBy, page);
         }
+
+        return moviesSingle.doOnSuccess(movies -> {
+            if(movies.getMovies().size() == 0)
+                throw new NoSuchElementException("No more movies.");
+        });
     }
 
     /**

@@ -82,11 +82,7 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
             })
             .map(cursor -> Movie.builder().from(cursor).build())
             .toList()
-            .map(Movies::new)
-            .doOnSuccess(movies -> {
-                if(movies.getMovies().size() == 0)
-                    throw new NoSuchElementException("No more movies.");
-            });
+            .map(Movies::new);
     }
 
     private Uri buildMoviesUri(int page) {

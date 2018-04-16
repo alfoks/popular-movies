@@ -26,10 +26,6 @@ public class TheMovieDbDataSource implements MoviesDataSource {
     @Override
     public Single<Movies> loadMovies(SortBy sortBy, int page) {
         return theMovieDbApi
-            .loadMovies(sortBy, page)
-            .doOnSuccess(movies -> {
-                if(movies.getMovies().size() == 0)
-                    throw new NoSuchElementException("No more movies.");
-            });
+            .loadMovies(sortBy, page);
     }
 }
