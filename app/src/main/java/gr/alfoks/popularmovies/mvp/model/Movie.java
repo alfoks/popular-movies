@@ -31,6 +31,8 @@ public final class Movie implements Serializable {
     public final Date releaseDate;
     public final int runtime;
     public final boolean favorite;
+    @SerializedName("videos")
+    public final Trailers trailers;
 
     private Movie(MovieBuilder builder) {
         this.id = builder.id;
@@ -42,6 +44,7 @@ public final class Movie implements Serializable {
         this.releaseDate = builder.releaseDate;
         this.runtime = builder.runtime;
         this.favorite = builder.favorite;
+        this.trailers = builder.trailers;
     }
 
     public static MovieBuilder builder() {
@@ -129,6 +132,7 @@ public final class Movie implements Serializable {
         private Date releaseDate = new Date();
         private int runtime;
         private boolean favorite = false;
+        private Trailers trailers;
 
         public MovieBuilder setId(long id) {
             this.id = id;
@@ -175,6 +179,11 @@ public final class Movie implements Serializable {
             return this;
         }
 
+        public MovieBuilder setTrailers(Trailers trailers) {
+            this.trailers = trailers;
+            return this;
+        }
+
         public Movie build() {
             return new Movie(this);
         }
@@ -189,6 +198,7 @@ public final class Movie implements Serializable {
             setReleaseDate(movie.releaseDate);
             setRuntime(movie.runtime);
             setFavorite(movie.favorite);
+            setTrailers(movie.trailers);
 
             return this;
         }
