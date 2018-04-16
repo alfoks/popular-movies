@@ -2,7 +2,6 @@ package gr.alfoks.popularmovies.data.source;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.NoSuchElementException;
 
 import gr.alfoks.popularmovies.BuildConfig;
 import gr.alfoks.popularmovies.data.ContentUtils;
@@ -10,6 +9,7 @@ import gr.alfoks.popularmovies.data.CursorIterable;
 import gr.alfoks.popularmovies.data.MoviesProvider;
 import gr.alfoks.popularmovies.data.table.MoviesSortTable;
 import gr.alfoks.popularmovies.data.table.MoviesTable;
+import gr.alfoks.popularmovies.data.table.TrailersTable;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
@@ -99,6 +99,28 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
     @NonNull
     private String[] getSortingSelectionArgs(SortBy sortBy) {
         return new String[] { String.valueOf(sortBy.getId()) };
+    }
+
+    @Override
+    public void saveMovie(Movie movie) {
+        updateMovie(movie);
+        updateTrailers(movie);
+    }
+
+    private void updateMovie(Movie movie) {
+        Uri uri = ContentUtils.withAppendedId(MoviesTable.Content.CONTENT_URI, movie.id);
+        ContentValues values = movie.asValuesNoFavorite();
+
+        context.getContentResolver().update(uri, values, null, null);
+    }
+
+    private void updateTrailers(Movie movie) {
+        Uri uri = TrailersTable.Content.CONTENT_URI;
+        String where = TrailersTable.Columns.MOVIE_ID + "=?";
+        String[] selectionArgs = new String[] { String.valueOf(movie.id) };
+
+        context.getContentResolver().delete(uri, where, selectionArgs);
+        context.getContentResolver().bulkInsert(uri, movie.trailers.asValues(movie.id));
     }
 
     @Override

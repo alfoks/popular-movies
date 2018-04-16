@@ -73,9 +73,18 @@ public final class MoviesRepository implements Repository {
 
         //When querying remote datasource check to see if movie is stored
         //locally and get its "favorite" field value
-        movieSingle = movieSingle.flatMap(this::getMovieWithFavorite);
+        movieSingle = movieSingle
+            .flatMap(this::getMovieWithFavorite)
+            .doOnSuccess(this::onRemoteSuccess);
 
         return movieSingle;
+    }
+
+    /**
+     * Save movie details from remote datasource in local
+     **/
+    private void onRemoteSuccess(Movie movie) {
+        localDataSource.saveMovie(movie);
     }
 
     @SuppressLint("CheckResult")
