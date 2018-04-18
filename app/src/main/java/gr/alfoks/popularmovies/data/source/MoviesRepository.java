@@ -44,7 +44,7 @@ public final class MoviesRepository implements Repository {
         if(shouldQueryLocalDataSource()) {
             return loadMovieFromLocalDataSource(movieId);
         } else {
-            return loadMovieFromRemoteDataSource(movieId, true);
+            return loadMovieFromRemoteDataSource(movieId);
         }
     }
 
@@ -56,20 +56,17 @@ public final class MoviesRepository implements Repository {
         return !networkAvailabilityChecker.isNetworkAvailable(context);
     }
 
+    private Single<Movie> loadMovieFromLocalDataSource(long movieId) {
+        return localDataSource.loadMovie(movieId);
+    }
+
     /**
      * Load movie from remote datasource. On error try local.
      */
-    private Single<Movie> loadMovieFromLocalDataSource(long movieId) {
-        return localDataSource
+    private Single<Movie> loadMovieFromRemoteDataSource(long movieId) {
+        Single<Movie> movieSingle = remoteDataSource
             .loadMovie(movieId)
-            .onErrorResumeNext(loadMovieFromRemoteDataSource(movieId, false));
-    }
-
-    private Single<Movie> loadMovieFromRemoteDataSource(long movieId, boolean failover) {
-        Single<Movie> movieSingle = remoteDataSource.loadMovie(movieId);
-        if(failover) {
-            movieSingle = movieSingle.onErrorResumeNext(t -> localDataSource.loadMovie(movieId));
-        }
+            .onErrorResumeNext(t -> localDataSource.loadMovie(movieId));
 
         //When querying remote datasource check to see if movie is stored
         //locally and get its "favorite" field value

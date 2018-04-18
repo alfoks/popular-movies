@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import gr.alfoks.popularmovies.BuildConfig;
 import gr.alfoks.popularmovies.data.table.MoviesSortTable;
 import gr.alfoks.popularmovies.data.table.MoviesTable;
+import gr.alfoks.popularmovies.data.table.ReviewsTable;
 import gr.alfoks.popularmovies.data.table.TrailersTable;
 import gr.alfoks.popularmovies.util.Utils;
 
@@ -35,6 +36,7 @@ public final class MoviesProvider extends ContentProvider {
     private static final int MOVIES = 101;
     private static final int MOVIES_SORT = 102;
     private static final int TRAILERS = 103;
+    private static final int REVIEWS = 104;
 
     private static final UriMatcher uriMatcher;
     private static final String UNKNOWN_URI = "Unknown uri: %s";
@@ -50,6 +52,7 @@ public final class MoviesProvider extends ContentProvider {
         uriMatcher.addURI(authority, MoviesTable.Content.PATH_MOVIES, MOVIES);
         uriMatcher.addURI(authority, MoviesSortTable.Content.PATH_MOVIES_SORT, MOVIES_SORT);
         uriMatcher.addURI(authority, TrailersTable.Content.PATH_TRAILERS, TRAILERS);
+        uriMatcher.addURI(authority, ReviewsTable.Content.PATH_REVIEWS, REVIEWS);
     }
 
     private SQLiteOpenHelper dbHelper;
@@ -131,6 +134,8 @@ public final class MoviesProvider extends ContentProvider {
                 return bulkInsert(MoviesSortTable.NAME, uri, values);
             case TRAILERS:
                 return bulkInsert(TrailersTable.NAME, uri, values);
+            case REVIEWS:
+                return bulkInsert(ReviewsTable.NAME, uri, values);
             default:
                 throw new UnsupportedOperationException(String.format(UNKNOWN_URI, uri));
         }
@@ -198,6 +203,9 @@ public final class MoviesProvider extends ContentProvider {
                 break;
             case TRAILERS:
                 qb.setTables(TrailersTable.NAME);
+                break;
+            case REVIEWS:
+                qb.setTables(ReviewsTable.NAME);
                 break;
             default:
                 throw new UnsupportedOperationException(String.format(UNKNOWN_URI, uri));

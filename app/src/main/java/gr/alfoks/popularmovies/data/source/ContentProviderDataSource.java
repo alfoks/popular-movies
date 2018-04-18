@@ -9,6 +9,7 @@ import gr.alfoks.popularmovies.data.CursorIterable;
 import gr.alfoks.popularmovies.data.MoviesProvider;
 import gr.alfoks.popularmovies.data.table.MoviesSortTable;
 import gr.alfoks.popularmovies.data.table.MoviesTable;
+import gr.alfoks.popularmovies.data.table.ReviewsTable;
 import gr.alfoks.popularmovies.data.table.TrailersTable;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
@@ -131,6 +132,7 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
     public void saveMovie(Movie movie) {
         updateMovie(movie);
         updateTrailers(movie);
+        insertReviews(movie);
     }
 
     private void updateMovie(Movie movie) {
@@ -147,6 +149,11 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
 
         context.getContentResolver().delete(uri, where, selectionArgs);
         context.getContentResolver().bulkInsert(uri, movie.trailers.asValues(movie.id));
+    }
+
+    private void insertReviews(Movie movie) {
+        Uri uri = ReviewsTable.Content.CONTENT_URI;
+        context.getContentResolver().bulkInsert(uri, movie.reviews.asValues(movie.id));
     }
 
     @Override

@@ -26,6 +26,5 @@ public class Trailers {
         }
 
         return values;
-
     }
 }

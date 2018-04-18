@@ -33,6 +33,8 @@ public final class Movie implements Serializable {
     public final boolean favorite;
     @SerializedName("videos")
     public final Trailers trailers;
+    @SerializedName("reviews")
+    public final Reviews reviews;
 
     private Movie(MovieBuilder builder) {
         this.id = builder.id;
@@ -45,6 +47,7 @@ public final class Movie implements Serializable {
         this.runtime = builder.runtime;
         this.favorite = builder.favorite;
         this.trailers = builder.trailers;
+        this.reviews = builder.reviews;
     }
 
     public static MovieBuilder builder() {
@@ -133,6 +136,7 @@ public final class Movie implements Serializable {
         private int runtime;
         private boolean favorite = false;
         private Trailers trailers = new Trailers(new ArrayList<>());
+        private Reviews reviews = new Reviews(new ArrayList<>());
 
         public MovieBuilder setId(long id) {
             this.id = id;
@@ -184,6 +188,11 @@ public final class Movie implements Serializable {
             return this;
         }
 
+        public MovieBuilder setReviews(Reviews reviews) {
+            this.reviews = reviews;
+            return this;
+        }
+
         public Movie build() {
             return new Movie(this);
         }
@@ -199,6 +208,7 @@ public final class Movie implements Serializable {
             setRuntime(movie.runtime);
             setFavorite(movie.favorite);
             setTrailers(movie.trailers);
+            setReviews(movie.reviews);
 
             return this;
         }

@@ -12,7 +12,7 @@ public interface TheMovieDbApi {
     String BASE_URL = "https://api.themoviedb.org/";
     String API_PATH = "/3/movie";
 
-    @GET(API_PATH + "/{movie-id}?append_to_response=videos")
+    @GET(API_PATH + "/{movie-id}?append_to_response=videos,reviews")
     Single<Movie> loadMovie(@Path("movie-id") long movieId);
 
     @GET(API_PATH + "/{sort-by}")
