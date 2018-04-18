@@ -9,6 +9,13 @@ public class Trailer {
     private static final String YOUTUBE_SITE = "YouTube";
     private static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=%s";
 
+    /**
+     * This url is undocumented (I think). Found out that it works while
+     * experimenting with YouTube API. This link returns the video thumbnail in
+     * standard resolution (640x480)
+     **/
+    private static final String YOUTUBE_THUMBNAIL_URL = "https://i.ytimg.com/vi/%s/sddefault.jpg";
+
     public final String id;
     public final String key;
     public final String site;
@@ -29,6 +36,10 @@ public class Trailer {
         }
 
         return "";
+    }
+
+    public String getThumbnailUrl() {
+        return String.format(YOUTUBE_THUMBNAIL_URL, key);
     }
 
     public ContentValues asValues(long movieId) {

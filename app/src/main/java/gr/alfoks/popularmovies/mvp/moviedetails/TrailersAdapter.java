@@ -66,9 +66,9 @@ public final class TrailersAdapter
         @Override
         public void setThumbnail(String thumbnailUrl) {
             Picasso.with(context)
-                   .load(R.drawable.placeholder_trailer)
+                   .load(thumbnailUrl)
                    .placeholder(R.drawable.anim_loading)
-                   .error(R.drawable.placeholder_trailer)
+                   .error(R.drawable.ic_warning)
                    .fit()
                    .centerInside()
                    .into(imgThumbnail);

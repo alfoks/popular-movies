@@ -76,8 +76,7 @@ public final class MovieDetailsPresenter
     @Override
     public void onBindTrailerView(MovieDetailsContract.TrailerView view, int position) {
         Trailer trailer = movie.trailers.getTrailers().get(position);
-        //TODO: Load a thumbnail somehow
-        view.setThumbnail("");
+        view.setThumbnail(trailer.getThumbnailUrl());
     }
 
     @Override
