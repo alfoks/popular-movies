@@ -1,11 +1,9 @@
 package gr.alfoks.popularmovies.data.source;
 
-import java.util.NoSuchElementException;
-
+import gr.alfoks.popularmovies.api.TheMovieDbApi;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
-import gr.alfoks.popularmovies.api.TheMovieDbApi;
 import io.reactivex.Single;
 
 import android.support.annotation.NonNull;

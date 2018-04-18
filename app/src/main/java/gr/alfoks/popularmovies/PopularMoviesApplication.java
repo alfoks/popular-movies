@@ -2,13 +2,13 @@ package gr.alfoks.popularmovies;
 
 import java.util.HashMap;
 
+import gr.alfoks.popularmovies.api.RestClient;
+import gr.alfoks.popularmovies.api.TheMovieDbApi;
 import gr.alfoks.popularmovies.data.source.ContentProviderDataSource;
 import gr.alfoks.popularmovies.data.source.MoviesRepository;
 import gr.alfoks.popularmovies.data.source.TheMovieDbDataSource;
 import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsPresenter;
 import gr.alfoks.popularmovies.mvp.movies.MoviesPresenter;
-import gr.alfoks.popularmovies.api.RestClient;
-import gr.alfoks.popularmovies.api.TheMovieDbApi;
 
 import android.app.Application;
 import android.support.annotation.NonNull;

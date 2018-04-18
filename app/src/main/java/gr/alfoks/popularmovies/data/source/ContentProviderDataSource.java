@@ -2,7 +2,6 @@ package gr.alfoks.popularmovies.data.source;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import gr.alfoks.popularmovies.BuildConfig;
 import gr.alfoks.popularmovies.data.ContentUtils;
