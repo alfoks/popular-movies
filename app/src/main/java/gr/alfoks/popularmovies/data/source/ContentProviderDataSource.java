@@ -13,6 +13,8 @@ import gr.alfoks.popularmovies.data.table.ReviewsTable;
 import gr.alfoks.popularmovies.data.table.TrailersTable;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
+import gr.alfoks.popularmovies.mvp.model.Review;
+import gr.alfoks.popularmovies.mvp.model.Reviews;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
 import gr.alfoks.popularmovies.mvp.model.Trailer;
 import gr.alfoks.popularmovies.mvp.model.Trailers;
@@ -55,7 +57,8 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
             })
             .map(cursor -> Movie.builder().from(cursor).build())
             .elementAtOrError(0)
-            .flatMap(this::loadMovieTrailers);
+            .flatMap(this::loadMovieTrailers)
+            .flatMap(this::loadMovieReviews);
     }
 
     private Single<Movie> loadMovieTrailers(Movie movie) {
@@ -78,6 +81,28 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
             .map(trailersList -> {
                 Trailers trailers = new Trailers(trailersList);
                 return Movie.builder().from(movie).setTrailers(trailers).build();
+            });
+    }
+
+    private Single<Movie> loadMovieReviews(Movie movie) {
+        Uri uri = ReviewsTable.Content.CONTENT_URI;
+        String selection = ReviewsTable.Columns.MOVIE_ID + "=?";
+        String[] selectionArgs = new String[] { String.valueOf(movie.id) };
+
+        Cursor c = getCursor(uri, selection, selectionArgs, null);
+
+        return Observable
+            .fromIterable(CursorIterable.from(c))
+            .doAfterNext(cursor -> {
+                if(cursor.getPosition() == cursor.getCount() - 1) {
+                    cursor.close();
+                }
+            })
+            .map(cursor -> Review.builder().from(c).build())
+            .toList()
+            .map(reviewsList -> {
+                Reviews reviews = new Reviews(reviewsList);
+                return Movie.builder().from(movie).setReviews(reviews).build();
             });
     }
 
