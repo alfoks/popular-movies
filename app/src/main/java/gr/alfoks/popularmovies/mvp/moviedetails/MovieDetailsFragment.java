@@ -1,7 +1,5 @@
 package gr.alfoks.popularmovies.mvp.moviedetails;
 
-import java.util.List;
-
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -10,13 +8,18 @@ import gr.alfoks.popularmovies.PopularMoviesApplication;
 import gr.alfoks.popularmovies.R;
 import gr.alfoks.popularmovies.mvp.base.BaseFragment;
 import gr.alfoks.popularmovies.mvp.model.Movie;
-import gr.alfoks.popularmovies.mvp.model.Trailer;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public final class MovieDetailsFragment
     extends
@@ -38,15 +41,15 @@ public final class MovieDetailsFragment
     TextView txtOverview;
     @BindView(R.id.btnFavorite)
     ImageView btnFavorite;
-    //Constraint layout views behave strangely on rotate, if an visual attribute
+    //Constraint layout views behave strangely on rotate, if a visual attribute
     //(text, background, ...) not set via code. So bind them all and
     //set attribute through code.
     @BindView(R.id.vwDivider)
     View vwDivider;
-    @BindView(R.id.txtTrailers)
-    TextView txtTrailers;
     @BindView(R.id.txtDummy)
     TextView txtDummy;
+    @BindView(R.id.rcvTrailers)
+    RecyclerView rcvTrailers;
 
     public MovieDetailsFragment() {
     }
@@ -78,13 +81,15 @@ public final class MovieDetailsFragment
     }
 
     @Override
-    protected void init(@Nullable Bundle state) {
+    protected void init(@Nullable Bundle savedInstanceState) {
         long movieId = getArguments().getLong(KEY_MOVIE_ID);
         getPresenter().loadMovie(movieId);
     }
 
     @Override
     public void onMovieLoaded(Movie movie) {
+        initTrailersRecyclerView();
+
         txtTitle.setText(movie.title);
         txtYear.setText(String.valueOf(movie.getReleaseYear()));
         txtDuration.setText(movie.getDuration());
@@ -93,7 +98,7 @@ public final class MovieDetailsFragment
         //See comment on fields declaration about constraint layout
         txtTitle.setBackground(txtDummy.getBackground());
         vwDivider.setBackground(getContext().getResources().getDrawable(android.R.drawable.divider_horizontal_dark));
-        txtTrailers.setText(getContext().getResources().getText(R.string.lbl_trailers));
+
         setFavoriteButtonIcon(movie.favorite);
 
         txtOverview.setText(movie.overview);
@@ -102,6 +107,20 @@ public final class MovieDetailsFragment
                .placeholder(R.drawable.anim_loading)
                .error(R.drawable.ic_warning)
                .into(imgPoster);
+    }
+
+    private void initTrailersRecyclerView() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(
+            getContext(),
+            LinearLayoutManager.HORIZONTAL,
+            false
+        );
+
+        rcvTrailers.setLayoutManager(layoutManager);
+        rcvTrailers.setItemAnimator(new DefaultItemAnimator());
+
+        TrailersAdapter adapter = new TrailersAdapter(getContext(), getPresenter());
+        rcvTrailers.setAdapter(adapter);
     }
 
     private void setFavoriteButtonIcon(boolean favorite) {
@@ -120,8 +139,14 @@ public final class MovieDetailsFragment
     }
 
     @Override
-    public void onTrailersLoaded(List<Trailer> trailers) {
-
+    public void playTrailer(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        if(intent.resolveActivity(getContext().getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Toast.makeText(getContext(), R.string.msg_no_video_app, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onConnectivityChanged(boolean connectionOn) {

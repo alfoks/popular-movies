@@ -3,4 +3,6 @@
     <dimen name="fragment_horizontal_margin">8dp</dimen>
     <dimen name="field_vertical_separation_margin">8dp</dimen>
     <dimen name="field_horizontal_separation_margin">8dp</dimen>
+    <dimen name="thumbnail_width">250dp</dimen>
+    <dimen name="thumbnail_height">140dp</dimen>
 </resources>

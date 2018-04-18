@@ -1,23 +1,26 @@
 package gr.alfoks.popularmovies.mvp.moviedetails;
 
-import java.util.List;
-
 import gr.alfoks.popularmovies.mvp.base.MvpPresenter;
 import gr.alfoks.popularmovies.mvp.base.MvpView;
 import gr.alfoks.popularmovies.mvp.model.Movie;
-import gr.alfoks.popularmovies.mvp.model.Trailer;
 
 public interface MovieDetailsContract {
 
     interface Presenter extends MvpPresenter<MovieDetailsContract.View> {
         void loadMovie(long movieId);
         void toggleFavorite();
-        void loadTrailers();
+        void onBindTrailerView(TrailerView view, int position);
+        int getTrailersCount();
+        void onTrailerClicked(int position);
     }
 
     interface View extends MvpView {
         void onMovieLoaded(Movie movie);
         void onMovieUpdated(Movie movie);
-        void onTrailersLoaded(List<Trailer> trailers);
+        void playTrailer(String url);
+    }
+
+    interface TrailerView extends MvpView {
+        void setThumbnail(String thumbnailUrl);
     }
 }

@@ -132,7 +132,7 @@ public final class Movie implements Serializable {
         private Date releaseDate = new Date();
         private int runtime;
         private boolean favorite = false;
-        private Trailers trailers;
+        private Trailers trailers = new Trailers(new ArrayList<>());
 
         public MovieBuilder setId(long id) {
             this.id = id;

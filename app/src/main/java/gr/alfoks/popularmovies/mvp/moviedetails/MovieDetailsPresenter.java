@@ -1,8 +1,5 @@
 package gr.alfoks.popularmovies.mvp.moviedetails;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gr.alfoks.popularmovies.data.source.Repository;
 import gr.alfoks.popularmovies.mvp.base.BasePresenter;
 import gr.alfoks.popularmovies.mvp.model.Movie;
@@ -17,8 +14,8 @@ import android.support.annotation.NonNull;
 public final class MovieDetailsPresenter
     extends BasePresenter<MovieDetailsContract.View>
     implements MovieDetailsContract.Presenter {
-    private final @NonNull
-    Repository repository;
+    @NonNull
+    private final Repository repository;
     private Movie movie = Movie.builder().build();
 
     public MovieDetailsPresenter(@NonNull Repository repository) {
@@ -70,15 +67,28 @@ public final class MovieDetailsPresenter
     }
 
     @Override
-    public void loadTrailers() {
-        getView().onTrailersLoaded(new ArrayList<>());
-    }
-
-    @Override
     protected MovieDetailsContract.View getView() {
         if(isViewAttached()) return super.getView();
 
         return nullView;
+    }
+
+    @Override
+    public void onBindTrailerView(MovieDetailsContract.TrailerView view, int position) {
+        Trailer trailer = movie.trailers.getTrailers().get(position);
+        //TODO: Load a thumbnail somehow
+        view.setThumbnail("");
+    }
+
+    @Override
+    public int getTrailersCount() {
+        return movie.trailers.getTrailers().size();
+    }
+
+    @Override
+    public void onTrailerClicked(int position) {
+        Trailer trailer = movie.trailers.getTrailers().get(position);
+        getView().playTrailer(trailer.getUrl());
     }
 
     private final MovieDetailsContract.View nullView = new MovieDetailsContract.View() {
@@ -91,7 +101,7 @@ public final class MovieDetailsPresenter
         }
 
         @Override
-        public void onTrailersLoaded(List<Trailer> trailers) {
+        public void playTrailer(String url) {
         }
     };
 }

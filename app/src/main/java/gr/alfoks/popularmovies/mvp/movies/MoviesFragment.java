@@ -66,7 +66,7 @@ public final class MoviesFragment
     }
 
     @Override
-    protected void init(@Nullable Bundle state) {
+    protected void init(@Nullable Bundle savedInstanceState) {
         layoutManager = new GridLayoutManager(getContext(), 2);
         rcvMovies.setLayoutManager(layoutManager);
         rcvMovies.setItemAnimator(new DefaultItemAnimator());
@@ -77,14 +77,14 @@ public final class MoviesFragment
         scrollListener = createScrollListener(layoutManager);
         rcvMovies.addOnScrollListener(scrollListener);
 
-        if(state != null) {
+        if(savedInstanceState != null) {
             List<Movie> movies =
                 Movie.listFromValuesArrayList(
-                    state.getParcelableArrayList(KEY_MOVIES)
+                    savedInstanceState.getParcelableArrayList(KEY_MOVIES)
                 );
 
             adapter.addMovies(movies);
-            layoutManager.onRestoreInstanceState(state.getParcelable(KEY_LAYOUT_MANAGER_STATE));
+            layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(KEY_LAYOUT_MANAGER_STATE));
             stateRestored = true;
         } else {
             setSortBy(getSortBy());
