@@ -2,6 +2,7 @@ package gr.alfoks.popularmovies.api;
 
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
+import gr.alfoks.popularmovies.mvp.model.Reviews;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
 import io.reactivex.Single;
 import retrofit2.http.GET;
@@ -17,4 +18,7 @@ public interface TheMovieDbApi {
 
     @GET(API_PATH + "/{sort-by}")
     Single<Movies> loadMovies(@Path("sort-by") SortBy sortBy, @Query("page") int page);
+
+    @GET(API_PATH + "/{movie-id}/reviews")
+    Single<Reviews> loadReviews(@Path("movie-id") long movieId, @Query("page") int page);
 }

@@ -1,5 +1,6 @@
 package gr.alfoks.popularmovies.mvp.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,5 +27,9 @@ public class Trailers {
         }
 
         return values;
+    }
+
+    public static Trailers empty() {
+        return new Trailers(new ArrayList<>());
     }
 }

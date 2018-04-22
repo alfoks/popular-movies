@@ -5,4 +5,5 @@
     <dimen name="field_horizontal_separation_margin">8dp</dimen>
     <dimen name="thumbnail_width">250dp</dimen>
     <dimen name="thumbnail_height">187dp</dimen>
+    <dimen name="review_default_height">80dp</dimen>
 </resources>

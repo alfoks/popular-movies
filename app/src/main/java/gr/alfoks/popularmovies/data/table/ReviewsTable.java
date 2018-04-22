@@ -13,6 +13,7 @@ public final class ReviewsTable {
         public static final String MOVIE_ID = "movieId";
         public static final String AUTHOR = "author";
         public static final String CONTENT = "content";
+        public static final String SORT_ORDER = "sortOrder";
     }
 
     public static final class Content {
@@ -33,6 +34,7 @@ public final class ReviewsTable {
             Columns.ID + " TEXT PRIMARY KEY," +
             Columns.MOVIE_ID + " INTEGER " + FOREIGN_KEY + "," +
             Columns.AUTHOR + " TEXT," +
-            Columns.CONTENT + " TEXT);";
+            Columns.CONTENT + " TEXT," +
+            Columns.SORT_ORDER + " INTEGER);";
     }
 }

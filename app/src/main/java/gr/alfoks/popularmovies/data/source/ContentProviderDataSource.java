@@ -85,25 +85,8 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
     }
 
     private Single<Movie> loadMovieReviews(Movie movie) {
-        Uri uri = ReviewsTable.Content.CONTENT_URI;
-        String selection = ReviewsTable.Columns.MOVIE_ID + "=?";
-        String[] selectionArgs = new String[] { String.valueOf(movie.id) };
-
-        Cursor c = getCursor(uri, selection, selectionArgs, null);
-
-        return Observable
-            .fromIterable(CursorIterable.from(c))
-            .doAfterNext(cursor -> {
-                if(cursor.getPosition() == cursor.getCount() - 1) {
-                    cursor.close();
-                }
-            })
-            .map(cursor -> Review.builder().from(c).build())
-            .toList()
-            .map(reviewsList -> {
-                Reviews reviews = new Reviews(reviewsList);
-                return Movie.builder().from(movie).setReviews(reviews).build();
-            });
+        return loadReviews(movie.id, 1)
+            .map(reviews -> Movie.builder().from(movie).setReviews(reviews).build());
     }
 
     private Cursor getMovieCursor(long movieId) {
@@ -122,7 +105,7 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
         String sortOrder = MoviesSortTable.Columns.SORT_ORDER;
         String[] selectionArgs = getSortingSelectionArgs(sortBy);
 
-        Uri uri = buildMoviesUri(page);
+        Uri uri = buildPagedUri(MoviesTable.Content.CONTENT_URI, page);
         Cursor c = getCursor(uri, SORTING_SELECTION, selectionArgs, sortOrder);
 
         return Observable
@@ -137,8 +120,29 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
             .map(Movies::new);
     }
 
-    private Uri buildMoviesUri(int page) {
-        return MoviesTable.Content.CONTENT_URI
+    @Override
+    public Single<Reviews> loadReviews(long movieId, int page) {
+        String sortOrder = ReviewsTable.Columns.SORT_ORDER;
+        String selection = ReviewsTable.Columns.MOVIE_ID + "=?";
+        String[] selectionArgs = new String[] { String.valueOf(movieId) };
+
+        Uri uri = buildPagedUri(ReviewsTable.Content.CONTENT_URI, page);
+        Cursor c = getCursor(uri, selection, selectionArgs, sortOrder);
+
+        return Observable
+            .fromIterable(CursorIterable.from(c))
+            .doAfterNext(cursor -> {
+                if(cursor.getPosition() == cursor.getCount() - 1) {
+                    cursor.close();
+                }
+            })
+            .map(cursor -> Review.builder().from(cursor).build())
+            .toList()
+            .map(Reviews::new);
+    }
+
+    private Uri buildPagedUri(Uri baseUri, int page) {
+        return baseUri
             .buildUpon()
             .appendQueryParameter(MoviesProvider.QUERY_PARAMETER_PAGE, String.valueOf(page))
             .appendQueryParameter(
@@ -157,7 +161,7 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
     public void saveMovie(Movie movie) {
         updateMovie(movie);
         updateTrailers(movie);
-        insertReviews(movie);
+        saveReviews(movie.reviews, movie.id, 1);
     }
 
     private void updateMovie(Movie movie) {
@@ -176,11 +180,6 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
         context.getContentResolver().bulkInsert(uri, movie.trailers.asValues(movie.id));
     }
 
-    private void insertReviews(Movie movie) {
-        Uri uri = ReviewsTable.Content.CONTENT_URI;
-        context.getContentResolver().bulkInsert(uri, movie.reviews.asValues(movie.id));
-    }
-
     @Override
     public void saveMovies(Movies movies, SortBy sortBy, int page) {
         // We could do the 2 different bulk inserts in a transaction, but
@@ -195,6 +194,12 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
 
         uri = MoviesSortTable.Content.CONTENT_URI;
         context.getContentResolver().bulkInsert(uri, movies.asSortOrderValues(sortBy, page));
+    }
+
+    @Override
+    public void saveReviews(Reviews reviews, long movieId, int page) {
+        Uri uri = ReviewsTable.Content.CONTENT_URI;
+        context.getContentResolver().bulkInsert(uri, reviews.asValues(movieId, page));
     }
 
     @Override

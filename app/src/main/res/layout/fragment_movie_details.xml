@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:id="@+id/scvMain"
+<android.support.v4.widget.NestedScrollView android:id="@+id/scvMain"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,112 +7,152 @@
     android:layout_height="match_parent"
     tools:context="gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsActivity">
 
-    <android.support.constraint.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.constraint.Guideline
+        <View
             android:id="@+id/gdlVerticalMiddle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+            android:layout_width="1dp"
+            android:layout_height="10dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
 
         <TextView
             android:id="@+id/txtTitle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="100dp"
+            android:layout_alignParentTop="true"
+            android:layout_margin="-8dp"
+            android:background="?attr/colorAccent"
             android:gravity="center_vertical|start"
             android:padding="8dp"
             android:textAppearance="?android:textAppearanceLarge"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/placeholder_title" />
-
-        <TextView
-            android:id="@+id/txtDummy"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?attr/colorAccent"
-            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/imgPoster"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="200dp"
+            android:layout_alignEnd="@id/gdlVerticalMiddle"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignRight="@id/gdlVerticalMiddle"
+            android:layout_below="@id/txtTitle"
             android:layout_marginTop="@dimen/field_vertical_separation_margin"
             android:contentDescription="@string/cnt_movie_poster"
             android:scaleType="fitCenter"
-            app:layout_constraintEnd_toEndOf="@id/gdlVerticalMiddle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtTitle"
             tools:srcCompat="@drawable/placeholder_poster" />
 
         <TextView
             android:id="@+id/txtYear"
             style="@style/Field.WrapContent"
+            android:layout_alignLeft="@id/gdlVerticalMiddle"
+            android:layout_alignStart="@id/gdlVerticalMiddle"
+            android:layout_below="@id/txtTitle"
             android:layout_marginLeft="@dimen/field_horizontal_separation_margin"
             android:layout_marginStart="@dimen/field_horizontal_separation_margin"
             android:textAppearance="?android:textAppearanceMedium"
-            app:layout_constraintStart_toEndOf="@id/gdlVerticalMiddle"
-            app:layout_constraintTop_toBottomOf="@+id/txtTitle"
             tools:text="@string/placeholder_year" />
 
         <TextView
             android:id="@+id/txtDuration"
             style="@style/Field.WrapContent"
+            android:layout_alignLeft="@id/txtYear"
+            android:layout_alignStart="@id/txtYear"
+            android:layout_below="@id/txtYear"
             android:textStyle="italic"
-            app:layout_constraintStart_toStartOf="@+id/txtYear"
-            app:layout_constraintTop_toBottomOf="@+id/txtYear"
             tools:text="@string/placeholder_duration" />
 
         <TextView
             android:id="@+id/txtRating"
             style="@style/Field.WrapContent"
-            app:layout_constraintStart_toStartOf="@+id/txtYear"
-            app:layout_constraintTop_toBottomOf="@+id/txtDuration"
+            android:layout_alignLeft="@id/txtYear"
+            android:layout_alignStart="@id/txtYear"
+            android:layout_below="@id/txtDuration"
             tools:text="@string/placeholder_rating" />
 
         <ImageView
             android:id="@+id/btnFavorite"
             style="@style/Field.WrapContent"
+            android:layout_alignLeft="@id/txtYear"
+            android:layout_alignStart="@id/txtYear"
+            android:layout_below="@id/txtRating"
             android:clickable="true"
             android:contentDescription="@string/cnt_favorite_button"
             android:focusable="true"
-            app:layout_constraintStart_toStartOf="@+id/txtYear"
-            app:layout_constraintTop_toBottomOf="@+id/txtRating"
             tools:srcCompat="@drawable/ic_favorite_border" />
 
         <TextView
             android:id="@+id/txtOverview"
             style="@style/Field.FullWidth"
-            app:layout_constraintEnd_toEndOf="@id/txtTitle"
-            app:layout_constraintStart_toStartOf="@id/txtTitle"
-            app:layout_constraintTop_toBottomOf="@+id/imgPoster"
+            android:layout_below="@id/imgPoster"
             tools:text="@string/placeholder_plot" />
 
         <View
             android:id="@+id/vwDivider"
             style="@style/Field.FullWidth"
+            android:layout_width="match_parent"
             android:layout_height="2dp"
-            app:layout_constraintEnd_toEndOf="@id/txtTitle"
-            app:layout_constraintStart_toStartOf="@id/txtTitle"
-            app:layout_constraintTop_toBottomOf="@id/txtOverview" />
+            android:layout_below="@id/txtOverview"
+            android:background="@android:drawable/divider_horizontal_dark" />
+
+        <TextView
+            android:id="@+id/txtTrailers"
+            style="@style/Field.Start"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/vwDivider"
+            android:text="@string/lbl_trailers"
+            android:textAppearance="?android:textAppearanceMedium" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rcvTrailers"
             style="@style/Field.FullWidth"
+            android:layout_width="match_parent"
+            android:layout_below="@id/txtTrailers"
             android:clipToPadding="false"
+            android:orientation="horizontal"
             android:scrollbars="horizontal"
-            app:layout_constraintEnd_toEndOf="@+id/txtTitle"
-            app:layout_constraintStart_toStartOf="@+id/txtTitle"
-            app:layout_constraintTop_toTopOf="@+id/vwDivider" />
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_trailer" />
 
         <View
+            android:id="@+id/vwDivider2"
             style="@style/Field.FullWidth"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/rcvTrailers" />
+            android:layout_height="2dp"
+            android:layout_below="@id/rcvTrailers"
+            android:background="@android:drawable/divider_horizontal_dark" />
 
-    </android.support.constraint.ConstraintLayout>
-</ScrollView>
+        <TextView
+            style="@style/Field.Start"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/vwDivider2"
+            android:text="@string/lbl_reviews"
+            android:textAppearance="?android:textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/txtSeeAll"
+            style="@style/Field.End"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/vwDivider2"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/lbl_see_all"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="?attr/colorAccent" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rcvReviews"
+            style="@style/Field.FullWidth"
+            android:layout_below="@id/txtSeeAll"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:scrollbars="vertical"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_review" />
+
+    </RelativeLayout>
+</android.support.v4.widget.NestedScrollView>

@@ -17,10 +17,12 @@
     <string name="placeholder_plot">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam maximus fermentum tempus. Ut massa sem, iaculis a velit ac, ornare.</string>
 
     <!-- Labels -->
-    <string name="lbl_trailers">Trailers:</string>
+    <string name="lbl_trailers">Trailers</string>
     <string name="lbl_sort_by">Sort by</string>
     <string name="lbl_no_connection">No connection</string>
     <string name="lbl_credits">Credits</string>
+    <string name="lbl_reviews">Reviews</string>
+    <string name="lbl_see_all">SEE ALL</string>
 
     <string name="msg_powered_by_tmdb">This product uses the TMDb API but is not endorsed or certified by TMDb.</string>
     <string name="msg_tmdb_link">https://www.themoviedb.org/</string>

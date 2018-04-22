@@ -10,4 +10,18 @@
             @dimen/fragment_horizontal_margin
         </item>
     </style>
+
+    <style name="Field.Start"
+        parent="Field.WrapContent">
+        <item name="android:layout_marginStart">
+            @dimen/fragment_horizontal_margin
+        </item>
+    </style>
+
+    <style name="Field.End"
+        parent="Field.WrapContent">
+        <item name="android:layout_marginEnd">
+            @dimen/fragment_horizontal_margin
+        </item>
+    </style>
 </resources>

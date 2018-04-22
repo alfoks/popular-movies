@@ -3,8 +3,8 @@ package gr.alfoks.popularmovies.mvp.moviedetails;
 import gr.alfoks.popularmovies.data.source.Repository;
 import gr.alfoks.popularmovies.mvp.base.BasePresenter;
 import gr.alfoks.popularmovies.mvp.model.Movie;
+import gr.alfoks.popularmovies.mvp.model.Review;
 import gr.alfoks.popularmovies.mvp.model.Trailer;
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -25,12 +25,16 @@ public final class MovieDetailsPresenter
     @SuppressLint("CheckResult")
     @Override
     public void loadMovie(long movieId) {
-        Single<Movie> movieObservable = repository.loadMovie(movieId);
-
-        movieObservable
+        repository
+            .loadMovie(movieId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::onMovieLoaded, this::onError);
+    }
+
+    private void onMovieLoaded(Movie movie) {
+        this.movie = movie;
+        getView().onMovieLoaded(movie);
     }
 
     @Override
@@ -61,11 +65,6 @@ public final class MovieDetailsPresenter
         }
     }
 
-    private void onMovieLoaded(Movie movie) {
-        this.movie = movie;
-        getView().onMovieLoaded(movie);
-    }
-
     @Override
     protected MovieDetailsContract.View getView() {
         if(isViewAttached()) return super.getView();
@@ -88,6 +87,18 @@ public final class MovieDetailsPresenter
     public void onTrailerClicked(int position) {
         Trailer trailer = movie.trailers.getTrailers().get(position);
         getView().playTrailer(trailer.getUrl());
+    }
+
+    @Override
+    public void onBindReviewView(MovieDetailsContract.ReviewView view, int position) {
+        Review review = movie.reviews.getReviews().get(position);
+        view.setAuthor(review.author);
+        view.setContent(review.content);
+    }
+
+    @Override
+    public int getReviewsCount() {
+        return movie.reviews.getReviews().size();
     }
 
     private final MovieDetailsContract.View nullView = new MovieDetailsContract.View() {

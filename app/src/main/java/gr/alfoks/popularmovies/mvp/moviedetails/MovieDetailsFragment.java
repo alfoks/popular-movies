@@ -14,9 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,17 +39,16 @@ public final class MovieDetailsFragment
     TextView txtOverview;
     @BindView(R.id.btnFavorite)
     ImageView btnFavorite;
-    //Constraint layout views behave strangely on rotate, if a visual attribute
-    //(text, background, ...) not set via code. So bind them all and
-    //set attribute through code.
-    @BindView(R.id.vwDivider)
-    View vwDivider;
-    @BindView(R.id.txtDummy)
-    TextView txtDummy;
     @BindView(R.id.rcvTrailers)
     RecyclerView rcvTrailers;
+    @BindView(R.id.rcvReviews)
+    RecyclerView rcvReviews;
+
+    private TrailersAdapter trailersAdapter;
+    private ReviewsAdapter reviewsAdapter;
 
     public MovieDetailsFragment() {
+
     }
 
     public static MovieDetailsFragment newInstance(long movieId) {
@@ -83,44 +80,44 @@ public final class MovieDetailsFragment
     @Override
     protected void init(@Nullable Bundle savedInstanceState) {
         long movieId = getArguments().getLong(KEY_MOVIE_ID);
+        initTrailersRecyclerView();
+        initReviewsRecyclerView();
         getPresenter().loadMovie(movieId);
+    }
+
+    private void initTrailersRecyclerView() {
+        trailersAdapter = new TrailersAdapter(getContext(), getPresenter());
+        initRecyclerView(rcvTrailers, trailersAdapter);
+    }
+
+    private void initReviewsRecyclerView() {
+        reviewsAdapter = new ReviewsAdapter(getContext(), getPresenter());
+        initRecyclerView(rcvReviews, reviewsAdapter);
+    }
+
+    private void initRecyclerView(RecyclerView view, RecyclerView.Adapter adapter) {
+        view.setNestedScrollingEnabled(false);
+        view.setItemAnimator(new DefaultItemAnimator());
+        view.setAdapter(adapter);
     }
 
     @Override
     public void onMovieLoaded(Movie movie) {
-        initTrailersRecyclerView();
+        trailersAdapter.notifyDataSetChanged();
+        reviewsAdapter.notifyDataSetChanged();
 
         txtTitle.setText(movie.title);
         txtYear.setText(String.valueOf(movie.getReleaseYear()));
         txtDuration.setText(movie.getDuration());
         txtRating.setText(String.valueOf(movie.getRating()));
-
-        //See comment on fields declaration about constraint layout
-        txtTitle.setBackground(txtDummy.getBackground());
-        vwDivider.setBackground(getContext().getResources().getDrawable(android.R.drawable.divider_horizontal_dark));
-
         setFavoriteButtonIcon(movie.favorite);
-
         txtOverview.setText(movie.overview);
+
         Picasso.with(getContext())
                .load(movie.getFullPosterPath())
                .placeholder(R.drawable.anim_loading)
                .error(R.drawable.ic_warning)
                .into(imgPoster);
-    }
-
-    private void initTrailersRecyclerView() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(
-            getContext(),
-            LinearLayoutManager.HORIZONTAL,
-            false
-        );
-
-        rcvTrailers.setLayoutManager(layoutManager);
-        rcvTrailers.setItemAnimator(new DefaultItemAnimator());
-
-        TrailersAdapter adapter = new TrailersAdapter(getContext(), getPresenter());
-        rcvTrailers.setAdapter(adapter);
     }
 
     private void setFavoriteButtonIcon(boolean favorite) {
@@ -149,6 +146,7 @@ public final class MovieDetailsFragment
         }
     }
 
+    @Override
     public void onConnectivityChanged(boolean connectionOn) {
         getPresenter().onConnectivityChanged(connectionOn);
     }

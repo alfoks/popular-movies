@@ -19,7 +19,7 @@
         android:id="@+id/btnPlay"
         android:layout_width="@dimen/thumbnail_width"
         android:layout_height="@dimen/thumbnail_height"
-        android:background="@drawable/image_selector_background"
+        android:background="@drawable/background_click_selector"
         android:clickable="true"
         android:contentDescription="@string/cnt_play_button"
         android:focusable="true"

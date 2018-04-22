@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Movies;
+import gr.alfoks.popularmovies.mvp.model.Reviews;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
 import gr.alfoks.popularmovies.util.NetworkAvailabilityChecker;
 import gr.alfoks.popularmovies.util.NetworkUtils;
@@ -134,18 +135,34 @@ public final class MoviesRepository implements Repository {
     private Single<Movies> loadMoviesFromRemoteDataSource(SortBy sortBy, int page) {
         return remoteDataSource
             .loadMovies(sortBy, page)
-            .doOnSuccess(movies -> onRemoteSuccess(movies, sortBy, page));
-    }
-
-    /**
-     * Save the results from remote datasource in local.
-     */
-    private void onRemoteSuccess(Movies movies, SortBy sortBy, int page) {
-        saveMoviesInLocalDataSource(movies, sortBy, page);
+            .doOnSuccess(movies -> saveMoviesInLocalDataSource(movies, sortBy, page));
     }
 
     private void saveMoviesInLocalDataSource(Movies movies, SortBy sortBy, int page) {
         localDataSource.saveMovies(movies, sortBy, page);
+    }
+
+    @Override
+    public Single<Reviews> loadReviews(long movieId, int page) {
+        if(shouldQueryLocalDataSource()) {
+            return loadReviewsFromLocalDataSource(movieId, page);
+        } else {
+            return loadReviewsFromRemoteDataSource(movieId, page);
+        }
+    }
+
+    private Single<Reviews> loadReviewsFromLocalDataSource(long movieId, int page) {
+        return localDataSource.loadReviews(movieId, page);
+    }
+
+    private Single<Reviews> loadReviewsFromRemoteDataSource(long movieId, int page) {
+        return remoteDataSource
+            .loadReviews(movieId, page)
+            .doOnSuccess(reviews -> saveReviewsInLocalDataSource(reviews, movieId, page));
+    }
+
+    private void saveReviewsInLocalDataSource(Reviews reviews, long movieId, int page) {
+        localDataSource.saveReviews(reviews, movieId, page);
     }
 
     @Override
