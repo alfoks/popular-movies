@@ -21,7 +21,7 @@ public final class MovieDetailsActivity extends BaseActivity {
     @Override
     protected void init(@Nullable Bundle state) {
         setupActionBar();
-        attachFragment();
+        setupFragment();
     }
 
     private void setupActionBar() {
@@ -33,14 +33,22 @@ public final class MovieDetailsActivity extends BaseActivity {
         }
     }
 
+    private void setupFragment() {
+        MovieDetailsFragment fragment = getFragment();
+        if(fragment == null) attachFragment();
+    }
+
+    private MovieDetailsFragment getFragment() {
+        return (MovieDetailsFragment)getSupportFragmentManager().findFragmentById(R.id.frgPlaceholder);
+    }
+
     private void attachFragment() {
         Bundle bundle = Utils.getExtras(getIntent());
         long movieId = bundle.getLong(MovieDetailsFragment.KEY_MOVIE_ID);
 
         getSupportFragmentManager()
             .beginTransaction()
-            .add(R.id.frgPlaceholder,
-                MovieDetailsFragment.newInstance(movieId))
+            .add(R.id.frgPlaceholder, MovieDetailsFragment.newInstance(movieId))
             .commit();
     }
 
