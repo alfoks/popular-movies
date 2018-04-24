@@ -1,31 +1,28 @@
-package gr.alfoks.popularmovies.mvp.moviedetails;
+package gr.alfoks.popularmovies.mvp.reviews;
 
 import butterknife.BindView;
 import gr.alfoks.popularmovies.R;
 import gr.alfoks.popularmovies.mvp.base.BaseActivity;
-import gr.alfoks.popularmovies.mvp.reviews.ReviewsActivity;
-import gr.alfoks.popularmovies.mvp.reviews.ReviewsFragment;
 import gr.alfoks.popularmovies.util.Utils;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 
-public final class MovieDetailsActivity extends BaseActivity implements
-    MovieDetailsFragment.OnSeeAllReviewsListener {
+public final class ReviewsActivity extends BaseActivity {
     @BindView(R.id.tlbMain)
     Toolbar tlbMovieDetails;
 
     @Override
     protected int getContentResource() {
-        return R.layout.activity_movie_details;
+        return R.layout.activity_movies;
     }
 
     @Override
     protected void init(@Nullable Bundle state) {
         setupActionBar();
         setupFragment();
+        attachPresenter();
     }
 
     private void setupActionBar() {
@@ -38,39 +35,47 @@ public final class MovieDetailsActivity extends BaseActivity implements
     }
 
     private void setupFragment() {
-        MovieDetailsFragment fragment = getFragment();
-        if(fragment == null) attachFragment();
+        if(getFragment() == null) attachFragment();
     }
 
-    private MovieDetailsFragment getFragment() {
-        return (MovieDetailsFragment)getSupportFragmentManager().findFragmentById(R.id.frgPlaceholder);
+    private ReviewsFragment getFragment() {
+        return (ReviewsFragment)getSupportFragmentManager().findFragmentById(R.id.frgPlaceholder);
     }
 
     private void attachFragment() {
         Bundle bundle = Utils.getExtras(getIntent());
-        long movieId = bundle.getLong(MovieDetailsFragment.KEY_MOVIE_ID);
+        long movieId = bundle.getLong(ReviewsFragment.KEY_MOVIE_ID);
 
         getSupportFragmentManager()
             .beginTransaction()
-            .add(R.id.frgPlaceholder, MovieDetailsFragment.newInstance(movieId))
+            .add(R.id.frgPlaceholder, ReviewsFragment.newInstance(movieId))
             .commit();
     }
 
     @Override
     protected void onConnectivityChanged(boolean connectionOn) {
-        MovieDetailsFragment fragment = (MovieDetailsFragment)getSupportFragmentManager().findFragmentById(R.id.frgPlaceholder);
+        ReviewsFragment fragment = getFragment();
+
         if(fragment != null) {
             fragment.onConnectivityChanged(connectionOn);
         }
     }
 
-    @Override
-    public void onSeeAllReviews(long movieId) {
-        final Intent showReviewsIntent = new Intent(this, ReviewsActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(ReviewsFragment.KEY_MOVIE_ID, movieId);
-        showReviewsIntent.putExtras(bundle);
+    private void attachPresenter() {
+        ReviewsFragment fragment = getFragment();
 
-        startActivity(showReviewsIntent);
+        if(fragment != null) {
+            fragment.attachPresenter((ReviewsContract.Presenter)getLastCustomNonConfigurationInstance());
+        }
+    }
+
+    @Override
+    public Object onRetainCustomNonConfigurationInstance() {
+        ReviewsFragment fragment = getFragment();
+        if(fragment != null) {
+            return fragment.getPresenter();
+        } else {
+            return super.onRetainCustomNonConfigurationInstance();
+        }
     }
 }

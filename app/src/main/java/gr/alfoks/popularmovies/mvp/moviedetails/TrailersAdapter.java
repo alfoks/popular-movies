@@ -20,9 +20,9 @@ public final class TrailersAdapter
     @NonNull
     private final Context context;
     @NonNull
-    private final MovieDetailsContract.Presenter presenter;
+    private final TrailersContract.ListPresenter presenter;
 
-    TrailersAdapter(@NonNull Context context, @NonNull MovieDetailsContract.Presenter presenter) {
+    TrailersAdapter(@NonNull Context context, @NonNull TrailersContract.ListPresenter presenter) {
         this.context = context;
         this.presenter = presenter;
     }
@@ -47,7 +47,7 @@ public final class TrailersAdapter
     }
 
     class TrailerViewHolder extends RecyclerView.ViewHolder
-        implements MovieDetailsContract.TrailerView {
+        implements TrailersContract.View {
         @BindView(R.id.imgThumbnail)
         ImageView imgThumbnail;
         @BindView(R.id.btnPlay)

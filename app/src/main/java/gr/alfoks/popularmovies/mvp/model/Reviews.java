@@ -33,13 +33,13 @@ public class Reviews {
         return values;
     }
 
-    public static Reviews empty() {
-        return new Reviews(new ArrayList<>());
-    }
-
     public Reviews mergeWith(Reviews reviews) {
         List<Review> reviewList = new ArrayList<>(this.reviews);
         reviewList.addAll(reviews.getReviews());
         return new Reviews(reviewList);
+    }
+
+    public static Reviews empty() {
+        return new Reviews(new ArrayList<>());
     }
 }

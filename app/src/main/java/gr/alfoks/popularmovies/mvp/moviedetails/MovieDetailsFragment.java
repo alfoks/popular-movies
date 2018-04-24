@@ -8,10 +8,14 @@ import gr.alfoks.popularmovies.PopularMoviesApplication;
 import gr.alfoks.popularmovies.R;
 import gr.alfoks.popularmovies.mvp.base.BaseFragment;
 import gr.alfoks.popularmovies.mvp.model.Movie;
+import gr.alfoks.popularmovies.mvp.reviews.ReviewsAdapter;
+import gr.alfoks.popularmovies.mvp.reviews.ReviewsContract;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
@@ -46,9 +50,9 @@ public final class MovieDetailsFragment
 
     private TrailersAdapter trailersAdapter;
     private ReviewsAdapter reviewsAdapter;
+    private OnSeeAllReviewsListener listener;
 
     public MovieDetailsFragment() {
-
     }
 
     public static MovieDetailsFragment newInstance(long movieId) {
@@ -66,12 +70,14 @@ public final class MovieDetailsFragment
         return R.layout.fragment_movie_details;
     }
 
+    @NonNull
     @Override
     protected MovieDetailsContract.Presenter providePresenter() {
         PopularMoviesApplication app = (PopularMoviesApplication)getContext().getApplicationContext();
         return app.provideMovieDetailsPresenter();
     }
 
+    @NonNull
     @Override
     protected MovieDetailsContract.View getThis() {
         return this;
@@ -86,12 +92,12 @@ public final class MovieDetailsFragment
     }
 
     private void initTrailersRecyclerView() {
-        trailersAdapter = new TrailersAdapter(getContext(), getPresenter());
+        trailersAdapter = new TrailersAdapter(getContext(), (TrailersContract.ListPresenter)getPresenter());
         initRecyclerView(rcvTrailers, trailersAdapter);
     }
 
     private void initReviewsRecyclerView() {
-        reviewsAdapter = new ReviewsAdapter(getContext(), getPresenter());
+        reviewsAdapter = new ReviewsAdapter(getContext(), (ReviewsContract.ListPresenter)getPresenter());
         initRecyclerView(rcvReviews, reviewsAdapter);
     }
 
@@ -147,7 +153,40 @@ public final class MovieDetailsFragment
     }
 
     @Override
+    public void showAllReviews(long movieId) {
+        listener.onSeeAllReviews(movieId);
+    }
+
+    @Override
     public void onConnectivityChanged(boolean connectionOn) {
         getPresenter().onConnectivityChanged(connectionOn);
     }
+
+    @OnClick(R.id.txtSeeAll)
+    void onSeeAllClicked() {
+        getPresenter().seeAllReviewsClicked();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof OnSeeAllReviewsListener) {
+            listener = (OnSeeAllReviewsListener)context;
+        } else {
+            listener = nullListener;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+
+    public interface OnSeeAllReviewsListener {
+        void onSeeAllReviews(long movieId);
+    }
+
+    private final OnSeeAllReviewsListener nullListener = movieId -> {
+    };
 }

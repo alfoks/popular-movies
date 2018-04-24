@@ -5,6 +5,7 @@ import gr.alfoks.popularmovies.mvp.base.BasePresenter;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 import gr.alfoks.popularmovies.mvp.model.Review;
 import gr.alfoks.popularmovies.mvp.model.Trailer;
+import gr.alfoks.popularmovies.mvp.reviews.ReviewsContract;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -13,7 +14,8 @@ import android.support.annotation.NonNull;
 
 public final class MovieDetailsPresenter
     extends BasePresenter<MovieDetailsContract.View>
-    implements MovieDetailsContract.Presenter {
+    implements MovieDetailsContract.Presenter,
+    TrailersContract.ListPresenter, ReviewsContract.ListPresenter {
     @NonNull
     private final Repository repository;
     private Movie movie = Movie.builder().build();
@@ -58,6 +60,11 @@ public final class MovieDetailsPresenter
     }
 
     @Override
+    public void seeAllReviewsClicked() {
+        getView().showAllReviews(movie.id);
+    }
+
+    @Override
     public void onConnectivityChanged(boolean connectionOn) {
         //When we have internet again, load the movie, if not loaded already
         if(connectionOn && movie.isEmpty()) {
@@ -73,7 +80,7 @@ public final class MovieDetailsPresenter
     }
 
     @Override
-    public void onBindTrailerView(MovieDetailsContract.TrailerView view, int position) {
+    public void onBindTrailerView(TrailersContract.View view, int position) {
         Trailer trailer = movie.trailers.getTrailers().get(position);
         view.setThumbnail(trailer.getThumbnailUrl());
     }
@@ -90,7 +97,7 @@ public final class MovieDetailsPresenter
     }
 
     @Override
-    public void onBindReviewView(MovieDetailsContract.ReviewView view, int position) {
+    public void onBindReviewView(ReviewsContract.ListItemView view, int position) {
         Review review = movie.reviews.getReviews().get(position);
         view.setAuthor(review.author);
         view.setContent(review.content);
@@ -112,6 +119,10 @@ public final class MovieDetailsPresenter
 
         @Override
         public void playTrailer(String url) {
+        }
+
+        @Override
+        public void showAllReviews(long movieId) {
         }
     };
 }

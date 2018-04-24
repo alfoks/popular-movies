@@ -205,6 +205,7 @@ public final class MoviesProvider extends ContentProvider {
                 qb.setTables(TrailersTable.NAME);
                 break;
             case REVIEWS:
+                limitString = buildLimitString(uri);
                 qb.setTables(ReviewsTable.NAME);
                 break;
             default:

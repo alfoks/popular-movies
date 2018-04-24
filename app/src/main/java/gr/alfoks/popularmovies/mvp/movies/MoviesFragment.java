@@ -54,12 +54,14 @@ public final class MoviesFragment
         return R.layout.fragment_movies;
     }
 
+    @NonNull
     @Override
     protected MoviesContract.Presenter providePresenter() {
         PopularMoviesApplication app = (PopularMoviesApplication)getContext().getApplicationContext();
         return app.provideMoviesPresenter();
     }
 
+    @NonNull
     @Override
     protected MoviesContract.View getThis() {
         return this;
@@ -84,7 +86,11 @@ public final class MoviesFragment
                 );
 
             adapter.addMovies(movies);
-            layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(KEY_LAYOUT_MANAGER_STATE));
+            layoutManager
+                .onRestoreInstanceState(
+                    savedInstanceState.getParcelable(KEY_LAYOUT_MANAGER_STATE)
+                );
+
             stateRestored = true;
         } else {
             setSortBy(getSortBy());
@@ -145,6 +151,20 @@ public final class MoviesFragment
     }
 
     @Override
+    public void onMovieRemoved(Movie movie) {
+        adapter.removeMovie(movie.id);
+    }
+
+    private SortBy getSortBy() {
+        SortBy sortBy = (SortBy)getArguments().getSerializable(KEY_SORT_BY);
+        return sortBy == null ? SortBy.POPULAR : sortBy;
+    }
+
+    public void onConnectivityChanged(boolean connectionOn) {
+        getPresenter().onConnectivityChanged(connectionOn);
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if(context instanceof OnMovieClickedListener) {
@@ -158,20 +178,6 @@ public final class MoviesFragment
     public void onDetach() {
         super.onDetach();
         listener = null;
-    }
-
-    @Override
-    public void onMovieRemoved(Movie movie) {
-        adapter.removeMovie(movie.id);
-    }
-
-    private SortBy getSortBy() {
-        SortBy sortBy = (SortBy)getArguments().getSerializable(KEY_SORT_BY);
-        return sortBy == null ? SortBy.POPULAR : sortBy;
-    }
-
-    public void onConnectivityChanged(boolean connectionOn) {
-        getPresenter().onConnectivityChanged(connectionOn);
     }
 
     public interface OnMovieClickedListener {

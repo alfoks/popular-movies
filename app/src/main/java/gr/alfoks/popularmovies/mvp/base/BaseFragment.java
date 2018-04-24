@@ -4,6 +4,7 @@ import butterknife.ButterKnife;
 
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,7 +18,7 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = providePresenter();
+        attachPresenter(null);
     }
 
     @Nullable
@@ -37,15 +38,26 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
         super.onDetach();
     }
 
+    public void attachPresenter(P retainedPresenter) {
+        if(retainedPresenter == null) {
+            presenter = providePresenter();
+        } else {
+            presenter = retainedPresenter;
+        }
+        presenter.attach(getThis());
+    }
+
+    public P getPresenter() {
+        return presenter;
+    }
+
     /** Layout resource to be inflated */
     @LayoutRes
     protected abstract int getContentResource();
+    @NonNull
     protected abstract P providePresenter();
+    @NonNull
     protected abstract V getThis();
     protected abstract void init(@Nullable Bundle savedInstanceState);
     protected abstract void onConnectivityChanged(boolean connectionOn);
-
-    protected P getPresenter() {
-        return presenter;
-    }
 }

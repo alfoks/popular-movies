@@ -6,16 +6,21 @@ import gr.alfoks.popularmovies.api.RestClient;
 import gr.alfoks.popularmovies.api.TheMovieDbApi;
 import gr.alfoks.popularmovies.data.source.ContentProviderDataSource;
 import gr.alfoks.popularmovies.data.source.MoviesRepository;
+import gr.alfoks.popularmovies.data.source.Repository;
 import gr.alfoks.popularmovies.data.source.TheMovieDbDataSource;
+import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsContract;
 import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsPresenter;
+import gr.alfoks.popularmovies.mvp.movies.MoviesContract;
 import gr.alfoks.popularmovies.mvp.movies.MoviesPresenter;
+import gr.alfoks.popularmovies.mvp.reviews.ReviewsContract;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
 
 public class PopularMoviesApplication extends Application {
-    private MoviesPresenter moviesPresenter;
-    private MovieDetailsPresenter movieDetailsPresenter;
+    private MoviesRepository repository;
+    private MoviesContract.Presenter moviesPresenter;
+    private MovieDetailsContract.Presenter movieDetailsPresenter;
 
     @Override
     public void onCreate() {
@@ -24,7 +29,7 @@ public class PopularMoviesApplication extends Application {
         TheMovieDbApi theMovieDbApi = createApi();
         ContentProviderDataSource contentProviderDataSource = new ContentProviderDataSource(this);
         TheMovieDbDataSource theMovieDbDataSource = new TheMovieDbDataSource(theMovieDbApi);
-        MoviesRepository repository = new MoviesRepository(this, contentProviderDataSource, theMovieDbDataSource);
+        repository = new MoviesRepository(this, contentProviderDataSource, theMovieDbDataSource);
 
         moviesPresenter = new MoviesPresenter(repository);
         movieDetailsPresenter = new MovieDetailsPresenter(repository);
@@ -39,12 +44,17 @@ public class PopularMoviesApplication extends Application {
     }
 
     @NonNull
-    public MoviesPresenter provideMoviesPresenter() {
+    public MoviesContract.Presenter provideMoviesPresenter() {
         return moviesPresenter;
     }
 
     @NonNull
-    public MovieDetailsPresenter provideMovieDetailsPresenter() {
+    public MovieDetailsContract.Presenter provideMovieDetailsPresenter() {
         return movieDetailsPresenter;
+    }
+
+    @NonNull
+    public Repository provideRepository() {
+        return repository;
     }
 }

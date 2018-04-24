@@ -35,7 +35,8 @@ import static gr.alfoks.popularmovies.data.MoviesProvider.SQLITE_ERROR;
 
 public final class ContentProviderDataSource implements LocalMoviesDataSource {
     private static final String SORTING_SELECTION = MoviesSortTable.Columns.SORT_TYPE + "=?";
-    private static final int PAGE_SIZE = 20;
+    private static final int MOVIES_PAGE_SIZE = 20;
+    private static final int REVIEWS_PAGE_SIZE = 10;
 
     @NonNull
     private final Context context;
@@ -126,7 +127,7 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
         String selection = ReviewsTable.Columns.MOVIE_ID + "=?";
         String[] selectionArgs = new String[] { String.valueOf(movieId) };
 
-        Uri uri = buildPagedUri(ReviewsTable.Content.CONTENT_URI, page);
+        Uri uri = buildPagedUri(ReviewsTable.Content.CONTENT_URI, page, REVIEWS_PAGE_SIZE);
         Cursor c = getCursor(uri, selection, selectionArgs, sortOrder);
 
         return Observable
@@ -142,12 +143,16 @@ public final class ContentProviderDataSource implements LocalMoviesDataSource {
     }
 
     private Uri buildPagedUri(Uri baseUri, int page) {
+        return buildPagedUri(baseUri, page, MOVIES_PAGE_SIZE);
+    }
+
+    private Uri buildPagedUri(Uri baseUri, int page, int pageSize) {
         return baseUri
             .buildUpon()
             .appendQueryParameter(MoviesProvider.QUERY_PARAMETER_PAGE, String.valueOf(page))
             .appendQueryParameter(
                 MoviesProvider.QUERY_PARAMETER_PAGE_SIZE,
-                String.valueOf(PAGE_SIZE)
+                String.valueOf(pageSize)
             )
             .build();
     }

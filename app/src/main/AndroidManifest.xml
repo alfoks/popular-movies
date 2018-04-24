@@ -25,17 +25,25 @@
         </activity>
         <activity
             android:name=".mvp.moviedetails.MovieDetailsActivity"
+            android:launchMode="singleTop"
             android:parentActivityName=".mvp.movies.MoviesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="gr.alfoks.popularmovies.mvp.movies.MoviesActivity" />
+                android:value=".mvp.movies.MoviesActivity" />
         </activity>
         <activity
             android:name=".mvp.credits.CreditsActivity"
             android:parentActivityName=".mvp.movies.MoviesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="gr.alfoks.popularmovies.mvp.movies.MoviesActivity" />
+                android:value=".mvp.movies.MoviesActivity" />
+        </activity>
+        <activity
+            android:name=".mvp.reviews.ReviewsActivity"
+            android:parentActivityName=".mvp.moviedetails.MovieDetailsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".mvp.moviedetails.MovieDetailsActivity" />
         </activity>
 
         <provider

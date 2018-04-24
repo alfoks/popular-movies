@@ -1,4 +1,4 @@
-package gr.alfoks.popularmovies.mvp.moviedetails;
+package gr.alfoks.popularmovies.mvp.reviews;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,9 +22,9 @@ public final class ReviewsAdapter
     @NonNull
     private final Context context;
     @NonNull
-    private final MovieDetailsContract.Presenter presenter;
+    private final ReviewsContract.ListPresenter presenter;
 
-    ReviewsAdapter(@NonNull Context context, @NonNull MovieDetailsContract.Presenter presenter) {
+    public ReviewsAdapter(@NonNull Context context, @NonNull ReviewsContract.ListPresenter presenter) {
         this.context = context;
         this.presenter = presenter;
     }
@@ -49,7 +49,7 @@ public final class ReviewsAdapter
     }
 
     class ReviewViewHolder extends RecyclerView.ViewHolder
-        implements MovieDetailsContract.ReviewView {
+        implements ReviewsContract.ListItemView {
         @BindView(R.id.txtAuthor)
         TextView txtAuthor;
         @BindView(R.id.txtContent)
