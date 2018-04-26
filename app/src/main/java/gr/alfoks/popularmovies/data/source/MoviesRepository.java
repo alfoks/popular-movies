@@ -11,7 +11,6 @@ import gr.alfoks.popularmovies.util.NetworkAvailabilityChecker;
 import gr.alfoks.popularmovies.util.NetworkUtils;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
 import android.annotation.SuppressLint;
@@ -145,13 +144,13 @@ public final class MoviesRepository implements Repository {
 
         //Request each movie's details, so they'll be loaded
         //and be persisted locally
-        for(Movie movie : movies.getMovies()) {
-            loadMovieFromRemoteDataSource(movie.id)
-                .subscribeOn(Schedulers.io())
-                .subscribe(m -> {
-                }, t -> {
-                });
-        }
+        //        for(Movie movie : movies.getMovies()) {
+        //            loadMovieFromRemoteDataSource(movie.id)
+        //                .subscribeOn(Schedulers.io())
+        //                .subscribe(m -> {
+        //                }, t -> {
+        //                });
+        //        }
     }
 
     @Override
