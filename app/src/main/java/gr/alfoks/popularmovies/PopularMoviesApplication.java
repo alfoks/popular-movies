@@ -8,15 +8,12 @@ import gr.alfoks.popularmovies.data.source.ContentProviderDataSource;
 import gr.alfoks.popularmovies.data.source.MoviesRepository;
 import gr.alfoks.popularmovies.data.source.Repository;
 import gr.alfoks.popularmovies.data.source.TheMovieDbDataSource;
-import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsContract;
-import gr.alfoks.popularmovies.mvp.moviedetails.MovieDetailsPresenter;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
 
 public class PopularMoviesApplication extends Application {
     private MoviesRepository repository;
-    private MovieDetailsContract.Presenter movieDetailsPresenter;
 
     @Override
     public void onCreate() {
@@ -26,8 +23,6 @@ public class PopularMoviesApplication extends Application {
         ContentProviderDataSource contentProviderDataSource = new ContentProviderDataSource(this);
         TheMovieDbDataSource theMovieDbDataSource = new TheMovieDbDataSource(theMovieDbApi);
         repository = new MoviesRepository(this, contentProviderDataSource, theMovieDbDataSource);
-
-        movieDetailsPresenter = new MovieDetailsPresenter(repository);
     }
 
     //Dependency injection functions below
@@ -36,11 +31,6 @@ public class PopularMoviesApplication extends Application {
         final HashMap<String, String> parameters = new HashMap<>();
         parameters.put("api_key", BuildConfig.THE_MOVIE_DB_API_KEY);
         return new RestClient<>(TheMovieDbApi.BASE_URL, TheMovieDbApi.class, parameters, null).create();
-    }
-
-    @NonNull
-    public MovieDetailsContract.Presenter provideMovieDetailsPresenter() {
-        return movieDetailsPresenter;
     }
 
     @NonNull

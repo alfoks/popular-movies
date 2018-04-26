@@ -74,7 +74,7 @@ public final class MovieDetailsFragment
     @Override
     protected MovieDetailsContract.Presenter providePresenter() {
         PopularMoviesApplication app = (PopularMoviesApplication)getContext().getApplicationContext();
-        return app.provideMovieDetailsPresenter();
+        return new MovieDetailsPresenter(app.provideRepository());
     }
 
     @NonNull
@@ -88,7 +88,8 @@ public final class MovieDetailsFragment
         long movieId = getArguments().getLong(KEY_MOVIE_ID);
         initTrailersRecyclerView();
         initReviewsRecyclerView();
-        getPresenter().loadMovie(movieId);
+
+        getPresenter().loadMovie(movieId, savedInstanceState != null);
     }
 
     private void initTrailersRecyclerView() {

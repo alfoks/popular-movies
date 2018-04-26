@@ -26,6 +26,7 @@ public final class MovieDetailsActivity extends BaseActivity implements
     protected void init(@Nullable Bundle state) {
         setupActionBar();
         setupFragment();
+        attachPresenter();
     }
 
     private void setupActionBar() {
@@ -72,5 +73,25 @@ public final class MovieDetailsActivity extends BaseActivity implements
         showReviewsIntent.putExtras(bundle);
 
         startActivity(showReviewsIntent);
+    }
+
+    private void attachPresenter() {
+        MovieDetailsFragment fragment = getFragment();
+
+        if(fragment != null) {
+            MovieDetailsContract.Presenter presenter =
+                (MovieDetailsContract.Presenter)getLastCustomNonConfigurationInstance();
+            fragment.attachPresenter(presenter);
+        }
+    }
+
+    @Override
+    public Object onRetainCustomNonConfigurationInstance() {
+        MovieDetailsFragment fragment = getFragment();
+        if(fragment != null) {
+            return fragment.getPresenter();
+        } else {
+            return super.onRetainCustomNonConfigurationInstance();
+        }
     }
 }

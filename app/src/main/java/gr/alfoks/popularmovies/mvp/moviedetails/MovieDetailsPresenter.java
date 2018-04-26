@@ -26,12 +26,16 @@ public final class MovieDetailsPresenter
 
     @SuppressLint("CheckResult")
     @Override
-    public void loadMovie(long movieId) {
-        repository
-            .loadMovie(movieId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::onMovieLoaded, this::onError);
+    public void loadMovie(long movieId, boolean configChanged) {
+        if(configChanged) {
+            getView().onMovieLoaded(movie);
+        } else {
+            repository
+                .loadMovie(movieId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onMovieLoaded, this::onError);
+        }
     }
 
     private void onMovieLoaded(Movie movie) {
@@ -68,7 +72,7 @@ public final class MovieDetailsPresenter
     public void onConnectivityChanged(boolean connectionOn) {
         //When we have internet again, load the movie, if not loaded already
         if(connectionOn && movie.isEmpty()) {
-            loadMovie(movie.id);
+            loadMovie(movie.id, false);
         }
     }
 

@@ -7,7 +7,7 @@ import gr.alfoks.popularmovies.mvp.model.Movie;
 public interface MovieDetailsContract {
 
     interface Presenter extends MvpPresenter<MovieDetailsContract.View> {
-        void loadMovie(long movieId);
+        void loadMovie(long movieId, boolean configChanged);
         void toggleFavorite();
         void seeAllReviewsClicked();
     }
