@@ -72,7 +72,7 @@ public final class MoviesAdapter
             Picasso.with(context)
                    .load(movie.getFullPosterPath())
                    .placeholder(R.drawable.anim_loading)
-                   .error(android.R.color.transparent)
+                   .error(R.drawable.ic_warning)
                    .fit()
                    .into(imgPoster);
         }
