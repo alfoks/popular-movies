@@ -13,7 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 public final class MoviesFragment
@@ -28,7 +28,6 @@ public final class MoviesFragment
     private MoviesAdapter adapter;
     private EndlessRecyclerViewScrollListener scrollListener;
     private OnMovieClickedListener listener;
-    private GridLayoutManager layoutManager;
 
     private boolean stateRestored = false;
 
@@ -65,18 +64,17 @@ public final class MoviesFragment
 
     @Override
     protected void init(@Nullable Bundle savedInstanceState) {
-        layoutManager = new GridLayoutManager(getContext(), 2);
-        rcvMovies.setLayoutManager(layoutManager);
         rcvMovies.setItemAnimator(new DefaultItemAnimator());
 
         adapter = new MoviesAdapter(getContext(), (MoviesContract.ListPresenter)getPresenter());
         rcvMovies.setAdapter(adapter);
 
-        scrollListener = createScrollListener(layoutManager);
+        scrollListener = createScrollListener((LinearLayoutManager)rcvMovies.getLayoutManager());
         rcvMovies.addOnScrollListener(scrollListener);
 
         if(savedInstanceState != null) {
-            layoutManager
+            rcvMovies
+                .getLayoutManager()
                 .onRestoreInstanceState(
                     savedInstanceState.getParcelable(KEY_LAYOUT_MANAGER_STATE)
                 );
@@ -95,7 +93,7 @@ public final class MoviesFragment
     }
 
     @NonNull
-    private EndlessRecyclerViewScrollListener createScrollListener(final GridLayoutManager layoutManager) {
+    private EndlessRecyclerViewScrollListener createScrollListener(final LinearLayoutManager layoutManager) {
         return new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
@@ -106,7 +104,10 @@ public final class MoviesFragment
 
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-        state.putParcelable(KEY_LAYOUT_MANAGER_STATE, layoutManager.onSaveInstanceState());
+        state.putParcelable(
+            KEY_LAYOUT_MANAGER_STATE,
+            rcvMovies.getLayoutManager().onSaveInstanceState()
+        );
     }
 
     @Override

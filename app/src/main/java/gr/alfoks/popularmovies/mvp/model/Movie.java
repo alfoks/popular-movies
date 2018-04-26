@@ -125,6 +125,10 @@ public final class Movie implements Serializable {
         return movies;
     }
 
+    public String getFullTitle() {
+        return String.format("%s (%s)", title, getReleaseYear());
+    }
+
     public static class MovieBuilder {
         private long id = EMPTY_ID;
         private String title;

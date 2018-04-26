@@ -1,26 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="2dp">
+    android:layout_margin="2dp"
+    android:background="?attr/colorPrimaryDark">
 
-    <TextView
-        android:id="@+id/txtTitle"
-        style="?android:attr/textAppearanceLarge"
+    <RelativeLayout
+        android:id="@+id/pnlMovies"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?attr/colorPrimaryDark"
-        android:gravity="center"
-        tools:text="@string/placeholder_title" />
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_click_selector">
 
-    <ImageView
-        android:id="@+id/imgPoster"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:clickable="true"
-        android:contentDescription="@string/cnt_movie_poster"
-        android:focusable="true"
-        android:scaleType="center" />
+        <ImageView
+            android:id="@+id/imgPoster"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/field_vertical_separation_margin"
+            android:contentDescription="@string/cnt_movie_poster"
+            android:padding="8dp"
+            tools:srcCompat="@drawable/placeholder_poster" />
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/txtTitle"
+            style="@style/Field.WrapContent"
+            android:layout_alignTop="@id/imgPoster"
+            android:layout_marginLeft="@dimen/field_horizontal_separation_margin"
+            android:layout_marginStart="@dimen/field_horizontal_separation_margin"
+            android:layout_marginTop="60dp"
+            android:layout_toEndOf="@id/imgPoster"
+            android:layout_toRightOf="@id/imgPoster"
+            android:textAppearance="?android:textAppearanceMedium"
+            tools:text="@string/placeholder_title" />
+
+        <ImageView
+            android:id="@+id/imgStar"
+            style="@style/Field.WrapContent"
+            android:layout_alignLeft="@id/txtTitle"
+            android:layout_alignStart="@id/txtTitle"
+            android:layout_below="@id/txtTitle"
+            android:contentDescription="@string/cnt_star_icon"
+            app:srcCompat="@drawable/ic_star" />
+
+        <TextView
+            android:id="@+id/txtRating"
+            style="@style/Field.WrapContent"
+            android:layout_alignBottom="@id/imgStar"
+            android:layout_below="@id/txtDuration"
+            android:layout_toEndOf="@id/imgStar"
+            android:layout_toRightOf="@id/imgStar"
+            android:gravity="center"
+            android:padding="@dimen/field_horizontal_separation_margin"
+            tools:text="@string/placeholder_rating" />
+
+    </RelativeLayout>
+</LinearLayout>

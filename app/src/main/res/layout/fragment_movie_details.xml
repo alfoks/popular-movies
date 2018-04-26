@@ -32,7 +32,7 @@
 
         <ImageView
             android:id="@+id/imgPoster"
-            android:layout_width="match_parent"
+            android:layout_width="144dp"
             android:layout_height="200dp"
             android:layout_alignEnd="@id/gdlVerticalMiddle"
             android:layout_alignParentLeft="true"
@@ -55,21 +55,45 @@
             android:textAppearance="?android:textAppearanceMedium"
             tools:text="@string/placeholder_year" />
 
-        <TextView
-            android:id="@+id/txtDuration"
+        <ImageView
+            android:id="@+id/imgClock"
             style="@style/Field.WrapContent"
             android:layout_alignLeft="@id/txtYear"
             android:layout_alignStart="@id/txtYear"
             android:layout_below="@id/txtYear"
+            android:contentDescription="@string/cnt_clock_icon"
+            app:srcCompat="@drawable/ic_clock" />
+
+        <TextView
+            android:id="@+id/txtDuration"
+            style="@style/Field.WrapContent"
+            android:layout_alignBottom="@id/imgClock"
+            android:layout_marginLeft="@dimen/field_horizontal_separation_margin"
+            android:layout_marginStart="@dimen/field_horizontal_separation_margin"
+            android:layout_toEndOf="@id/imgClock"
+            android:layout_toRightOf="@id/imgClock"
+            android:gravity="center"
             android:textStyle="italic"
             tools:text="@string/placeholder_duration" />
 
-        <TextView
-            android:id="@+id/txtRating"
+        <ImageView
+            android:id="@+id/imgStar"
             style="@style/Field.WrapContent"
             android:layout_alignLeft="@id/txtYear"
             android:layout_alignStart="@id/txtYear"
             android:layout_below="@id/txtDuration"
+            android:contentDescription="@string/cnt_star_icon"
+            app:srcCompat="@drawable/ic_star" />
+
+        <TextView
+            android:id="@+id/txtRating"
+            style="@style/Field.WrapContent"
+            android:layout_alignBottom="@id/imgStar"
+            android:layout_marginLeft="@dimen/field_horizontal_separation_margin"
+            android:layout_marginStart="@dimen/field_horizontal_separation_margin"
+            android:layout_toEndOf="@id/imgStar"
+            android:layout_toRightOf="@id/imgStar"
+            android:gravity="center"
             tools:text="@string/placeholder_rating" />
 
         <ImageView

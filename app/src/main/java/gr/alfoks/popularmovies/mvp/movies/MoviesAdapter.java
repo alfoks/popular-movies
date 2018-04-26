@@ -4,6 +4,7 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import gr.alfoks.popularmovies.R;
 import gr.alfoks.popularmovies.mvp.model.Movie;
 
@@ -50,19 +51,23 @@ public final class MoviesAdapter
         ImageView imgPoster;
         @BindView(R.id.txtTitle)
         TextView txtTitle;
+        @BindView(R.id.txtRating)
+        TextView txtRating;
 
         private MovieViewHolder(android.view.View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
 
-            imgPoster.setOnClickListener(v -> {
-                presenter.movieClicked(getLayoutPosition());
-            });
+        @OnClick(R.id.pnlMovies)
+        void onMovieClicked() {
+            presenter.movieClicked(getLayoutPosition());
         }
 
         @Override
         public void bindData(Movie movie) {
-            txtTitle.setText(movie.title);
+            txtTitle.setText(movie.getFullTitle());
+            txtRating.setText(movie.getRating());
 
             Picasso.with(context)
                    .load(movie.getFullPosterPath())
