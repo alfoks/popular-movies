@@ -39,6 +39,8 @@ public final class MoviesActivity extends BaseActivity
     @Override
     protected void init(@Nullable Bundle state) {
         setupActionBar();
+        setupFragment();
+        attachPresenter();
     }
 
     private void setupActionBar() {
@@ -47,6 +49,10 @@ public final class MoviesActivity extends BaseActivity
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setIcon(R.drawable.ic_movie);
         }
+    }
+
+    private void setupFragment() {
+        if(getFragment() == null) attachFragment(sortBy);
     }
 
     @Override
@@ -117,13 +123,7 @@ public final class MoviesActivity extends BaseActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 sortBy = sortByAdapter.getItem(position);
-
-                MoviesFragment fragment = getFragment();
-                if(fragment == null) {
-                    attachFragment(sortBy);
-                } else {
-                    fragment.setSortBy(sortBy);
-                }
+                getFragment().setSortBy(sortBy);
             }
 
             @Override
@@ -164,6 +164,25 @@ public final class MoviesActivity extends BaseActivity
         MoviesFragment fragment = getFragment();
         if(fragment != null) {
             fragment.onConnectivityChanged(connectionOn);
+        }
+    }
+
+    private void attachPresenter() {
+        MoviesFragment fragment = getFragment();
+
+        if(fragment != null) {
+            MoviesContract.Presenter presenter = (MoviesContract.Presenter)getLastCustomNonConfigurationInstance();
+            fragment.attachPresenter(presenter);
+        }
+    }
+
+    @Override
+    public Object onRetainCustomNonConfigurationInstance() {
+        MoviesFragment fragment = getFragment();
+        if(fragment != null) {
+            return fragment.getPresenter();
+        } else {
+            return super.onRetainCustomNonConfigurationInstance();
         }
     }
 }

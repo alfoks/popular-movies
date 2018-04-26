@@ -15,11 +15,12 @@ import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 
 public final class MoviesPresenter extends BasePresenter<MoviesContract.View>
-    implements MoviesContract.Presenter {
+    implements MoviesContract.Presenter, MoviesContract.ListPresenter {
 
     @NonNull
     private final Repository repository;
     private int nextPage = 1;
+    private Movies movies = Movies.empty();
     private SortBy sortBy = SortBy.POPULAR;
 
     public MoviesPresenter(@NonNull Repository repository) {
@@ -39,30 +40,34 @@ public final class MoviesPresenter extends BasePresenter<MoviesContract.View>
     private void dataChanged(DataChange dataChange) {
         switch(dataChange.type) {
             case FAVORITE:
-                removeFavorite(dataChange);
+                if(sortBy == SortBy.FAVORITES) {
+                    favoriteUpdated(dataChange);
+                }
                 break;
         }
     }
 
-    private void removeFavorite(DataChange dataChange) {
-        //TODO: Implement it correctly (i.e. move data access in view adapter, to presenter
+    private void favoriteUpdated(DataChange dataChange) {
         if(!(dataChange.data instanceof Movie)) return;
         Movie movie = (Movie)dataChange.data;
-        //TODO: Account for fact that unfavorited movie maybe favorited again before returning to list
-        if(!movie.favorite) {
-            getView().onMovieRemoved(movie);
+        if(movie.favorite) {
+            movies = movies.addMovie(movie);
+        } else {
+            movies = movies.removeMovie(movie);
         }
+        getView().onDataChanged();
     }
 
     @Override
     public void setSortBy(SortBy sortBy) {
         this.sortBy = sortBy;
-        resetPage();
+        reset();
         getView().reset();
     }
 
-    private void resetPage() {
+    private void reset() {
         nextPage = 1;
+        movies = Movies.empty();
     }
 
     @SuppressLint("CheckResult")
@@ -77,8 +82,26 @@ public final class MoviesPresenter extends BasePresenter<MoviesContract.View>
     }
 
     private void onMoviesLoaded(Movies movies) {
+        this.movies = this.movies.mergeWith(movies);
         nextPage++;
-        getView().onMoviesLoaded(movies);
+        getView().onDataChanged();
+    }
+
+    @Override
+    public void onBindMovieView(MoviesContract.ListItemView view, int position) {
+        Movie movie = movies.getMovies().get(position);
+        view.bindData(movie);
+    }
+
+    @Override
+    public int getMoviesCount() {
+        return movies.getMovies().size();
+    }
+
+    @Override
+    public void movieClicked(int position) {
+        Movie movie = movies.getMovies().get(position);
+        getView().showMovieDetails(movie);
     }
 
     @Override
@@ -87,14 +110,9 @@ public final class MoviesPresenter extends BasePresenter<MoviesContract.View>
     }
 
     @Override
-    public void movieClicked(Movie movie) {
-        getView().onMovieClicked(movie);
-    }
-
-    @Override
     public void onConnectivityChanged(boolean connectionOn) {
+        reset();
         getView().reset();
-        resetPage();
         loadMovies();
     }
 
@@ -107,7 +125,7 @@ public final class MoviesPresenter extends BasePresenter<MoviesContract.View>
 
     private final MoviesContract.View nullView = new MoviesContract.View() {
         @Override
-        public void onMovieRemoved(Movie movie) {
+        public void onDataChanged() {
         }
 
         @Override
@@ -115,15 +133,11 @@ public final class MoviesPresenter extends BasePresenter<MoviesContract.View>
         }
 
         @Override
-        public void onMoviesLoaded(Movies movies) {
-        }
-
-        @Override
         public void onErrorLoadingMovies(Throwable e) {
         }
 
         @Override
-        public void onMovieClicked(Movie movie) {
+        public void showMovieDetails(Movie movie) {
         }
     };
 }

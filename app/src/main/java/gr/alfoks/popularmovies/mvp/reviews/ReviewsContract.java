@@ -2,6 +2,7 @@ package gr.alfoks.popularmovies.mvp.reviews;
 
 import gr.alfoks.popularmovies.mvp.base.MvpPresenter;
 import gr.alfoks.popularmovies.mvp.base.MvpView;
+import gr.alfoks.popularmovies.mvp.model.Review;
 import gr.alfoks.popularmovies.mvp.model.Reviews;
 
 public interface ReviewsContract {
@@ -22,7 +23,6 @@ public interface ReviewsContract {
     }
 
     interface ListItemView extends MvpView {
-        void setAuthor(String author);
-        void setContent(String content);
+        void bindData(Review review);
     }
 }

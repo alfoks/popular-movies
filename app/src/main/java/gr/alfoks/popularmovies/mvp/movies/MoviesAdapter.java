@@ -1,19 +1,13 @@
 package gr.alfoks.popularmovies.mvp.movies;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import gr.alfoks.popularmovies.R;
 import gr.alfoks.popularmovies.mvp.model.Movie;
-import io.reactivex.Observable;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,12 +18,11 @@ import android.widget.TextView;
 public final class MoviesAdapter
     extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
     private final Context context;
-    private final List<Movie> movies = new ArrayList<>();
-    private final OnItemClickedListener listener;
+    private final MoviesContract.ListPresenter presenter;
 
-    MoviesAdapter(Context context, OnItemClickedListener listener) {
+    MoviesAdapter(Context context, MoviesContract.ListPresenter presenter) {
         this.context = context;
-        this.listener = listener;
+        this.presenter = presenter;
     }
 
     @Override
@@ -43,55 +36,16 @@ public final class MoviesAdapter
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
-        holder.bindData(movies.get(position));
+        presenter.onBindMovieView(holder, position);
     }
 
     @Override
     public int getItemCount() {
-        return movies.size();
+        return presenter.getMoviesCount();
     }
 
-    void addMovie(Movie movie) {
-        movies.add(movie);
-        notifyDataSetChanged();
-    }
-
-    void addMovies(List<Movie> movies) {
-        this.movies.addAll(movies);
-    }
-
-    void reset() {
-        movies.clear();
-        notifyDataSetChanged();
-    }
-
-    @SuppressLint("CheckResult")
-    public void removeMovie(long movieId) {
-        Observable
-            .fromIterable(movies)
-            .filter(movie -> movie.id == movieId)
-            .subscribe(movie -> {
-                movies.remove(movie);
-                notifyDataSetChanged();
-            }, throwable -> {
-            });
-    }
-
-    //TODO: Don't keep data in adapter
-
-    /**
-     * Expose movies. This method should be removed and the data not stored in
-     * adapter at all.
-     **/
-    public List<Movie> getMovies() {
-        return movies;
-    }
-
-    public interface OnItemClickedListener {
-        void onItemClicked(Movie movie);
-    }
-
-    class MovieViewHolder extends RecyclerView.ViewHolder {
+    class MovieViewHolder extends RecyclerView.ViewHolder
+        implements MoviesContract.ListItemView {
         @BindView(R.id.imgPoster)
         ImageView imgPoster;
         @BindView(R.id.txtTitle)
@@ -101,10 +55,13 @@ public final class MoviesAdapter
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            imgPoster.setOnClickListener(createOnClickedListener());
+            imgPoster.setOnClickListener(v -> {
+                presenter.movieClicked(getLayoutPosition());
+            });
         }
 
-        private void bindData(Movie movie) {
+        @Override
+        public void bindData(Movie movie) {
             txtTitle.setText(movie.title);
 
             Picasso.with(context)
@@ -113,15 +70,6 @@ public final class MoviesAdapter
                    .error(android.R.color.transparent)
                    .fit()
                    .into(imgPoster);
-        }
-
-        @NonNull
-        private View.OnClickListener createOnClickedListener() {
-            return v -> {
-                if(listener != null) {
-                    listener.onItemClicked(movies.get(getLayoutPosition()));
-                }
-            };
         }
     }
 }

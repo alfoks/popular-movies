@@ -99,8 +99,7 @@ public final class MovieDetailsPresenter
     @Override
     public void onBindReviewView(ReviewsContract.ListItemView view, int position) {
         Review review = movie.reviews.getReviews().get(position);
-        view.setAuthor(review.author);
-        view.setContent(review.content);
+        view.bindData(review);
     }
 
     @Override

@@ -4,6 +4,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import gr.alfoks.popularmovies.R;
+import gr.alfoks.popularmovies.mvp.model.Review;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -114,13 +115,9 @@ public final class ReviewsAdapter
         }
 
         @Override
-        public void setAuthor(String author) {
-            txtAuthor.setText(author);
-        }
-
-        @Override
-        public void setContent(String content) {
-            txtContent.setText(content);
+        public void bindData(Review review) {
+            txtAuthor.setText(review.author);
+            txtContent.setText(review.content);
         }
     }
 }

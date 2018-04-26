@@ -167,10 +167,14 @@ public final class MoviesRepository implements Repository {
 
     @Override
     public Single<Boolean> updateFavorite(long movieId, boolean favorite) {
-        final Movie movie = Movie.builder().setId(movieId).setFavorite(favorite).build();
+        final Movie[] movie = new Movie[1];
         return localDataSource
-            .updateFavorite(movieId, favorite)
-            .doOnSuccess(success -> notifyDataChanged(new DataChange(DataChangeType.FAVORITE, movie)));
+            .loadMovie(movieId)
+            .flatMap(m -> {
+                movie[0] = Movie.builder().from(m).setFavorite(favorite).build();
+                return localDataSource.updateFavorite(m.id, favorite);
+            })
+            .doOnSuccess(success -> notifyDataChanged(new DataChange(DataChangeType.FAVORITE, movie[0])));
     }
 
     /**

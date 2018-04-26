@@ -1,13 +1,10 @@
 package gr.alfoks.popularmovies.mvp.movies;
 
-import java.util.List;
-
 import butterknife.BindView;
 import gr.alfoks.popularmovies.PopularMoviesApplication;
 import gr.alfoks.popularmovies.R;
 import gr.alfoks.popularmovies.mvp.base.BaseFragment;
 import gr.alfoks.popularmovies.mvp.model.Movie;
-import gr.alfoks.popularmovies.mvp.model.Movies;
 import gr.alfoks.popularmovies.mvp.model.SortBy;
 import gr.alfoks.popularmovies.util.EndlessRecyclerViewScrollListener;
 
@@ -24,7 +21,6 @@ public final class MoviesFragment
     implements MoviesContract.View {
     private static final String KEY_SORT_BY = "SORT_BY";
     private static final String KEY_LAYOUT_MANAGER_STATE = "LM_STATE";
-    private static final String KEY_MOVIES = "MOVIES";
 
     @BindView(R.id.rcvMovies)
     RecyclerView rcvMovies;
@@ -58,7 +54,7 @@ public final class MoviesFragment
     @Override
     protected MoviesContract.Presenter providePresenter() {
         PopularMoviesApplication app = (PopularMoviesApplication)getContext().getApplicationContext();
-        return app.provideMoviesPresenter();
+        return new MoviesPresenter(app.provideRepository());
     }
 
     @NonNull
@@ -73,27 +69,19 @@ public final class MoviesFragment
         rcvMovies.setLayoutManager(layoutManager);
         rcvMovies.setItemAnimator(new DefaultItemAnimator());
 
-        adapter = new MoviesAdapter(getContext(), onItemClickedListener);
+        adapter = new MoviesAdapter(getContext(), (MoviesContract.ListPresenter)getPresenter());
         rcvMovies.setAdapter(adapter);
 
         scrollListener = createScrollListener(layoutManager);
         rcvMovies.addOnScrollListener(scrollListener);
 
         if(savedInstanceState != null) {
-            List<Movie> movies =
-                Movie.listFromValuesArrayList(
-                    savedInstanceState.getParcelableArrayList(KEY_MOVIES)
-                );
-
-            adapter.addMovies(movies);
             layoutManager
                 .onRestoreInstanceState(
                     savedInstanceState.getParcelable(KEY_LAYOUT_MANAGER_STATE)
                 );
 
             stateRestored = true;
-        } else {
-            setSortBy(getSortBy());
         }
     }
 
@@ -107,10 +95,6 @@ public final class MoviesFragment
     }
 
     @NonNull
-    private final MoviesAdapter.OnItemClickedListener onItemClickedListener =
-        movie -> getPresenter().movieClicked(movie);
-
-    @NonNull
     private EndlessRecyclerViewScrollListener createScrollListener(final GridLayoutManager layoutManager) {
         return new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
@@ -122,22 +106,13 @@ public final class MoviesFragment
 
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-
         state.putParcelable(KEY_LAYOUT_MANAGER_STATE, layoutManager.onSaveInstanceState());
-        state.putParcelableArrayList(KEY_MOVIES, Movie.listAsValuesArrayList(adapter.getMovies()));
     }
 
     @Override
     public void reset() {
-        adapter.reset();
+        adapter.notifyDataSetChanged();
         scrollListener.resetState();
-    }
-
-    @Override
-    public void onMoviesLoaded(Movies movies) {
-        for(Movie movie : movies.getMovies()) {
-            adapter.addMovie(movie);
-        }
     }
 
     @Override
@@ -146,13 +121,13 @@ public final class MoviesFragment
     }
 
     @Override
-    public void onMovieClicked(Movie movie) {
+    public void showMovieDetails(Movie movie) {
         listener.onMovieClicked(movie.id);
     }
 
     @Override
-    public void onMovieRemoved(Movie movie) {
-        adapter.removeMovie(movie.id);
+    public void onDataChanged() {
+        adapter.notifyDataSetChanged();
     }
 
     private SortBy getSortBy() {

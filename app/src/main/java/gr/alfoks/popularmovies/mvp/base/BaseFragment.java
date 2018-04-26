@@ -13,19 +13,17 @@ import android.view.ViewGroup;
 
 public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     extends Fragment {
-    private P presenter;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        attachPresenter(null);
-    }
+    private P presenter = null;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(getContentResource(), container, false);
         ButterKnife.bind(this, view);
+
+        if(presenter == null) {
+            presenter = providePresenter();
+        }
 
         presenter.attach(getThis());
         init(savedInstanceState);
@@ -38,13 +36,13 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
         super.onDetach();
     }
 
-    public void attachPresenter(P retainedPresenter) {
-        if(retainedPresenter == null) {
-            presenter = providePresenter();
+    public void attachPresenter(P presenter) {
+        if(presenter != null) {
+            this.presenter = presenter;
+            this.presenter.attach(getThis());
         } else {
-            presenter = retainedPresenter;
+            this.presenter = providePresenter();
         }
-        presenter.attach(getThis());
     }
 
     public P getPresenter() {

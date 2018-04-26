@@ -45,8 +45,7 @@ public final class ReviewsPresenter extends BasePresenter<ReviewsContract.View>
     @Override
     public void onBindReviewView(ReviewsContract.ListItemView view, int position) {
         Review review = reviews.getReviews().get(position);
-        view.setAuthor(review.author);
-        view.setContent(review.content);
+        view.bindData(review);
     }
 
     @Override
